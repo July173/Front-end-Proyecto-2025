@@ -1,0 +1,47 @@
+# node_modules: dependencias instaladas, no se suben
+node_modules/
+
+# salida de compilación
+dist/
+build/
+
+# archivos de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# salida de testing
+coverage/
+
+# directorios de caché de herramientas
+.cache/
+.next/
+out/
+.vite/
+.vscode/
+
+# editor de texto (VS Code, etc.)
+*.sublime-workspace
+.idea/
+.vscode/
+*.code-workspace
+
+# archivo lock si estás usando yarn o pnpm (opcional)
+# puedes dejar solo el que usas
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
+
+# archivos de Tailwind generados (por ejemplo, si usas JIT y generas CSS)
+*.css.map
