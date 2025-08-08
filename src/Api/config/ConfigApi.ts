@@ -1,0 +1,1 @@
+//configuracion generica del los enpoints
