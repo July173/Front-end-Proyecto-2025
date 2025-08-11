@@ -88,21 +88,21 @@
   .sena-form-panel {
     @apply flex-1 bg-white flex items-center justify-center p-8;
   }
-  
-  .sena-welcome-panel {
-    @apply flex-1 bg-gradient-to-br from-green-600 to-green-700 relative overflow-hidden flex items-center justify-center text-white;
-  }
-  
-  .sena-welcome-panel::before {
-    content: '';
-    @apply absolute inset-0 opacity-10;
-    background-image: 
-      linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 42%, rgba(255,255,255,0.1) 44%, transparent 46%),
-      linear-gradient(-45deg, transparent 40%, rgba(255,255,255,0.1) 42%, rgba(255,255,255,0.1) 44%, transparent 46%);
-    background-size: 60px 60px;
-    animation: float 20s ease-in-out infinite;
-  }
-  
+ .sena-welcome-panel {
+  @apply flex-1 relative overflow-hidden flex items-center justify-center text-white;
+  background: linear-gradient(to bottom right, #43A047, #2E7D32);
+}
+
+.sena-welcome-panel::before {
+  content: '';
+  @apply absolute inset-0;
+  background-image: url('/public/Background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.4; /* Ajusta este valor para más o menos visibilidad */
+  mix-blend-mode: soft-light; /* Otras opciones: overlay, multiply, screen */
+}
   .sena-form {
     @apply w-full max-w-md space-y-6;
   }
@@ -120,7 +120,7 @@
   }
   
   .sena-button {
-    @apply w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+    @apply w-full bg-[#388E3C] hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
   }
   
   .sena-button-outline {
@@ -128,7 +128,7 @@
   }
   
   .sena-link {
-    @apply text-green-600 hover:text-green-700 font-medium transition-colors duration-200;
+    @apply text-[#43A047] hover:text-green-700 font-medium transition-colors duration-200;
   }
   
   .sena-text-muted {
