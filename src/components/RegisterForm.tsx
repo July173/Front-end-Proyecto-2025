@@ -19,9 +19,63 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
     acceptTerms: false
   });
 
+  const [errors, setErrors] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    documentNumber: '',
+    phone: ''
+  });
+
+  const validate = () => {
+    let valid = true;
+    const newErrors: typeof errors = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      documentNumber: '',
+      phone: ''
+    };
+
+    // Validar correo
+    if (!formData.email.match(/^\S+@soy\.sena\.edu\.co$/)) {
+      newErrors.email = 'El correo debe terminar en @soy.sena.edu.co';
+      valid = false;
+    }
+
+    // Validar nombres (solo letras)
+    if (!formData.firstName.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/)) {
+      newErrors.firstName = 'Dato no válido';
+      valid = false;
+    }
+
+    // Validar apellidos (solo letras)
+    if (!formData.lastName.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/)) {
+      newErrors.lastName = 'Dato no válido';
+      valid = false;
+    }
+
+    // Validar número de documento (solo números)
+    if (!formData.documentNumber.match(/^\d+$/)) {
+      newErrors.documentNumber = 'Dato no válido';
+      valid = false;
+    }
+
+    // Validar teléfono (solo números y longitud 10)
+    if (!formData.phone.match(/^\d{10}$/)) {
+      newErrors.phone = 'Dato no válido';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register attempt:', formData);
+    if (validate()) {
+      console.log('Register attempt:', formData);
+    }
   };
 
   return (
@@ -57,6 +111,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               className="sena-input"
               required
             />
+            {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -70,6 +125,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
                 className="sena-input"
                 required
               />
+              {errors.firstName && <span className="text-red-500 text-xs">{errors.firstName}</span>}
             </div>
             <div className="sena-input-group">
               <User className="sena-input-icon" />
@@ -81,6 +137,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
                 className="sena-input"
                 required
               />
+              {errors.lastName && <span className="text-red-500 text-xs">{errors.lastName}</span>}
             </div>
           </div>
 
@@ -97,6 +154,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <option value="TI">Tarjeta de Identidad</option>
               <option value="CE">Cédula de Extranjería</option>
               <option value="PAS">Pasaporte</option>
+              <option value="PAS">Número ciego - SENA</option>
+              <option value="PAS">Documento Nacional de Identificación</option>
+              <option value="PAS">Número de Identificación Tributaria</option>
+              <option value="PAS">Permiso por Protección Temporal</option>
+
             </select>
           </div>
 
@@ -111,6 +173,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
                 className="sena-input"
                 required
               />
+              {errors.documentNumber && <span className="text-red-500 text-xs">{errors.documentNumber}</span>}
             </div>
             <div className="sena-input-group">
               <Phone className="sena-input-icon" />
@@ -121,7 +184,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
                 className="sena-input"
                 required
+                maxLength={10}
               />
+              {errors.phone && <span className="text-red-500 text-xs">{errors.phone}</span>}
             </div>
           </div>
 
@@ -131,7 +196,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               id="terms"
               checked={formData.acceptTerms}
               onChange={(e) => setFormData({...formData, acceptTerms: e.target.checked})}
-              className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+              className="mt-1 w-4 h-4 text-[#43A047] border-gray-300 rounded focus:ring-green-500"
               required
             />
             <label htmlFor="terms" className="text-sm sena-text-muted">
