@@ -28,8 +28,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
           Volver a inicio de sesión
         </button>
 
-        <SenaLogo />
-
+        {/* botón para ver los emails */}
+        <button
+          onClick={() => onNavigate('Emails')}
+          className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Emails
+        </button>
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Iniciar Sesión
@@ -74,7 +80,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
             </button>
           </div>
 
-          <button type="submit" className="sena-button">
+          <button
+            type="submit"
+            onClick={() => onNavigate('inicioAprendiz')}
+            className="sena-button"
+          >
             Iniciar Sesión
           </button>
 
