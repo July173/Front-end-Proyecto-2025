@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useValidationEmail } from '../hook/ValidationEmail';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
@@ -11,6 +11,9 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+    // Validación de correo soy.sena.edu.co
+    const { isValid, error } = useValidationEmail(email);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +53,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
               className="sena-input"
               required
             />
+              {/* Mensaje de error si el correo no es soy.sena y el campo no está vacío */}
+              {!isValid && email && (
+                <span className="text-red-500 text-xs mt-1 block">{error}</span>
+              )}
           </div>
 
           <div className="sena-input-group">

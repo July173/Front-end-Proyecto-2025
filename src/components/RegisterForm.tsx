@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useValidationEmail } from '../hook/ValidationEmail';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
@@ -27,6 +28,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
     phone: ''
   });
 
+    // Validación de correo institucional
+    const { isValid: isEmailValid, error: emailError } = useValidationEmail(formData.email);
+
   const validate = () => {
     let valid = true;
     const newErrors: typeof errors = {
@@ -37,9 +41,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
       phone: ''
     };
 
-    // Validar correo
-    if (!formData.email.match(/^\S+@soy\.sena\.edu\.co$/)) {
-      newErrors.email = 'El correo debe terminar en @soy.sena.edu.co';
+    // Validar que el campo email esté lleno y sea válido
+    if (!formData.email) {
+      newErrors.email = 'Completa este campo';
+      valid = false;
+    } else if (!isEmailValid) {
+      newErrors.email = emailError;
       valid = false;
     }
 
@@ -111,7 +118,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               className="sena-input"
               required
             />
-            {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
+              {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
