@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { isValidPassword } from '../hook/validationlogin';
 
 interface ResetPasswordFormProps {
   onNavigate: (view: string) => void;
@@ -13,16 +13,32 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
     newPassword: '',
     confirmPassword: ''
   });
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmError, setConfirmError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPasswords({ ...passwords, newPassword: value });
+    setPasswordError(!isValidPassword(value) ? 'La contraseña debe tener al menos 8 caracteres.' : '');
+    setConfirmError(passwords.confirmPassword && value !== passwords.confirmPassword ? 'Las contraseñas no coinciden' : '');
+  };
+
+  const handleConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPasswords({ ...passwords, confirmPassword: value });
+    setConfirmError(passwords.newPassword !== value ? 'Las contraseñas no coinciden' : '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
-    console.log('Password reset:', passwords.newPassword);
-    // Simulate password update
-    onNavigate('login');
+    if (passwordError || confirmError) return;
+    setLoading(true);
+    // Simulate password update (aquí iría la petición al backend)
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate('login');
+    }, 1500);
   };
 
   return (
@@ -31,6 +47,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
         <button
           onClick={() => onNavigate('verify-code')}
           className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors"
+          disabled={loading}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver a inicio de sesión
@@ -54,10 +71,12 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
               type="password"
               placeholder="Nueva contraseña"
               value={passwords.newPassword}
-              onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
+              onChange={handlePasswordChange}
               className="sena-input"
               required
+              disabled={loading}
             />
+            {passwordError && <span className="text-red-500 text-xs">{passwordError}</span>}
           </div>
 
           <div className="sena-input-group">
@@ -66,14 +85,16 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
               type="password"
               placeholder="Confirmar nueva contraseña"
               value={passwords.confirmPassword}
-              onChange={(e) => setPasswords({...passwords, confirmPassword: e.target.value})}
+              onChange={handleConfirmChange}
               className="sena-input"
               required
+              disabled={loading}
             />
+            {confirmError && <span className="text-red-500 text-xs">{confirmError}</span>}
           </div>
 
-          <button type="submit" className="sena-button">
-            Actualizar contraseña
+          <button type="submit" className="sena-button" disabled={!!passwordError || !!confirmError || loading}>
+            {loading ? 'Procesando...' : 'Actualizar contraseña'}
           </button>
         </form>
 

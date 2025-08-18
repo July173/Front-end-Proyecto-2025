@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { isSenaEmail } from '../hook/validationlogin';
 
 interface ForgotPasswordFormProps {
   onNavigate: (view: string) => void;
@@ -10,12 +10,24 @@ interface ForgotPasswordFormProps {
 
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(!isSenaEmail(value) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Password recovery for:', email);
+    if (emailError) return;
+    setLoading(true);
     // Simulate sending recovery code
-    onNavigate('verify-code');
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate('verify-code');
+    }, 1500);
   };
 
   return (
@@ -47,14 +59,15 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
               type="email"
               placeholder="ejemplo@soy.sena.edu.co"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="sena-input"
               required
             />
+            {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
           </div>
 
-          <button type="submit" className="sena-button">
-            Enviar Código
+          <button type="submit" className="sena-button" disabled={!!emailError || loading}>
+            {loading ? 'Procesando...' : 'Enviar Código'}
           </button>
         </form>
 

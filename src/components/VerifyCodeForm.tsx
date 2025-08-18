@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { isValidResetCode } from '../hook/validationlogin';
 
 interface VerifyCodeFormProps {
   onNavigate: (view: string) => void;
@@ -10,12 +10,24 @@ interface VerifyCodeFormProps {
 
 const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
   const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCode(value);
+    setCodeError(!isValidResetCode(value) ? 'El código debe ser de 6 dígitos numéricos.' : '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Verification code:', code);
+    if (codeError) return;
+    setLoading(true);
     // Simulate code verification
-    onNavigate('reset-password');
+    setTimeout(() => {
+      setLoading(false);
+      onNavigate('reset-password');
+    }, 1500);
   };
 
   return (
@@ -48,14 +60,15 @@ const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
               type="text"
               placeholder="Código de recuperación"
               value={code}
-              onChange={(e) => setCode(e.target.value)}
+              onChange={handleCodeChange}
               className="sena-input"
               required
             />
+            {codeError && <span className="text-red-500 text-xs">{codeError}</span>}
           </div>
 
-          <button type="submit" className="sena-button">
-            Verificar Código
+          <button type="submit" className="sena-button" disabled={!!codeError || loading}>
+            {loading ? 'Procesando...' : 'Verificar Código'}
           </button>
         </form>
 

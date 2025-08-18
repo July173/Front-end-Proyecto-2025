@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
 import { validateInstitutionalLogin } from '../Api/Services/User';
+import { isSenaEmail, isValidPassword } from '../hook/validationlogin';
 
 interface LoginFormProps {
   onNavigate: (view: string) => void;
@@ -14,17 +14,28 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(!isSenaEmail(value) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '');
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(!isValidPassword(value) ? 'La contraseña debe tener al menos 8 caracteres.' : '');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (emailError || passwordError) return;
     setLoading(true);
     try {
       const result = await validateInstitutionalLogin(email, password);
-      // Aquí puedes guardar el token en localStorage o contexto
-      // localStorage.setItem('access', result.access);
-      // localStorage.setItem('refresh', result.refresh);
-      // Redirigir al usuario a la vista principal
       onNavigate('inicioAprendiz');
     } catch (err: unknown) {
       setError((err as Error).message || 'Error al iniciar sesión');
@@ -68,10 +79,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
               type="email"
               placeholder="ejemplo@soy.sena.edu.co"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="sena-input"
               required
             />
+            {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
           </div>
 
           <div className="sena-input-group">
@@ -80,10 +92,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
               type="password"
               placeholder="******************"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               className="sena-input"
               required
             />
+            {passwordError && <span className="text-red-500 text-xs">{passwordError}</span>}
           </div>
 
           {error && (
@@ -105,7 +118,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
             className="sena-button"
             disabled={loading}
           >
-            {loading ? 'Validando...' : 'Iniciar Sesión'}
+            {loading ? 'Procesando...' : 'Iniciar Sesión'}
           </button>
 
           <div className="text-center">
