@@ -1,8 +1,9 @@
-
 import React, { useState } from 'react';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { registerAprendiz } from '../Api/Services/Person';
+import { RegisterPayload } from '../Api/types';
 
 interface RegisterFormProps {
   onNavigate: (view: string) => void;
@@ -11,8 +12,8 @@ interface RegisterFormProps {
 const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
   const [formData, setFormData] = useState({
     email: '',
-    firstName: '',
-    lastName: '',
+    names: '', // campo único para nombres
+    surnames: '', // campo único para apellidos
     documentType: '',
     documentNumber: '',
     phone: '',
@@ -21,8 +22,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
 
   const [errors, setErrors] = useState({
     email: '',
-    firstName: '',
-    lastName: '',
+    names: '',
+    surnames: '',
     documentNumber: '',
     phone: ''
   });
@@ -31,27 +32,27 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
     let valid = true;
     const newErrors: typeof errors = {
       email: '',
-      firstName: '',
-      lastName: '',
+      names: '',
+      surnames: '',
       documentNumber: '',
       phone: ''
     };
 
     // Validar correo
-    if (!formData.email.match(/^\S+@soy\.sena\.edu\.co$/)) {
+    if (!formData.email.match(/^[^@\s]+@soy\.sena\.edu\.co$/)) {
       newErrors.email = 'El correo debe terminar en @soy.sena.edu.co';
       valid = false;
     }
 
-    // Validar nombres (solo letras)
-    if (!formData.firstName.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/)) {
-      newErrors.firstName = 'Dato no válido';
+    // Validar nombres (solo letras y al menos un espacio)
+    if (!formData.names.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/) || formData.names.trim().split(' ').length < 2) {
+      newErrors.names = 'Ingresa al menos dos nombres separados por espacio';
       valid = false;
     }
 
-    // Validar apellidos (solo letras)
-    if (!formData.lastName.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/)) {
-      newErrors.lastName = 'Dato no válido';
+    // Validar apellidos (solo letras y al menos un espacio)
+    if (!formData.surnames.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/) || formData.surnames.trim().split(' ').length < 2) {
+      newErrors.surnames = 'Ingresa al menos dos apellidos separados por espacio';
       valid = false;
     }
 
@@ -71,10 +72,32 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Register attempt:', formData);
+      // Separar nombres y apellidos
+      const [first_name, ...restNames] = formData.names.trim().split(' ');
+      const second_name = restNames.join(' ');
+      const [first_last_name, ...restSurnames] = formData.surnames.trim().split(' ');
+      const second_last_name = restSurnames.join(' ');
+      const payload: RegisterPayload = {
+        email: formData.email,
+        first_name,
+        second_name,
+        first_last_name,
+        second_last_name,
+        type_identification: formData.documentType,
+        number_identification: formData.documentNumber,
+        phone_number: formData.phone,
+        password: formData.documentNumber, // Por ahora, usar número de documento como password
+      };
+      try {
+        const response = await registerAprendiz(payload);
+        alert('Registro exitoso. Revisa tu correo institucional.');
+        onNavigate('login');
+      } catch (error) {
+        alert('Error en el registro: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+      }
     }
   };
 
@@ -119,25 +142,25 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <User className="sena-input-icon" />
               <input
                 type="text"
-                placeholder="Nombres"
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                placeholder="Nombres (Ej: Brayan Stid)"
+                value={formData.names}
+                onChange={(e) => setFormData({...formData, names: e.target.value})}
                 className="sena-input"
                 required
               />
-              {errors.firstName && <span className="text-red-500 text-xs">{errors.firstName}</span>}
+              {errors.names && <span className="text-red-500 text-xs">{errors.names}</span>}
             </div>
             <div className="sena-input-group">
               <User className="sena-input-icon" />
               <input
                 type="text"
-                placeholder="Apellidos"
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                placeholder="Apellidos (Ej: Cortes Lombana)"
+                value={formData.surnames}
+                onChange={(e) => setFormData({...formData, surnames: e.target.value})}
                 className="sena-input"
                 required
               />
-              {errors.lastName && <span className="text-red-500 text-xs">{errors.lastName}</span>}
+              {errors.surnames && <span className="text-red-500 text-xs">{errors.surnames}</span>}
             </div>
           </div>
 

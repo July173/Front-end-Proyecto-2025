@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { validateInstitutionalLogin } from '../Api/Services/User';
 
 interface LoginFormProps {
   onNavigate: (view: string) => void;
@@ -11,10 +12,25 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
+    setError(null);
+    setLoading(true);
+    try {
+      const result = await validateInstitutionalLogin(email, password);
+      // Aquí puedes guardar el token en localStorage o contexto
+      // localStorage.setItem('access', result.access);
+      // localStorage.setItem('refresh', result.refresh);
+      // Redirigir al usuario a la vista principal
+      onNavigate('inicioAprendiz');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,6 +86,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
             />
           </div>
 
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
+
           <div className="text-center">
             <button
               type="button"
@@ -82,10 +102,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
 
           <button
             type="submit"
-            onClick={() => onNavigate('inicioAprendiz')}
             className="sena-button"
+            disabled={loading}
           >
-            Iniciar Sesión
+            {loading ? 'Validando...' : 'Iniciar Sesión'}
           </button>
 
           <div className="text-center">
