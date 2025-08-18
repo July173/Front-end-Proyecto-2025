@@ -6,7 +6,6 @@ import RegisterForm from '../components/RegisterForm';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import VerifyCodeForm from '../components/VerifyCodeForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import EmailsView from '@/components/EmailsView';
 import InicioAprendiz from './incioAprendiz';
 
 const Index = () => {
@@ -24,8 +23,6 @@ const Index = () => {
         return <VerifyCodeForm onNavigate={setCurrentView} />;
       case 'reset-password':
         return <ResetPasswordForm onNavigate={setCurrentView} />;
-      case 'Emails':
-        return <EmailsView onNavigate={setCurrentView} />;
       case 'inicioAprendiz':
         return <InicioAprendiz />;
       default:
