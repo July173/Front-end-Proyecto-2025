@@ -1,8 +1,9 @@
-
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { isSenaEmail } from '../hook/validationlogin';
+import { requestPasswordResetCode } from '../Api/Services/User';
 
 interface ForgotPasswordFormProps {
   onNavigate: (view: string) => void;
@@ -10,12 +11,29 @@ interface ForgotPasswordFormProps {
 
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(!isSenaEmail(value) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Password recovery for:', email);
-    // Simulate sending recovery code
-    onNavigate('verify-code');
+    if (emailError) return;
+    setLoading(true);
+    setErrorMsg('');
+    localStorage.setItem('recovery_email', email);
+    const result = await requestPasswordResetCode(email);
+    setLoading(false);
+    if (result.success) {
+      onNavigate('verify-code');
+    } else {
+      setErrorMsg(result.message || 'No se pudo enviar el correo. Por favor verifica el correo e inténtalo de nuevo.');
+    }
   };
 
   return (
@@ -47,14 +65,15 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
               type="email"
               placeholder="ejemplo@soy.sena.edu.co"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="sena-input"
               required
             />
+            {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
           </div>
-
-          <button type="submit" className="sena-button">
-            Enviar Código
+          {errorMsg && <div className="text-red-500 text-sm mb-2">{errorMsg}</div>}
+          <button type="submit" className="sena-button" disabled={!!emailError || loading}>
+            {loading ? 'Procesando...' : 'Enviar Código'}
           </button>
         </form>
 

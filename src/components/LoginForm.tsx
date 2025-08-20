@@ -3,6 +3,8 @@ import { useValidationEmail } from '../hook/ValidationEmail';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { validateInstitutionalLogin } from '../Api/Services/User';
+import { isSenaEmail, isValidPassword } from '../hook/validationlogin';
 
 interface LoginFormProps {
   onNavigate: (view: string) => void;
@@ -11,13 +13,36 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-    // Validación de correo soy.sena.edu.co
-    const { isValid, error } = useValidationEmail(email);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(!isSenaEmail(value) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '');
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(!isValidPassword(value) ? 'La contraseña debe tener al menos 8 caracteres.' : '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
+    setError(null);
+    if (emailError || passwordError) return;
+    setLoading(true);
+    try {
+      const result = await validateInstitutionalLogin(email, password);
+      onNavigate('inicioAprendiz');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,8 +56,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
           Volver a inicio de sesión
         </button>
 
-        <SenaLogo />
-
+        {/* botón para ver los emails */}
+        <button
+          onClick={() => onNavigate('Emails')}
+          className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Emails
+        </button>
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Iniciar Sesión
@@ -49,14 +80,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
               type="email"
               placeholder="ejemplo@soy.sena.edu.co"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="sena-input"
               required
             />
-              {/* Mensaje de error si el correo no es soy.sena y el campo no está vacío */}
-              {!isValid && email && (
-                <span className="text-red-500 text-xs mt-1 block">{error}</span>
-              )}
+            {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
           </div>
 
           <div className="sena-input-group">
@@ -65,11 +93,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
               type="password"
               placeholder="******************"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               className="sena-input"
               required
             />
+            {passwordError && <span className="text-red-500 text-xs">{passwordError}</span>}
           </div>
+
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
 
           <div className="text-center">
             <button
@@ -81,8 +114,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
             </button>
           </div>
 
-          <button type="submit" className="sena-button">
-            Iniciar Sesión
+          <button
+            type="submit"
+            className="sena-button"
+            disabled={loading}
+          >
+            {loading ? 'Procesando...' : 'Iniciar Sesión'}
           </button>
 
           <div className="text-center">

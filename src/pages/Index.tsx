@@ -6,6 +6,7 @@ import RegisterForm from '../components/RegisterForm';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import VerifyCodeForm from '../components/VerifyCodeForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
+import InicioAprendiz from './incioAprendiz';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('login');
@@ -22,6 +23,8 @@ const Index = () => {
         return <VerifyCodeForm onNavigate={setCurrentView} />;
       case 'reset-password':
         return <ResetPasswordForm onNavigate={setCurrentView} />;
+      case 'inicioAprendiz':
+        return <InicioAprendiz />;
       default:
         return <LoginForm onNavigate={setCurrentView} />;
     }

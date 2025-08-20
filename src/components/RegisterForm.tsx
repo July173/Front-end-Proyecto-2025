@@ -1,9 +1,18 @@
-
 import React, { useState } from 'react';
 import { useValidationEmail } from '../hook/ValidationEmail';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import { registerAprendiz } from '../Api/Services/Person';
+import { RegisterPayload } from '../Api/types';
+import {
+  isSenaEmail,
+  isValidNames,
+  isValidSurnames,
+  isValidDocumentNumber,
+  isValidPhone,
+  capitalizeWords
+} from '../hook/validationlogin';
 
 interface RegisterFormProps {
   onNavigate: (view: string) => void;
@@ -12,8 +21,8 @@ interface RegisterFormProps {
 const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
   const [formData, setFormData] = useState({
     email: '',
-    firstName: '',
-    lastName: '',
+    names: '',
+    surnames: '',
     documentType: '',
     documentNumber: '',
     phone: '',
@@ -22,66 +31,76 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
 
   const [errors, setErrors] = useState({
     email: '',
-    firstName: '',
-    lastName: '',
+    names: '',
+    surnames: '',
     documentNumber: '',
     phone: ''
   });
 
-    // Validación de correo institucional
-    const { isValid: isEmailValid, error: emailError } = useValidationEmail(formData.email);
+  const [loading, setLoading] = useState(false);
 
   const validate = () => {
     let valid = true;
     const newErrors: typeof errors = {
       email: '',
-      firstName: '',
-      lastName: '',
+      names: '',
+      surnames: '',
       documentNumber: '',
       phone: ''
     };
 
-    // Validar que el campo email esté lleno y sea válido
-    if (!formData.email) {
-      newErrors.email = 'Completa este campo';
-      valid = false;
-    } else if (!isEmailValid) {
-      newErrors.email = emailError;
-      valid = false;
-    }
+    newErrors.email = !isSenaEmail(formData.email) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '';
+    newErrors.names = isValidNames(formData.names) || '';
+    newErrors.surnames = isValidSurnames(formData.surnames) || '';
+    newErrors.documentNumber = isValidDocumentNumber(formData.documentNumber) || '';
+    newErrors.phone = isValidPhone(formData.phone) || '';
 
-    // Validar nombres (solo letras)
-    if (!formData.firstName.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/)) {
-      newErrors.firstName = 'Dato no válido';
-      valid = false;
-    }
-
-    // Validar apellidos (solo letras)
-    if (!formData.lastName.match(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/)) {
-      newErrors.lastName = 'Dato no válido';
-      valid = false;
-    }
-
-    // Validar número de documento (solo números)
-    if (!formData.documentNumber.match(/^\d+$/)) {
-      newErrors.documentNumber = 'Dato no válido';
-      valid = false;
-    }
-
-    // Validar teléfono (solo números y longitud 10)
-    if (!formData.phone.match(/^\d{10}$/)) {
-      newErrors.phone = 'Dato no válido';
-      valid = false;
-    }
-
+    Object.values(newErrors).forEach((err) => { if (err) valid = false; });
     setErrors(newErrors);
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (field: string, value: string) => {
+    setFormData({ ...formData, [field]: value });
+    // Validación en tiempo real
+    let error = '';
+    if (field === 'email') error = !isSenaEmail(value) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '';
+    if (field === 'names') error = isValidNames(value) || '';
+    if (field === 'surnames') error = isValidSurnames(value) || '';
+    if (field === 'documentNumber') error = isValidDocumentNumber(value) || '';
+    if (field === 'phone') error = isValidPhone(value) || '';
+    setErrors({ ...errors, [field]: error });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Register attempt:', formData);
+      setLoading(true);
+      // Separar nombres y apellidos y capitalizar
+      const [first_name, ...restNames] = capitalizeWords(formData.names.trim()).split(' ');
+      const second_name = restNames.join(' ');
+      const [first_last_name, ...restSurnames] = capitalizeWords(formData.surnames.trim()).split(' ');
+      const second_last_name = restSurnames.join(' ');
+      const payload: RegisterPayload = {
+        email: formData.email,
+        first_name,
+        second_name,
+        first_last_name,
+        second_last_name,
+        type_identification: formData.documentType,
+        number_identification: formData.documentNumber,
+        phone_number: formData.phone,
+        password: formData.documentNumber, // Por ahora, usar número de documento como password
+      };
+      try {
+        const response = await registerAprendiz(payload);
+        alert('Registro exitoso. Revisa tu correo institucional.');
+        onNavigate('login');
+      } catch (error) {
+        alert('Error en el registro: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -114,7 +133,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               type="email"
               placeholder="Correo institucional · ejemplo@soy.sena.edu.co"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) => handleChange('email', e.target.value)}
               className="sena-input"
               required
             />
@@ -126,25 +145,25 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <User className="sena-input-icon" />
               <input
                 type="text"
-                placeholder="Nombres"
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                placeholder="Nombres (Ej: Brayan Stid)"
+                value={formData.names}
+                onChange={(e) => handleChange('names', e.target.value)}
                 className="sena-input"
                 required
               />
-              {errors.firstName && <span className="text-red-500 text-xs">{errors.firstName}</span>}
+              {errors.names && <span className="text-red-500 text-xs">{errors.names}</span>}
             </div>
             <div className="sena-input-group">
               <User className="sena-input-icon" />
               <input
                 type="text"
-                placeholder="Apellidos"
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                placeholder="Apellidos (Ej: Cortes Lombana)"
+                value={formData.surnames}
+                onChange={(e) => handleChange('surnames', e.target.value)}
                 className="sena-input"
                 required
               />
-              {errors.lastName && <span className="text-red-500 text-xs">{errors.lastName}</span>}
+              {errors.surnames && <span className="text-red-500 text-xs">{errors.surnames}</span>}
             </div>
           </div>
 
@@ -165,7 +184,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <option value="PAS">Documento Nacional de Identificación</option>
               <option value="PAS">Número de Identificación Tributaria</option>
               <option value="PAS">Permiso por Protección Temporal</option>
-
             </select>
           </div>
 
@@ -176,7 +194,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
                 type="text"
                 placeholder="Numero de documento"
                 value={formData.documentNumber}
-                onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
+                onChange={(e) => handleChange('documentNumber', e.target.value)}
                 className="sena-input"
                 required
               />
@@ -188,7 +206,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
                 type="tel"
                 placeholder="Teléfono"
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => handleChange('phone', e.target.value)}
                 className="sena-input"
                 required
                 maxLength={10}
@@ -214,8 +232,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
             </label>
           </div>
 
-          <button type="submit" className="sena-button">
-            Registrarse
+          <button type="submit" className="sena-button" disabled={loading}>
+            {loading ? 'Procesando...' : 'Registrarse'}
           </button>
 
           <div className="text-center">
