@@ -14,6 +14,9 @@ export const ENDPOINTS = {
     resetPassword: `${API_BASE_URL}security/users/reset-password/`, // Actualiza la contraseña
     // Otros endpoints de usuario
   },
+  menu: {
+    getMenuItems: `${API_BASE_URL}security/rol-form-permissions/{id}/get-menu/`,
+  }
   // Más entidades...
 };
 

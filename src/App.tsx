@@ -3,18 +3,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import React, { useState } from "react"; 
-import LoginForm from "./components/LoginForm";
-import { EmailRegistroPendiente, EmailRecuperacionContrasena } from "./components/Emails";
-import EmailsView from "./components/EmailsView";
+import { Admin, NotFound, Home } from "./pages/RoutesIndex";
+import React from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [view, setView] = useState("login");
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -22,12 +18,29 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* pública */}
             <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* protegida */}
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/home" 
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-        {/* ...otras vistas */}
       </TooltipProvider>
     </QueryClientProvider>
   );
