@@ -3,6 +3,7 @@ import { Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
 import { isValidPassword } from '../hook/validationlogin';
+import { resetPassword } from '../Api/Services/User';
 
 interface ResetPasswordFormProps {
   onNavigate: (view: string) => void;
@@ -16,6 +17,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
   const [passwordError, setPasswordError] = useState('');
   const [confirmError, setConfirmError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -34,11 +36,16 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
     e.preventDefault();
     if (passwordError || confirmError) return;
     setLoading(true);
-    // Simulate password update (aquí iría la petición al backend)
-    setTimeout(() => {
-      setLoading(false);
+    setErrorMsg('');
+    const email = localStorage.getItem('recovery_email') || '';
+    const code = localStorage.getItem('reset_code') || '';
+    const result = await resetPassword(email, code, passwords.newPassword);
+    setLoading(false);
+    if (result.success) {
       onNavigate('login');
-    }, 1500);
+    } else {
+      setErrorMsg(result.message || 'No se pudo actualizar la contraseña.');
+    }
   };
 
   return (
@@ -92,7 +99,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
             />
             {confirmError && <span className="text-red-500 text-xs">{confirmError}</span>}
           </div>
-
+          {errorMsg && <div className="text-red-500 text-sm mb-2">{errorMsg}</div>}
           <button type="submit" className="sena-button" disabled={!!passwordError || !!confirmError || loading}>
             {loading ? 'Procesando...' : 'Actualizar contraseña'}
           </button>

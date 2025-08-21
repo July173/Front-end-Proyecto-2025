@@ -3,6 +3,7 @@ import { Mail, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
 import { isSenaEmail } from '../hook/validationlogin';
+import { requestPasswordResetCode } from '../Api/Services/User';
 
 interface ForgotPasswordFormProps {
   onNavigate: (view: string) => void;
@@ -12,6 +13,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -23,11 +25,15 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
     e.preventDefault();
     if (emailError) return;
     setLoading(true);
-    // Simulate sending recovery code
-    setTimeout(() => {
-      setLoading(false);
+    setErrorMsg('');
+    localStorage.setItem('recovery_email', email);
+    const result = await requestPasswordResetCode(email);
+    setLoading(false);
+    if (result.success) {
       onNavigate('verify-code');
-    }, 1500);
+    } else {
+      setErrorMsg(result.message || 'No se pudo enviar el correo. Por favor verifica el correo e inténtalo de nuevo.');
+    }
   };
 
   return (
@@ -65,7 +71,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
             />
             {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
           </div>
-
+          {errorMsg && <div className="text-red-500 text-sm mb-2">{errorMsg}</div>}
           <button type="submit" className="sena-button" disabled={!!emailError || loading}>
             {loading ? 'Procesando...' : 'Enviar Código'}
           </button>
