@@ -13,9 +13,9 @@ const useSupportForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  // 👇 CONFIGURA ESTOS VALORES:
-  const SUPPORT_EMAIL = 'july345ra@gmail.com'; // 👈 CAMBIA ESTE EMAIL
-  const WEB3FORMS_ACCESS_KEY = '5643954c-17a9-45c6-a918-4c6cb867aa99'; // 👈 Tu key de Web3Forms
+  //  CONFIGURA ESTOS VALORES:
+  const SUPPORT_EMAIL = 'july345ra@gmail.com'; // CAMBIA ESTE EMAIL
+  const WEB3FORMS_ACCESS_KEY = '5643954c-17a9-45c6-a918-4c6cb867aa99'; //  Tu key de Web3Forms
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

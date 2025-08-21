@@ -7,7 +7,7 @@ import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import VerifyCodeForm from '../components/VerifyCodeForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
 import EmailsView from '@/components/EmailsView';
-import InicioAprendiz from './incioAprendiz';
+import InicioAprendiz from './Home';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('login');
