@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useValidationEmail } from '../hook/ValidationEmail';
+import TermsModal from './TermsModal';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
@@ -38,6 +38,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   const validate = () => {
     let valid = true;
@@ -226,7 +227,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
             />
             <label htmlFor="terms" className="text-sm sena-text-muted">
               Acepto los{' '}
-              <a href="#" className="sena-link">
+              <a
+                href="#"
+                className="sena-link"
+                onClick={e => { e.preventDefault(); setIsTermsModalOpen(true); }}
+              >
                 términos y condiciones
               </a>
             </label>
@@ -248,7 +253,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
           </div>
         </form>
 
-        <FooterLinks />
+  <FooterLinks />
+  <TermsModal isOpen={isTermsModalOpen} onClose={() => setIsTermsModalOpen(false)} />
       </div>
     </div>
   );

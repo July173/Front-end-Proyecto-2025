@@ -35,9 +35,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
     setError(null);
     if (emailError || passwordError) return;
     setLoading(true);
+    
     try {
       const result = await validateInstitutionalLogin(email, password);
-      onNavigate('inicioAprendiz');
+      
+      // Guardar datos del usuario para usar en el sidebar
+      const userData = {
+        id: result.user.id,
+        email: result.user.email,
+        role: result.user.role,
+        access_token: result.access,
+        refresh_token: result.refresh
+      };
+      
+      // Guardar en localStorage para persistir la sesión
+      localStorage.setItem('user_data', JSON.stringify(userData));
+      localStorage.setItem('access_token', result.access);
+      localStorage.setItem('refresh_token', result.refresh);
+      
+      onNavigate('home');
     } catch (err: unknown) {
       setError((err as Error).message || 'Error al iniciar sesión');
     } finally {
