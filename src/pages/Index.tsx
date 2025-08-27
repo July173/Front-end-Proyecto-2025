@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import WelcomePanel from '../components/WelcomePanel';
 import LoginForm from '../components/LoginForm';
@@ -6,9 +5,9 @@ import RegisterForm from '../components/RegisterForm';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import VerifyCodeForm from '../components/VerifyCodeForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import Home from './Home';
+// ✅ Home ya no se importa aquí
 
- const Index = () => {
+const Index = () => {
   const [currentView, setCurrentView] = useState('login');
 
   const renderForm = () => {
@@ -23,8 +22,9 @@ import Home from './Home';
         return <VerifyCodeForm onNavigate={setCurrentView} />;
       case 'reset-password':
         return <ResetPasswordForm onNavigate={setCurrentView} />;
-      case 'home':
-        return <Home />;
+      // ❌ REMOVE ESTE CASE - no debe haber 'home' aquí
+      // case 'home':
+      //   return <Home />;
       default:
         return <LoginForm onNavigate={setCurrentView} />;
     }

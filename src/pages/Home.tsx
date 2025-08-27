@@ -1,40 +1,32 @@
 import React from "react";
-import SidebarMenu from "../components/Menu"; 
 import { useUserData } from "../hook/useUserData";
 
 export const Home = () => {
   const { userData, isLoading } = useUserData();
-
-  // Función para obtener el nombre del usuario
+console.log("Página X renderizada");
   const getUserName = () => {
     if (userData?.email) {
-      const emailPart = userData.email.split('@')[0];
-      const nameParts = emailPart.split('.');
+      const emailPart = userData.email.split("@")[0];
+      const nameParts = emailPart.split(".");
       return nameParts
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
     }
-    return 'Usuario';
+    return "Usuario";
   };
 
-  //Solo loading, no validación de login (lo hace ProtectedRoute)
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
       </div>
     );
+    
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar dinámico */}
-      <SidebarMenu 
-        userId={userData!.id}
-        userName={getUserName()}
-      />
-      
-      <main className="flex-1 bg-white p-8">
+    <div className="bg-[#D9D9D9] p-8 rounded-lg shadow">
+      <div className="mb-6 bg-white rounded-lg shadow p-4">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold mb-2">
@@ -53,10 +45,10 @@ export const Home = () => {
             <div className="text-sm space-y-1">
               <p><strong>ID:</strong> {userData!.id}</p>
               <p><strong>Email:</strong> {userData!.email}</p>
-              <p><strong>Rol:</strong> {userData!.role || 'No asignado'}</p>
+              <p><strong>Rol:</strong> {userData!.role || "No asignado"}</p>
             </div>
           </div>
-          
+
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <h3 className="font-semibold text-green-800 mb-2">¿Cómo usar el menú?</h3>
             <p className="text-sm text-green-700">
@@ -85,7 +77,7 @@ export const Home = () => {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

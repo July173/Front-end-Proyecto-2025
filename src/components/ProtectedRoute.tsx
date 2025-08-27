@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const userData = localStorage.getItem("user_data");
-
+console.log("ProtectedRoute", userData);
   if (!userData) {
     return (
       <div className="flex min-h-screen items-center justify-center">
