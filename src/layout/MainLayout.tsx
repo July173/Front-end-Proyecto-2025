@@ -28,12 +28,12 @@ export default function MainLayout() {
 
     // 👇 ahora sí el layout siempre devuelve la estructura
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-[#D9D9D9]">
             <div className="flex flex-1 min-h-screen">
                 <Menu userId={userData!.id} userName={getUserName()} />
                 <div className="flex-1 flex flex-col">
                     <Header />
-                    <main className="flex-1 p-4 bg-[#F5F5F5]">
+                    <main className="flex-1 p-4 bg-[#D9D9D9]">
                         <Outlet />
                     </main>
                 </div>

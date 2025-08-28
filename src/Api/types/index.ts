@@ -132,6 +132,7 @@ export interface MenuUserInfo {
   name: string;        // Nombre completo del usuario
   role: string;        // Rol del usuario
   avatar?: string;     // URL del avatar (opcional)
+  email?: string;      // Email del usuario (opcional)
 }
 
 //Datos procesados para el componente sidebar

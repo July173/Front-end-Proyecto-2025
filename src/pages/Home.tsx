@@ -25,8 +25,7 @@ console.log("Página X renderizada");
   }
 
   return (
-    <div className="bg-[#D9D9D9] p-8 rounded-lg shadow">
-      <div className="mb-6 bg-white rounded-lg shadow p-4">
+    <div className="bg-white p-8 rounded-lg shadow">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold mb-2">
@@ -77,7 +76,6 @@ console.log("Página X renderizada");
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };
