@@ -50,7 +50,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
     if (onNavigate) {
       onNavigate('login');
     } else {
-      navigate('/login');
+      navigate('/');
     }
   };
 
