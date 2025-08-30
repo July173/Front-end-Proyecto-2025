@@ -1,5 +1,7 @@
 // configuracion generica del los enpoints
 
+import { get } from "http";
+
 const API_BASE_URL = "http://localhost:8000/api/";
 
 // Endpoints agrupados por entidad/tabla
@@ -7,6 +9,8 @@ export const ENDPOINTS = {
   person: {
     registerAprendiz: `${API_BASE_URL}security/persons/register-aprendiz/`,
     // Otros endpoints de persona
+
+    getPerson: `${API_BASE_URL}security/persons/{id}/`,
   },
   user: {
     validateLogin: `${API_BASE_URL}security/users/validate-institutional-login/`,

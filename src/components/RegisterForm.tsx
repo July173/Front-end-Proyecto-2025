@@ -26,7 +26,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
     documentType: '',
     documentNumber: '',
     phone: '',
-    acceptTerms: false
+    acceptTerms: false,
+    image: '' // Nuevo campo para imagen, opcional
   });
 
   const [errors, setErrors] = useState({
@@ -92,6 +93,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
         number_identification: formData.documentNumber,
         phone_number: formData.phone,
         password: formData.documentNumber, // Por ahora, usar número de documento como password
+        image: formData.image || undefined,
       };
       try {
         const response = await registerAprendiz(payload);

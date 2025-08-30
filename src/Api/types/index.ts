@@ -9,6 +9,7 @@ export interface RegisterPayload {
   number_identification: string;
   phone_number: string;
   password: string;
+  image?: string; // Nuevo campo opcional para imagen
 }
 
 export interface Persona {
@@ -21,6 +22,7 @@ export interface Persona {
   type_identification: string;
   number_identification: string;
   active: boolean;
+  image?: string; // URL de la imagen de perfil (opcional)
 }
 
 // User
