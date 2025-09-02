@@ -46,11 +46,17 @@ export interface RegisterResponse {
 export interface ValidateLoginResponse {
   access: string;
   refresh: string;
-  user: {
+  user?: {
     email: string;
     id: string;
     role?: number;
+    person: string; // id de la persona asociada
   };
+  // Para compatibilidad con backend antiguo/campos planos
+  user_id?: string;
+  email?: string;
+  role?: number;
+  person?: string;
 }
 
 // Role

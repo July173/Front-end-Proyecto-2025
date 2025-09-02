@@ -14,7 +14,7 @@ console.log("ProtectedRoute", userData);
         <div className="text-center">
           <p className="text-gray-600 mb-4">No hay sesión activa</p>
           <button
-            onClick={() => (window.location.href = "/login")}
+            onClick={() => (window.location.href = "/")}
             className="sena-button"
           >
             Volver al login

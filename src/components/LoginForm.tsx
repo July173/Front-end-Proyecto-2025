@@ -39,24 +39,37 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
     
     try {
       const result = await validateInstitutionalLogin(email, password);
-      
-      // Guardar datos del usuario para usar en el sidebar
-      const userData = {
-        id: result.user.id,
-        email: result.user.email,
-        role: result.user.role,
-        access_token: result.access,
-        refresh_token: result.refresh
-      };
-      
+
+      // Adaptar a ambos formatos de backend
+      let userData;
+      if (result.user) {
+        // Formato esperado (user anidado)
+        userData = {
+          id: result.user.id,
+          email: result.user.email,
+          role: result.user.role,
+          person: result.user.person ? String(result.user.person) : undefined,
+          access_token: result.access,
+          refresh_token: result.refresh
+        };
+      } else {
+        // Formato plano (user_id, email, person)
+        userData = {
+          id: result.user_id,
+          email: result.email,
+          role: result.role, // si existe
+          person: result.person ? String(result.person) : undefined,
+          access_token: result.access,
+          refresh_token: result.refresh
+        };
+      }
+
       // Guardar en localStorage para persistir la sesión
       localStorage.setItem('user_data', JSON.stringify(userData));
       localStorage.setItem('access_token', result.access);
       localStorage.setItem('refresh_token', result.refresh);
-      
-      // ✅ CAMBIAR ESTO - usar React Router en lugar de estado interno
+
       navigate('/home');
-      // ❌ NO USAR: onNavigate('home');
       
     } catch (err: unknown) {
       setError((err as Error).message || 'Error al iniciar sesión');

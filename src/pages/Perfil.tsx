@@ -19,13 +19,20 @@ export const Perfil = () => {
   const [modalError, setModalError] = useState('');
 
   useEffect(() => {
-    if (userData?.id) {
-      getPersonById(userData.id)
+    setError(null);
+    setLoading(true);
+    if (userData && userData.person) {
+      getPersonById(userData.person)
         .then(setPerson)
         .catch(() => setError('No se pudo cargar la información'))
         .finally(() => setLoading(false));
+    } else if (userData && !userData.person) {
+      setError('No se encontró el id de persona en la sesión');
+      setLoading(false);
+    } else {
+      setLoading(true); // Esperar a que userData esté disponible
     }
-  }, [userData]);
+  }, [userData && userData.person]);
 
 
   // Lógica modal: enviar correo al abrir
@@ -48,9 +55,21 @@ export const Perfil = () => {
     // eslint-disable-next-line
   }, [showModal, modalStep, userData]);
 
+
+  // DEBUG: Mostrar el contenido de userData y el valor de person
   if (loading) return <div className="p-8">Cargando...</div>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
-  if (!person) return null;
+  if (error) return (
+    <div className="p-8 text-red-500">
+      {error}
+      <pre className="text-xs text-black bg-gray-100 mt-4 p-2 rounded">userData: {JSON.stringify(userData, null, 2)}{"\n"}person: {userData?.person ? userData.person : 'NO DEFINIDO'}</pre>
+    </div>
+  );
+  if (!person) return (
+    <div className="p-8 text-orange-500">
+      No se encontró la persona.<br />
+      <pre className="text-xs text-black bg-gray-100 mt-4 p-2 rounded">userData: {JSON.stringify(userData, null, 2)}{"\n"}person: {userData?.person ? userData.person : 'NO DEFINIDO'}</pre>
+    </div>
+  );
 
   return (
     <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow">
