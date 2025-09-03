@@ -9,6 +9,7 @@ export interface RegisterPayload {
   number_identification: string;
   phone_number: string;
   password: string;
+  image?: string; // Nuevo campo opcional para imagen
 }
 
 export interface Persona {
@@ -21,6 +22,7 @@ export interface Persona {
   type_identification: string;
   number_identification: string;
   active: boolean;
+  image?: string; // URL de la imagen de perfil (opcional)
 }
 
 // User
@@ -44,11 +46,17 @@ export interface RegisterResponse {
 export interface ValidateLoginResponse {
   access: string;
   refresh: string;
-  user: {
+  user?: {
     email: string;
     id: string;
     role?: number;
+    person: string; // id de la persona asociada
   };
+  // Para compatibilidad con backend antiguo/campos planos
+  user_id?: string;
+  email?: string;
+  role?: number;
+  person?: string;
 }
 
 // Role
@@ -95,4 +103,57 @@ export interface RolFormPermission {
   role: string; // id del role
   form: string; // id del form
   permission: string; // id del permission
+}
+
+// Elemento individual del formulario/menú (coincide con tu API)
+export interface FormItem {
+  name: string;    // Nombre del formulario
+  path: string;    // Ruta del formulario
+}
+
+// Módulo que contiene varios formularios (estructura de tu API)
+export interface ModuleForm {
+  name: string;        // Nombre del módulo
+  form: FormItem[];    // Array de formularios dentro del módulo
+}
+
+
+// Respuesta completa del endpoint del menú (estructura exacta de tu swagger)
+export interface MenuApiResponse {
+  rol: string;                    // Nombre del rol del usuario
+  moduleForm: ModuleForm[];       // Array de módulos con sus formularios
+}
+
+// Elemento procesado para mostrar en el sidebar (lo que necesita el componente) 
+export interface MenuItem {
+  id: string;          // ID generado único
+  name: string;        // Nombre a mostrar
+  path: string;        // Ruta de navegación
+  icon: string;        // Icono asignado
+  module: string;      // Módulo al que pertenece
+  isActive?: boolean;  // Si está activo
+}
+
+
+// Información del usuario para el sidebar
+export interface MenuUserInfo {
+  name: string;        // Nombre completo del usuario
+  role: string;        // Rol del usuario
+  avatar?: string;     // URL del avatar (opcional)
+  email?: string;      // Email del usuario (opcional)
+}
+
+//Datos procesados para el componente sidebar
+export interface ProcessedMenuData {
+  menuItems: MenuItem[];      // Items procesados para el menú
+  userInfo: MenuUserInfo;     // Información del usuario
+}
+
+// Props del componente SidebarMenu
+export interface SidebarMenuProps {
+  userId: string | number;                    // ID del usuario
+  userName?: string;                          // Nombre del usuario (opcional)
+  onMenuItemClick?: (item: MenuItem) => void; // Callback al hacer clic
+  className?: string;                         // Clases CSS adicionales
+  onNavigate?: (view: string) => void;        // Navegación entre vistas (login, home, etc.)
 }

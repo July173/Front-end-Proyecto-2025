@@ -3,18 +3,24 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import React, { useState } from "react"; 
-import LoginForm from "./components/LoginForm";
-import { EmailRegistroPendiente, EmailRecuperacionContrasena } from "./components/Emails";
-import EmailsView from "./components/EmailsView";
+import { Admin, NotFound, Home, MassRegistration, Perfil } from "./pages/RoutesIndex";
+import React from "react";
+import MainLayout from "./layout/MainLayout";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  const [view, setView] = useState("login");
+// Componente wrapper para las rutas protegidas
+const ProtectedLayout = () => {
+  return (
+    <ProtectedRoute>
+      <MainLayout />
+    </ProtectedRoute>
+  );
+};
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -22,12 +28,21 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Ruta pública */}
             <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+            {/* Rutas protegidas con layout */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/mass-registration" element={<MassRegistration />} />
+              <Route path="/perfil" element={<Perfil />} />
+            </Route>
+
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-        {/* ...otras vistas */}
       </TooltipProvider>
     </QueryClientProvider>
   );

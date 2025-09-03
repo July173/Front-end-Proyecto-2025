@@ -25,3 +25,22 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Configuración local de Docker
+.docker/
+.dockerignore
+
+# Archivos temporales creados por contenedores
+*.pid
+*.log
+*.tmp
+*.bak
+
+# Volúmenes o datos persistentes
+docker-data/
+docker-volume/
+volumes/
+data/
+
+# Overrides locales (no compartidos con el equipo)
+docker-compose.override.yml
+docker-compose.local.yml

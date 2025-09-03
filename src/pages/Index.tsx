@@ -1,15 +1,27 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WelcomePanel from '../components/WelcomePanel';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import VerifyCodeForm from '../components/VerifyCodeForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import InicioAprendiz from './incioAprendiz';
+// ✅ Home ya no se importa aquí
+
+const getViewFromUrl = () => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('view') || 'login';
+};
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState('login');
+  const [currentView, setCurrentView] = useState(getViewFromUrl());
+
+  useEffect(() => {
+    const onPopState = () => {
+      setCurrentView(getViewFromUrl());
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   const renderForm = () => {
     switch (currentView) {
@@ -23,8 +35,6 @@ const Index = () => {
         return <VerifyCodeForm onNavigate={setCurrentView} />;
       case 'reset-password':
         return <ResetPasswordForm onNavigate={setCurrentView} />;
-      case 'inicioAprendiz':
-        return <InicioAprendiz />;
       default:
         return <LoginForm onNavigate={setCurrentView} />;
     }

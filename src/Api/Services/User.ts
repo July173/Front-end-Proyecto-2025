@@ -18,7 +18,7 @@ export async function requestPasswordResetCode(email: string): Promise<{ success
 		body: JSON.stringify({ email }),
 	});
 	const data = await response.json();
-	if (response.ok && data.code) {
+	if (response.ok	 && data.code) {
 		// Guardar el código en localStorage
 		localStorage.setItem('reset_code', data.code);
 		return { success: true, code: data.code };

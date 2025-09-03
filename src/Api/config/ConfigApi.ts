@@ -7,6 +7,8 @@ export const ENDPOINTS = {
   person: {
     registerAprendiz: `${API_BASE_URL}security/persons/register-aprendiz/`,
     // Otros endpoints de persona
+
+    getPerson: `${API_BASE_URL}security/persons/{id}/`,
   },
   user: {
     validateLogin: `${API_BASE_URL}security/users/validate-institutional-login/`,
@@ -14,6 +16,9 @@ export const ENDPOINTS = {
     resetPassword: `${API_BASE_URL}security/users/reset-password/`, // Actualiza la contraseña
     // Otros endpoints de usuario
   },
+  menu: {
+    getMenuItems: `${API_BASE_URL}security/rol-form-permissions/{id}/get-menu/`,
+  }
   // Más entidades...
 };
 

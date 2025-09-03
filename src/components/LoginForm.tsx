@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
-import SenaLogo from './SenaLogo';
+import { useNavigate } from 'react-router-dom'; // ✅ AGREGAR ESTO
 import FooterLinks from './FooterLinks';
 import { validateInstitutionalLogin } from '../Api/Services/User';
 import { isSenaEmail, isValidPassword } from '../hook/validationlogin';
+import SenaLogo from './SenaLogo';
 
 interface LoginFormProps {
   onNavigate: (view: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
+  const navigate = useNavigate(); // ✅ AGREGAR ESTO
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -34,9 +36,41 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
     setError(null);
     if (emailError || passwordError) return;
     setLoading(true);
+    
     try {
       const result = await validateInstitutionalLogin(email, password);
-      onNavigate('inicioAprendiz');
+
+      // Adaptar a ambos formatos de backend
+      let userData;
+      if (result.user) {
+        // Formato esperado (user anidado)
+        userData = {
+          id: result.user.id,
+          email: result.user.email,
+          role: result.user.role,
+          person: result.user.person ? String(result.user.person) : undefined,
+          access_token: result.access,
+          refresh_token: result.refresh
+        };
+      } else {
+        // Formato plano (user_id, email, person)
+        userData = {
+          id: result.user_id,
+          email: result.email,
+          role: result.role, // si existe
+          person: result.person ? String(result.person) : undefined,
+          access_token: result.access,
+          refresh_token: result.refresh
+        };
+      }
+
+      // Guardar en localStorage para persistir la sesión
+      localStorage.setItem('user_data', JSON.stringify(userData));
+      localStorage.setItem('access_token', result.access);
+      localStorage.setItem('refresh_token', result.refresh);
+
+      navigate('/home');
+      
     } catch (err: unknown) {
       setError((err as Error).message || 'Error al iniciar sesión');
     } finally {
@@ -47,13 +81,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   return (
     <div className="sena-form-panel">
       <div className="sena-form">
-        <button
-          onClick={() => onNavigate('welcome')}
-          className="flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver a inicio de sesión
-        </button>
+       <SenaLogo />
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Iniciar Sesión
