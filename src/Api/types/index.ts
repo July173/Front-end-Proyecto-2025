@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 // Person
 export interface RegisterPayload {
   email: string;
@@ -126,6 +128,8 @@ export interface MenuApiResponse {
 
 // Elemento procesado para mostrar en el sidebar (lo que necesita el componente) 
 export interface MenuItem {
+  children: MenuItem[]; // Sub-items para menús anidados
+  title: ReactNode;
   id: string;          // ID generado único
   name: string;        // Nombre a mostrar
   path: string;        // Ruta de navegación
@@ -149,6 +153,11 @@ export interface ProcessedMenuData {
   userInfo: MenuUserInfo;     // Información del usuario
 }
 
+export interface AppSidebarProps {
+  user: MenuUserInfo;
+  menuItems: MenuItem[];
+  collapsed?: boolean;
+}
 // Props del componente SidebarMenu
 export interface SidebarMenuProps {
   userId: string | number;                    // ID del usuario
