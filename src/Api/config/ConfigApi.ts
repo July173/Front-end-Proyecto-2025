@@ -35,7 +35,15 @@ export const ENDPOINTS = {
   module:{
     getModule: `${API_BASE_URL}security/modules/`,
     deleteModule: `${API_BASE_URL}security/modules/{id}/`,
-  }
+  },
+  aprendiz: {
+    getAprendices: `${API_BASE_URL}general/create-aprendices/`,
+    postAprendiz: `${API_BASE_URL}general/create-aprendices/`,
+  },
+  instructor: {
+    getInstructores: `${API_BASE_URL}general/create-instructors/`,
+    postInstructor: `${API_BASE_URL}general/create-instructors/`,
+  },
   // Más entidades...
 };
 
