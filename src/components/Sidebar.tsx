@@ -15,33 +15,32 @@ import {
 } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
+import { MenuItem, MenuUserInfo, AppSidebarProps } from "@/Api/types";
+import { FC, SVGProps } from "react";
 
-export function AppSidebar() {
+export function AppSidebar({ user, menuItems, collapsed = false }: AppSidebarProps) {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
   const [expandedGroups, setExpandedGroups] = useState<string[]>(["main"]);
 
-  const menuItems = getMenuForUser(currentUser);
-
   const isActive = (path: string) => currentPath === path;
-  
+
   const toggleGroup = (groupId: string) => {
-    setExpandedGroups(prev => 
-      prev.includes(groupId) 
+    setExpandedGroups(prev =>
+      prev.includes(groupId)
         ? prev.filter(id => id !== groupId)
         : [...prev, groupId]
     );
   };
 
-  const getIconComponent = (iconName: string) => {
-    const Icon = Icons[iconName as keyof typeof Icons] as unknown;
-    return Icon || Icons.Circle;
+  const getIconComponent = (iconName: string): FC<SVGProps<SVGSVGElement>> => {
+    return (Icons[iconName as keyof typeof Icons] as FC<SVGProps<SVGSVGElement>>) || Icons.Circle;
   };
 
   const renderMenuItem = (item: MenuItem, level = 0) => {
     const Icon = getIconComponent(item.icon);
-    const hasChildren = item.children && item.children.length > 0;
+    const hasChildren = item.children && Array.isArray(item.children) && item.children.length > 0;
     const isExpanded = expandedGroups.includes(item.id);
     const isCurrentActive = item.path ? isActive(item.path) : false;
 
@@ -59,22 +58,22 @@ export function AppSidebar() {
             >
               <div className="flex items-center">
                 <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                {!collapsed && <span className="font-medium">{item.title}</span>}
+                {!collapsed && <span className="font-medium">{item.title || item.name}</span>}
               </div>
               {!collapsed && (
-                <Icons.ChevronDown 
+                <Icons.ChevronDown
                   className={cn(
                     "h-4 w-4 transition-transform duration-200",
                     isExpanded && "rotate-180"
-                  )} 
+                  )}
                 />
               )}
             </SidebarMenuButton>
           </SidebarMenuItem>
-          
           {!collapsed && isExpanded && (
             <div className="ml-4 space-y-1 animate-fade-in">
-              {item.children?.map(child => renderMenuItem(child, level + 1))}
+              {Array.isArray(item.children) &&
+                item.children.map((child: MenuItem) => renderMenuItem(child, level + 1))}
             </div>
           )}
         </div>
@@ -94,7 +93,7 @@ export function AppSidebar() {
             )}
           >
             <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
-            {!collapsed && <span>{item.title}</span>}
+            {!collapsed && <span>{item.title || item.name}</span>}
           </NavLink>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -102,7 +101,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className={cn("border-r-0 transition-all duration-300", collapsed ? "w-16" : "w-64")}>
+    <Sidebar className={cn("border-r-0 transition-all duration-300", collapsed ? "w-16" : "w-64")}> 
       <SidebarContent className="bg-sidebar">
         {/* Header con logo y trigger */}
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border/20">
@@ -137,10 +136,10 @@ export function AppSidebar() {
             {!collapsed && (
               <div className="flex-1 min-w-0">
                 <p className="text-sidebar-foreground font-medium text-sm truncate">
-                  {currentUser.name}
+                  {user.name}
                 </p>
                 <p className="text-sidebar-foreground/70 text-xs truncate">
-                  {currentUser.role.name}
+                  {user.role}
                 </p>
               </div>
             )}

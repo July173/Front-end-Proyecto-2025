@@ -1,6 +1,6 @@
 // services/menuService.ts
 import { ENDPOINTS } from '../config/ConfigApi';
-import { MenuApiResponse, ProcessedMenuData, MenuItem, MenuUserInfo } from '../types'; // Importa desde tu archivo principal de tipos
+import { MenuApiResponse, ProcessedMenuData, MenuItem, MenuUserInfo, AppSidebarProps } from '../types'; // Importa desde tu archivo principal de tipos
 
 export const menu = {
   /**
@@ -71,10 +71,12 @@ export const menu = {
         menuItems.push({
           id,
           name: formItem.name,
+          title: formItem.name, // o el valor que corresponda
           path: formItem.path || `/${module.name.toLowerCase()}/${formItem.name.toLowerCase().replace(/\s+/g, '-')}`,
           icon: moduleIcon,
           module: module.name,
-          isActive: false
+          isActive: false,
+          children: [] // Si no tiene hijos, usa un array vacío
         });
       });
     });
