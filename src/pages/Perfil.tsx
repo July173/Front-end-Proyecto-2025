@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useRef } from 'react';
+import { Camera } from 'lucide-react';
+
 import { requestPasswordResetCode, verifyResetCode } from '../Api/Services/User';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import { getPersonById } from '../Api/Services/Person';
+import { getPersonById, patchPersonImage } from '../Api/Services/Person';
 import { useUserData } from '../hook/useUserData';
 
 export const Perfil = () => {
@@ -9,9 +12,14 @@ export const Perfil = () => {
   const [person, setPerson] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Modal recuperación
+  // Imagen editable
+  const [editImgLoading, setEditImgLoading] = useState(false);
+  const [editImgError, setEditImgError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showImgConfirm, setShowImgConfirm] = useState(false);
+  const [pendingImgFile, setPendingImgFile] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalStep, setModalStep] = useState<'send'|'verify'|'reset'>('send');
+  const [modalStep, setModalStep] = useState<'send' | 'verify' | 'reset'>('send');
   const [modalLoading, setModalLoading] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
   const [code, setCode] = useState('');
@@ -74,18 +82,80 @@ export const Perfil = () => {
   return (
     <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow">
       <div className="bg-black/50 rounded-lg shadow p-8 flex flex-col items-center relative mb-8">
-      
-       
-          <div className="w-28 h-28 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center overflow-hidden">
-            {person.image ? (
-              <img src={person.image} alt="Foto de perfil" className="object-cover w-full h-full" />
-            ) : (
-              <span className="text-4xl font-bold text-gray-600">
-                {person.first_name.charAt(0).toUpperCase()}
-              </span>
-            )}
-          </div>
- 
+      <div className="flex items-end ">
+        <div className="w-28 h-28 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center overflow-hidden relative">
+          {person.image ? (
+            <img src={`http://localhost:8000${person.image}`} alt="Foto de perfil" className="object-cover w-full h-full" />
+          ) : (
+            <span className="text-4xl font-bold text-gray-600">
+              {person.first_name.charAt(0).toUpperCase()}
+            </span>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setPendingImgFile(file);
+              setShowImgConfirm(true);
+            }}
+          />
+        </div>
+        <button
+          className="bg-green-600 rounded-full p-2 shadow hover:bg-green-700 flex items-center justify-center mb-2"
+          title="Editar imagen"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={editImgLoading}
+          style={{ width: '32px', height: '32px' }}
+        >
+          <Camera className="text-white" size={18} />
+        </button>
+          {/* Modal de confirmación de cambio de imagen */}
+          {showImgConfirm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 relative">
+                <button className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-xl" onClick={() => setShowImgConfirm(false)}>&times;</button>
+                <h2 className="text-xl font-bold mb-2 text-[#263238]">¿Cambiar imagen de perfil?</h2>
+                <p className="mb-4 text-gray-700">¿Estás seguro que deseas cambiar tu imagen de perfil?</p>
+                <div className="flex gap-4 mt-4">
+                  <button
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow w-full"
+                    onClick={async () => {
+                      if (!pendingImgFile) return;
+                      setEditImgLoading(true);
+                      setEditImgError('');
+                      setShowImgConfirm(false);
+                      try {
+                        const updated = await patchPersonImage(person.id, pendingImgFile);
+                        setPerson(updated);
+                      } catch (err) {
+                        setEditImgError('No se pudo actualizar la imagen');
+                      } finally {
+                        setEditImgLoading(false);
+                        setPendingImgFile(null);
+                      }
+                    }}
+                    disabled={editImgLoading}
+                  >Sí, cambiar</button>
+                  <button
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded shadow w-full"
+                    onClick={() => {
+                      setShowImgConfirm(false);
+                      setPendingImgFile(null);
+                    }}
+                    disabled={editImgLoading}
+                  >Cancelar</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        {editImgError && <div className="text-red-500 text-xs mt-2">{editImgError}</div>}
+        {editImgLoading && <div className="text-gray-500 text-xs mt-2">Actualizando imagen...</div>}
+
 
         <div className="mt-4" />
         <h1 className="text-3xl font-bold text-white text-center">
@@ -96,84 +166,84 @@ export const Perfil = () => {
 
 
 
-  
-        <h2 className="text-2xl font-bold mb-2 text-[#263238]">Información Personal</h2>
-        <p className="font-semibold mb-4 text-gray-700">Datos Personales</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* Nombres */}
-          <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
-            <legend className="px-1 text-xs font-semibold text-[#1976d2]">Nombres</legend>
-            <div className="flex items-center">
-              <input value={person.first_name + (person.second_name ? ' ' + person.second_name : '')} readOnly className="w-full bg-transparent outline-none text-gray-700" />
-              <span className="ml-2 text-gray-400">
-                <i className="fa fa-user" />
-              </span>
-            </div>
-          </fieldset>
-          {/* Apellidos */}
-          <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
-            <legend className="px-1 text-xs font-semibold text-[#1976d2]">Apellidos</legend>
-            <div className="flex items-center">
-              <input value={person.first_last_name + (person.second_last_name ? ' ' + person.second_last_name : '')} readOnly className="w-full bg-transparent outline-none text-gray-700" />
-              <span className="ml-2 text-gray-400">
-                <i className="fa fa-user" />
-              </span>
-            </div>
-          </fieldset>
-          {/* Documento */}
-          <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
-            <legend className="px-1 text-xs font-semibold text-[#1976d2]">Documento</legend>
-            <div className="flex items-center">
-              <input value={person.number_identification} readOnly className="w-full bg-transparent outline-none text-gray-700" />
-              <span className="ml-2 text-gray-400">
-                <i className="fa fa-id-card" />
-              </span>
-            </div>
-          </fieldset>
-          {/* Tipo Documento */}
-          <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
-            <legend className="px-1 text-xs font-semibold text-[#1976d2]">Tipo Documento</legend>
-            <div className="flex items-center">
-              <input value={person.type_identification} readOnly className="w-full bg-transparent outline-none text-gray-700" />
-              <span className="ml-2 text-gray-400">
-                <i className="fa fa-id-card" />
-              </span>
-            </div>
-          </fieldset>
-          {/* Correo */}
-          <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
-            <legend className="px-1 text-xs font-semibold text-[#1976d2]">Correo</legend>
-            <div className="flex items-center">
-              <input value={userData?.email} readOnly className="w-full bg-transparent outline-none text-gray-700" />
-              <span className="ml-2 text-gray-400">
-                <i className="fa fa-envelope" />
-              </span>
-            </div>
-          </fieldset>
-          {/* Teléfono */}
-          <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
-            <legend className="px-1 text-xs font-semibold text-[#1976d2]">Teléfono</legend>
-            <div className="flex items-center">
-              <input value={person.phone_number} readOnly className="w-full bg-transparent outline-none text-gray-700" />
-              <span className="ml-2 text-gray-400">
-                <i className="fa fa-phone" />
-              </span>
-            </div>
-          </fieldset>
-        </div>
-        <button
-          className="bg-green-600 hover:bg-green-700  font-bold py-3 px-6 rounded-lg shadow mx-auto block mt-6"
-          onClick={() => {
-            setShowModal(true);
-            setModalStep('send');
-            setModalMsg('');
-            setModalError('');
-            setCode('');
-            setCodeError('');
-          }}
-        >
-          Cambiar Contraseña
-        </button>
+
+      <h2 className="text-2xl font-bold mb-2 text-[#263238]">Información Personal</h2>
+      <p className="font-semibold mb-4 text-gray-700">Datos Personales</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Nombres */}
+        <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
+          <legend className="px-1 text-xs font-semibold text-[#1976d2]">Nombres</legend>
+          <div className="flex items-center">
+            <input value={person.first_name + (person.second_name ? ' ' + person.second_name : '')} readOnly className="w-full bg-transparent outline-none text-gray-700" />
+            <span className="ml-2 text-gray-400">
+              <i className="fa fa-user" />
+            </span>
+          </div>
+        </fieldset>
+        {/* Apellidos */}
+        <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
+          <legend className="px-1 text-xs font-semibold text-[#1976d2]">Apellidos</legend>
+          <div className="flex items-center">
+            <input value={person.first_last_name + (person.second_last_name ? ' ' + person.second_last_name : '')} readOnly className="w-full bg-transparent outline-none text-gray-700" />
+            <span className="ml-2 text-gray-400">
+              <i className="fa fa-user" />
+            </span>
+          </div>
+        </fieldset>
+        {/* Documento */}
+        <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
+          <legend className="px-1 text-xs font-semibold text-[#1976d2]">Documento</legend>
+          <div className="flex items-center">
+            <input value={person.number_identification} readOnly className="w-full bg-transparent outline-none text-gray-700" />
+            <span className="ml-2 text-gray-400">
+              <i className="fa fa-id-card" />
+            </span>
+          </div>
+        </fieldset>
+        {/* Tipo Documento */}
+        <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
+          <legend className="px-1 text-xs font-semibold text-[#1976d2]">Tipo Documento</legend>
+          <div className="flex items-center">
+            <input value={person.type_identification} readOnly className="w-full bg-transparent outline-none text-gray-700" />
+            <span className="ml-2 text-gray-400">
+              <i className="fa fa-id-card" />
+            </span>
+          </div>
+        </fieldset>
+        {/* Correo */}
+        <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
+          <legend className="px-1 text-xs font-semibold text-[#1976d2]">Correo</legend>
+          <div className="flex items-center">
+            <input value={userData?.email} readOnly className="w-full bg-transparent outline-none text-gray-700" />
+            <span className="ml-2 text-gray-400">
+              <i className="fa fa-envelope" />
+            </span>
+          </div>
+        </fieldset>
+        {/* Teléfono */}
+        <fieldset className="relative border-2 border-gray-500 rounded-tl-xl rounded-tr-none rounded-br-xl rounded-bl-xl px-4 pt-3 pb-2">
+          <legend className="px-1 text-xs font-semibold text-[#1976d2]">Teléfono</legend>
+          <div className="flex items-center">
+            <input value={person.phone_number} readOnly className="w-full bg-transparent outline-none text-gray-700" />
+            <span className="ml-2 text-gray-400">
+              <i className="fa fa-phone" />
+            </span>
+          </div>
+        </fieldset>
+      </div>
+      <button
+        className="bg-green-600 hover:bg-green-700  font-bold py-3 px-6 rounded-lg shadow mx-auto block mt-6"
+        onClick={() => {
+          setShowModal(true);
+          setModalStep('send');
+          setModalMsg('');
+          setModalError('');
+          setCode('');
+          setCodeError('');
+        }}
+      >
+        Cambiar Contraseña
+      </button>
 
       {/* Modal recuperación */}
       {showModal && (

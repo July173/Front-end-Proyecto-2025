@@ -2,6 +2,7 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://django:8000/api/";
 
+
 // Endpoints agrupados por entidad/tabla
 export const ENDPOINTS = {
   person: {
@@ -9,6 +10,7 @@ export const ENDPOINTS = {
     // Otros endpoints de persona
 
     getPerson: `${API_BASE_URL}security/persons/{id}/`,
+    patchPerson: `${API_BASE_URL}security/persons/{id}/`,
   },
   user: {
     validateLogin: `${API_BASE_URL}security/users/validate-institutional-login/`,

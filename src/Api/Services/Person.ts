@@ -1,3 +1,17 @@
+// Actualizar imagen de perfil de persona
+export async function patchPersonImage(id: string, imageFile: File): Promise<Persona> {
+  const url = ENDPOINTS.person.patchPerson.replace('{id}', id);
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error('Error al actualizar la imagen');
+  }
+  return response.json();
+}
 // Obtener datos de una persona por ID
 import { Persona } from "../types";
 
