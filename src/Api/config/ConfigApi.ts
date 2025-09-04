@@ -12,6 +12,7 @@ export const ENDPOINTS = {
     // Otros endpoints de persona
 
     getPerson: `${API_BASE_URL}security/persons/{id}/`,
+    patchPerson: `${API_BASE_URL}security/persons/{id}/`,
   },
   user: {
     validateLogin: `${API_BASE_URL}security/users/validate-institutional-login/`,
