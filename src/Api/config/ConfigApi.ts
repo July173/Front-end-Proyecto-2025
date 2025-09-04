@@ -19,9 +19,22 @@ export const ENDPOINTS = {
     requestPasswordReset: `${API_BASE_URL}security/users/request-password-reset/`, // Envia el código y lo compara
     resetPassword: `${API_BASE_URL}security/users/reset-password/`, // Actualiza la contraseña
     // Otros endpoints de usuario
+    getUser: `${API_BASE_URL}security/users/`,
   },
   menu: {
     getMenuItems: `${API_BASE_URL}security/rol-form-permissions/{id}/get-menu/`,
+  },
+  rol: {
+    getRoles: `${API_BASE_URL}security/roles/`,
+    deleteRole: `${API_BASE_URL}security/roles/{id}/`,
+  },
+  form : {
+    getForm: `${API_BASE_URL}security/forms/`,
+    deleteForm: `${API_BASE_URL}security/forms/{id}/`,
+  },
+  module:{
+    getModule: `${API_BASE_URL}security/modules/`,
+    deleteModule: `${API_BASE_URL}security/modules/{id}/`,
   }
   // Más entidades...
 };

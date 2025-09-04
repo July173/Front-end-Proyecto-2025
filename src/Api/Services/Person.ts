@@ -1,3 +1,7 @@
+//configuracion o validaciones por separado del servicio
+import { RegisterPayload, RegisterResponse } from "../types";
+import { ENDPOINTS } from "../config/ConfigApi";
+
 // Actualizar imagen de perfil de persona
 export async function patchPersonImage(id: string, imageFile: File): Promise<Persona> {
   const url = ENDPOINTS.person.patchPerson.replace('{id}', id);
@@ -28,9 +32,7 @@ export async function getPersonById(id: string): Promise<Persona> {
   }
   return response.json();
 }
-//configuracion o validaciones por separado del servicio
-import { RegisterPayload, RegisterResponse } from "../types";
-import { ENDPOINTS } from "../config/ConfigApi";
+
 
 export async function registerAprendiz(payload: RegisterPayload): Promise<RegisterResponse> {
   const response = await fetch(ENDPOINTS.person.registerAprendiz, {
