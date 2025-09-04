@@ -1,3 +1,33 @@
+// Actualizar imagen de perfil de persona
+export async function patchPersonImage(id: string, imageFile: File): Promise<Persona> {
+  const url = ENDPOINTS.person.patchPerson.replace('{id}', id);
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error('Error al actualizar la imagen');
+  }
+  return response.json();
+}
+// Obtener datos de una persona por ID
+import { Persona } from "../types";
+
+export async function getPersonById(id: string): Promise<Persona> {
+  const url = ENDPOINTS.person.getPerson.replace('{id}', id);
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Error al obtener los datos de la persona");
+  }
+  return response.json();
+}
 //configuracion o validaciones por separado del servicio
 import { RegisterPayload, RegisterResponse } from "../types";
 import { ENDPOINTS } from "../config/ConfigApi";

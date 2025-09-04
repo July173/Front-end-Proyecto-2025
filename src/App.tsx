@@ -5,10 +5,20 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
-import { Admin, NotFound, Home } from "./pages/RoutesIndex";
+import { Admin, NotFound, Home, MassRegistration, Perfil } from "./pages/RoutesIndex";
 import React from "react";
+import MainLayout from "./layout/MainLayout";
 
 const queryClient = new QueryClient();
+
+// Componente wrapper para las rutas protegidas
+const ProtectedLayout = () => {
+  return (
+    <ProtectedRoute>
+      <MainLayout />
+    </ProtectedRoute>
+  );
+};
 
 const App = () => {
   return (
@@ -18,26 +28,18 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* pública */}
+            {/* Ruta pública */}
             <Route path="/" element={<Index />} />
-            
-            {/* protegida */}
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute>
-                  <Admin />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/home" 
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } 
-            />
+
+            {/* Rutas protegidas con layout */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/mass-registration" element={<MassRegistration />} />
+              <Route path="/perfil" element={<Perfil />} />
+            </Route>
+
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

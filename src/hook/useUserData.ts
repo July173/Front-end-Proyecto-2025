@@ -4,6 +4,7 @@ interface UserData {
   id: string;
   email: string;
   role?: number;
+  person?: string; // id de la persona asociada
   access_token: string;
 }
 

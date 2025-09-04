@@ -7,14 +7,14 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const userData = localStorage.getItem("user_data");
-
+console.log("ProtectedRoute", userData);
   if (!userData) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600 mb-4">No hay sesión activa</p>
           <button
-            onClick={() => (window.location.href = "/login")}
+            onClick={() => (window.location.href = "/")}
             className="sena-button"
           >
             Volver al login

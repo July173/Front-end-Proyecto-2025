@@ -9,6 +9,7 @@ export interface RegisterPayload {
   number_identification: string;
   phone_number: string;
   password: string;
+  image?: string; // Nuevo campo opcional para imagen
 }
 
 export interface Persona {
@@ -21,6 +22,7 @@ export interface Persona {
   type_identification: string;
   number_identification: string;
   active: boolean;
+  image?: string; // URL de la imagen de perfil (opcional)
 }
 
 // User
@@ -44,11 +46,17 @@ export interface RegisterResponse {
 export interface ValidateLoginResponse {
   access: string;
   refresh: string;
-  user: {
+  user?: {
     email: string;
     id: string;
     role?: number;
+    person: string; // id de la persona asociada
   };
+  // Para compatibilidad con backend antiguo/campos planos
+  user_id?: string;
+  email?: string;
+  role?: number;
+  person?: string;
 }
 
 // Role
@@ -132,6 +140,7 @@ export interface MenuUserInfo {
   name: string;        // Nombre completo del usuario
   role: string;        // Rol del usuario
   avatar?: string;     // URL del avatar (opcional)
+  email?: string;      // Email del usuario (opcional)
 }
 
 //Datos procesados para el componente sidebar

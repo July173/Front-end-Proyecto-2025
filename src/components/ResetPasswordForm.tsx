@@ -45,6 +45,10 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
     const result = await resetPassword(email, code, passwords.newPassword);
     setLoading(false);
     if (result.success) {
+      // Limpiar sesión y redirigir al login
+      localStorage.removeItem('user_data');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       onNavigate('login');
     } else {
       setErrorMsg(result.message || 'No se pudo actualizar la contraseña.');
