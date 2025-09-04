@@ -82,19 +82,7 @@ export const Perfil = () => {
   return (
     <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow">
       <div className="bg-black/50 rounded-lg shadow p-8 flex flex-col items-center relative mb-8">
-      <div className='flex '>
-        {/* Botón editar imagen */}
-
-        <button
-          className="absolute left-2 bg-green-600 rounded-full p-2 shadow hover:bg-green-700 flex items-center justify-center"
-          title="Editar imagen"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={editImgLoading}
-          style={{ width: '32px', height: '32px' }}
-        >
-          <Camera className="text-white" size={18} />
-        </button>
-
+      <div className="flex items-end ">
         <div className="w-28 h-28 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center overflow-hidden relative">
           {person.image ? (
             <img src={`http://localhost:8000${person.image}`} alt="Foto de perfil" className="object-cover w-full h-full" />
@@ -103,7 +91,6 @@ export const Perfil = () => {
               {person.first_name.charAt(0).toUpperCase()}
             </span>
           )}
-
           <input
             type="file"
             accept="image/*"
@@ -116,7 +103,16 @@ export const Perfil = () => {
               setShowImgConfirm(true);
             }}
           />
-          </div>
+        </div>
+        <button
+          className="bg-green-600 rounded-full p-2 shadow hover:bg-green-700 flex items-center justify-center mb-2"
+          title="Editar imagen"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={editImgLoading}
+          style={{ width: '32px', height: '32px' }}
+        >
+          <Camera className="text-white" size={18} />
+        </button>
           {/* Modal de confirmación de cambio de imagen */}
           {showImgConfirm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
