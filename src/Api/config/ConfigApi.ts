@@ -4,6 +4,7 @@ import { get } from "http";
 
 const API_BASE_URL = "http://localhost:8000/api/";
 
+
 // Endpoints agrupados por entidad/tabla
 export const ENDPOINTS = {
   person: {

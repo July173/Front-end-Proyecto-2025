@@ -78,7 +78,7 @@ export const Perfil = () => {
        
           <div className="w-28 h-28 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center overflow-hidden">
             {person.image ? (
-              <img src={person.image} alt="Foto de perfil" className="object-cover w-full h-full" />
+              <img  src={`http://localhost:8000${person.image}`} alt="Foto de perfil" className="object-cover w-full h-full" />
             ) : (
               <span className="text-4xl font-bold text-gray-600">
                 {person.first_name.charAt(0).toUpperCase()}
