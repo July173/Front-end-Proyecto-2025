@@ -18,6 +18,7 @@ export const ENDPOINTS = {
     resetPassword: `${API_BASE_URL}security/users/reset-password/`, // Actualiza la contraseña
     // Otros endpoints de usuario
     getUser: `${API_BASE_URL}security/users/`,
+    deleteUser: `${API_BASE_URL}security/users/{id}/soft-delete/`,
   },
   menu: {
     getMenuItems: `${API_BASE_URL}security/rol-form-permissions/{id}/get-menu/`,

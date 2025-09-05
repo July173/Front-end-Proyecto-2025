@@ -166,3 +166,37 @@ export interface SidebarMenuProps {
   className?: string;                         // Clases CSS adicionales
   onNavigate?: (view: string) => void;        // Navegación entre vistas (login, home, etc.)
 }
+
+export interface Aprendiz {
+  id: string;
+  nombre: string;
+  email: string;
+  estado: string;
+  programa?: string;
+  ficha?: string;
+}
+
+export interface Instructor {
+  id: string;
+  nombre: string;
+  email: string;
+  estado: string;
+  area?: string;
+  rol?: string;
+}
+
+export interface UsuarioRegistrado {
+  id: string;
+  email: string;
+  estado: string;
+  person: {
+    first_name: string;
+    second_name?: string;
+    first_last_name: string;
+    second_last_name?: string;
+    phone_number: string;
+    type_identification: string;
+    number_identification: string;
+    image?: string;
+  };
+}

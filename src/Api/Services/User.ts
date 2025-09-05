@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "../config/ConfigApi";
-import { ValidateLoginResponse} from "../types";
+import { ValidateLoginResponse } from "../types";
 
 // Servicio para solicitar código de recuperación de contraseña
 // Obtener todos los usuarios
@@ -8,6 +8,20 @@ export async function getUsers() {
 	if (!response.ok) throw new Error('Error al obtener usuarios');
 	return response.json();
 }
+
+/**
+ * Cambia el estado de un usuario (habilitar o inhabilitar) usando el endpoint de soft-delete.
+ * Si el usuario está habilitado, lo inhabilita; si está inhabilitado, lo habilita.
+ * @param id ID del usuario a modificar
+ * @returns Promesa con la respuesta de la API
+ */
+export async function deleteUser(id: string) {
+	const url = ENDPOINTS.user.deleteUser.replace('{id}', id);
+	const response = await fetch(url, { method: "DELETE" });
+	if (!response.ok) throw new Error('Error al cambiar el estado del usuario');
+	return response.json();
+}
+
 export async function requestPasswordResetCode(email: string): Promise<{ success: boolean; code?: string; message?: string }> {
 	// Validar correo institucional en frontend
 	if (!email.endsWith('@soy.sena.edu.co')) {
@@ -71,3 +85,18 @@ export async function resetPassword(email: string, code: string, new_password: s
 	}
 	return { success: false, message: data.error || "No se pudo actualizar la contraseña" };
 }
+
+// Define a User type with the relevant properties
+interface User {
+	is_active?: boolean;
+	estado?: string;
+}
+
+// Para aprendices/instructores:
+export function getUserStatus(user: User) {
+	return typeof user.is_active === 'boolean'
+		? (user.is_active ? 'activo' : 'inhabilitado')
+		: ((user.estado || '').toLowerCase().includes('habilitado') ? 'activo' : 'inhabilitado');
+}
+
+
