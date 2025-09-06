@@ -1,124 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import { getAprendices } from '../Api/Services/Aprendiz';
-import { getInstructores } from '../Api/Services/Instructor';
 import { getUsers, deleteUser, getUserStatus } from '../Api/Services/User';
-import { User, GraduationCap } from 'lucide-react';
-import type { Aprendiz, Instructor, UsuarioRegistrado } from '../Api/types';
+import { getPersonById } from '../Api/Services/Person';
+import { User, Plus } from 'lucide-react';
+import ModalCreateUser from './ModalCreateUser';
+import ConfirmModal from './ConfirmModal';
+import type { UsuarioRegistrado, Person } from '../Api/types';
 
 const estadoColor = {
   activo: 'bg-green-100 border-green-400',
   inhabilitado: 'bg-red-100 border-red-400',
-  registrado: 'bg-yellow-100 border-yellow-400',
 };
 
 const estadoLabel = {
   activo: 'Activo',
   inhabilitado: 'Inhabilitado',
-  registrado: 'Registrado',
 };
 
 const Users = () => {
-  const [aprendices, setAprendices] = useState<Aprendiz[]>([]);
-  const [instructores, setInstructores] = useState<Instructor[]>([]);
   const [registrados, setRegistrados] = useState<UsuarioRegistrado[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
+  // Estado para confirmación
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingUser, setPendingUser] = useState<UsuarioRegistrado | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setError('');
-      try {
-        const [apr, inst, reg] = await Promise.all([
-          getAprendices(),
-          getInstructores(),
-          getUsers()
-        ]);
-        setAprendices(apr);
-        setInstructores(inst);
-        setRegistrados(reg);
-      } catch (err) {
-        setError('Error al cargar los usuarios');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
+    fetchAll();
   }, []);
 
-  // Cambia el estado del usuario usando deleteUser (habilita o inhabilita)
-  const handleToggleEstado = async (userId: string) => {
+  const fetchAll = async () => {
+    setLoading(true);
+    setError('');
     try {
-      await deleteUser(userId);
-      // Refresca los datos después de cambiar el estado
-      const [apr, inst, reg] = await Promise.all([
-        getAprendices(),
-        getInstructores(),
-        getUsers()
-      ]);
-      setAprendices(apr);
-      setInstructores(inst);
+      const reg = await getUsers();
       setRegistrados(reg);
-    } catch {
-      alert('No se pudo cambiar el estado del usuario');
+    } catch (err) {
+      setError('Error al cargar los usuarios');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Tarjeta para aprendices/instructores
-  function UserCard({ user, tipo }: { user: Aprendiz | Instructor, tipo: 'aprendiz' | 'instructor' }) {
-    const isAprendiz = tipo === 'aprendiz';
-    const Icon = isAprendiz ? GraduationCap : User;
-    const estado = getUserStatus(user); // <-- usa la función importada
-    const color = estadoColor[estado] || 'bg-gray-100 border-gray-300';
-    const label = estadoLabel[estado] || '';
-    return (
-      <div className={`border ${color} rounded-lg p-4 m-2 w-[320px] min-h-[180px] flex flex-col justify-between shadow-sm`}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Icon className={isAprendiz ? 'text-purple-500' : 'text-blue-600'} />
-            <span className="font-semibold">{user.nombre}</span>
-          </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-            estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-          }`}>
-            {label}
-          </span>
-        </div>
-        <div className="text-sm text-gray-700 mb-1">
-          <div>{user.email}</div>
-          {isAprendiz ? (
-            <>
-              <div>Programa : <span className="font-medium">{(user as Aprendiz).programa || '-'}</span></div>
-              <div>Rol : <span className="font-bold">Aprendiz</span></div>
-              <div>Ficha : <span className="font-mono">{(user as Aprendiz).ficha || '-'}</span></div>
-            </>
-          ) : (
-            <>
-              <div>Área : <span className="font-medium">{(user as Instructor).area || '-'}</span></div>
-              <div>Rol : <span className="font-bold">{(user as Instructor).rol || 'Administrador'}</span></div>
-            </>
-          )}
-        </div>
-        <div className="flex gap-2 mt-2">
-          <button
-            className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-full text-sm font-semibold`}
-            onClick={() => handleToggleEstado(user.id)}
-          >
-            <User className="w-4 h-4" />
-            {estado === 'activo' ? 'Inhabilitar' : 'Habilitar'}
-          </button>
-          <button className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 rounded-full text-sm font-semibold">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.862 3.487a2.25 2.25 0 013.182 3.182l-9.75 9.75a4.5 4.5 0 01-1.897 1.13l-3.1.886.886-3.1a4.5 4.5 0 011.13-1.897l9.75-9.75z" /></svg>
-            Editar
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const handleToggleEstado = (user: UsuarioRegistrado) => {
+    setPendingUser(user);
+    setShowConfirm(true);
+  };
 
-  // Tarjeta para usuarios registrados
+  const handleConfirmToggle = async () => {
+    if (!pendingUser) return;
+    setShowConfirm(false);
+    try {
+      await deleteUser(pendingUser.id);
+      window.location.reload(); // Solo si no hay error
+    } catch (e) {
+      alert('No se pudo cambiar el estado del usuario');
+    }
+    setPendingUser(null);
+  };
+
   function RegistradoCard({ user }: { user: UsuarioRegistrado }) {
-    const estado = getUserStatus(user); // <-- usa solo esta función
+    const estado = getUserStatus(user);
     const color = estadoColor[estado];
     const label = estadoLabel[estado];
     return (
@@ -144,7 +87,7 @@ const Users = () => {
         <div className="flex gap-2 mt-2">
           <button
             className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-full text-sm font-semibold`}
-            onClick={() => handleToggleEstado(user.id)}
+            onClick={() => handleToggleEstado(user)}
           >
             <User className="w-4 h-4" />
             {estado === 'activo' ? 'Inhabilitar' : 'Habilitar'}
@@ -158,32 +101,62 @@ const Users = () => {
     );
   }
 
+  // Separar usuarios por estado
+  const habilitados = registrados.filter(u => getUserStatus(u) === 'activo');
+  const inhabilitados = registrados.filter(u => getUserStatus(u) === 'inhabilitado');
+
   return (
-    <div className="p-4">
+    <div className="bg-white p-8 rounded-lg shadow relative">
+      {/* Botón azul en la esquina superior derecha */}
+      <button
+        className="absolute right-8 top-8 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow"
+        onClick={() => setShowModal(true)}
+      >
+        <Plus className="w-5 h-5" />
+        Registro usuario
+      </button>
       <h2 className="text-2xl font-bold mb-2">Gestión De Usuarios-Sena</h2>
       {loading && <div className="text-gray-500">Cargando...</div>}
       {error && <div className="text-red-500">{error}</div>}
-      {/* Aprendices */}
-      <div className="mt-4">
-        <h3 className="text-green-700 text-xl font-bold mb-2">Aprendices</h3>
-        <div className="flex flex-wrap">
-          {aprendices.map((u, i) => <UserCard key={`apr-${i}`} user={u} tipo="aprendiz" />)}
-        </div>
-      </div>
-      {/* Instructores */}
+      {/* Usuarios habilitados */}
       <div className="mt-6">
-        <h3 className="text-blue-700 text-xl font-bold mb-2">Instructores</h3>
+        <h3 className="text-green-700 text-xl font-bold mb-2">Usuarios Habilitados</h3>
         <div className="flex flex-wrap">
-          {instructores.map((u, i) => <UserCard key={`inst-${i}`} user={u} tipo="instructor" />)}
+          {habilitados.map((u, i) => <RegistradoCard key={`hab-${i}`} user={u} />)}
         </div>
       </div>
-      {/* Registrados */}
+      {/* Usuarios inhabilitados */}
       <div className="mt-6">
-        <h3 className="text-yellow-600 text-xl font-bold mb-2">Usuarios Registrados</h3>
+        <h3 className="text-red-600 text-xl font-bold mb-2">Usuarios Inhabilitados</h3>
         <div className="flex flex-wrap">
-          {registrados.map((u, i) => <RegistradoCard key={`reg-${i}`} user={u} />)}
+          {inhabilitados.map((u, i) => <RegistradoCard key={`inh-${i}`} user={u} />)}
         </div>
       </div>
+      {/* Modal de crear usuario */}
+      {showModal && (
+        <ModalCreateUser
+          onClose={() => setShowModal(false)}
+          onSuccess={fetchAll}
+        />
+      )}
+      {/* Modal de confirmación */}
+      <ConfirmModal
+        isOpen={showConfirm}
+        title={
+          pendingUser && getUserStatus(pendingUser) === 'activo'
+            ? "¿Inhabilitar usuario?"
+            : "¿Habilitar usuario?"
+        }
+        message={
+          pendingUser && getUserStatus(pendingUser) === 'activo'
+            ? "¿Quieres inhabilitar este usuario?"
+            : "¿Quieres habilitar este usuario?"
+        }
+        confirmText="Sí, confirmar"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmToggle}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 };

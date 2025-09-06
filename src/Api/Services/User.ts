@@ -19,7 +19,13 @@ export async function deleteUser(id: string) {
 	const url = ENDPOINTS.user.deleteUser.replace('{id}', id);
 	const response = await fetch(url, { method: "DELETE" });
 	if (!response.ok) throw new Error('Error al cambiar el estado del usuario');
-	return response.json();
+	// Si la respuesta es 204 No Content, no intentes hacer response.json()
+	if (response.status === 204) return true;
+	try {
+		return await response.json();
+	} catch {
+		return true;
+	}
 }
 
 export async function requestPasswordResetCode(email: string): Promise<{ success: boolean; code?: string; message?: string }> {

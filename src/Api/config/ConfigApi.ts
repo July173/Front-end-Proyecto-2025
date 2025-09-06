@@ -27,11 +27,11 @@ export const ENDPOINTS = {
     getRoles: `${API_BASE_URL}security/roles/`,
     deleteRole: `${API_BASE_URL}security/roles/{id}/`,
   },
-  form : {
+  form: {
     getForm: `${API_BASE_URL}security/forms/`,
     deleteForm: `${API_BASE_URL}security/forms/{id}/`,
   },
-  module:{
+  module: {
     getModule: `${API_BASE_URL}security/modules/`,
     deleteModule: `${API_BASE_URL}security/modules/{id}/`,
   },
@@ -43,6 +43,24 @@ export const ENDPOINTS = {
     getInstructores: `${API_BASE_URL}general/create-instructors/`,
     postInstructor: `${API_BASE_URL}general/create-instructors/`,
   },
+  regional: {
+    getRegionales: `${API_BASE_URL}general/regionals/`,
+  },
+  center: {
+    getCenters: `${API_BASE_URL}general/centers/`,
+  },
+  sede: {
+    getSedes: `${API_BASE_URL}general/sedes/`,
+  },
+  program: {
+    getPrograms: `${API_BASE_URL}general/programs/`,
+  },
+  KnowledgeArea: {
+    getKnowledgeAreas: `${API_BASE_URL}general/knowledge-areas/`,
+  },
+  ficha: {
+    getFichas: `${API_BASE_URL}general/fichas/`,
+  }
   // Más entidades...
 };
 

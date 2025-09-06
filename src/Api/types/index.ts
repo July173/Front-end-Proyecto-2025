@@ -14,7 +14,7 @@ export interface RegisterPayload {
   image?: string; // Nuevo campo opcional para imagen
 }
 
-export interface Persona {
+export interface Person {
   id: string;
   first_name: string;
   second_name?: string;
@@ -28,7 +28,7 @@ export interface Persona {
 }
 
 // User
-export interface Usuario {
+export interface User {
   id: string;
   email: string;
   password: string;
@@ -40,8 +40,8 @@ export interface Usuario {
 }
 
 export interface RegisterResponse {
-  persona: Persona;
-  usuario: Usuario;
+  person: Person;
+  user: User;
   success: string;
 }
 
@@ -81,6 +81,7 @@ export interface Form {
   id: string;
   name: string;
   description: string;
+  path: string;
   active: boolean;
 }
 
@@ -95,38 +96,38 @@ export interface Module {
 // FormModule
 export interface FormModule {
   id: string;
-  form: string; // id del form
-  module: string; // id del module
+  form: number; // id del form
+  module: number; // id del module
 }
 
 // RolFormPermission
 export interface RolFormPermission {
   id: string;
-  role: string; // id del role
-  form: string; // id del form
-  permission: string; // id del permission
+  role: number; // id del role
+  form: number; // id del form
+  permission: number; // id del permission
 }
 
-// Elemento individual del formulario/menú (coincide con tu API)
+// Elemento individual del formulario/menú 
 export interface FormItem {
   name: string;    // Nombre del formulario
   path: string;    // Ruta del formulario
 }
 
-// Módulo que contiene varios formularios (estructura de tu API)
+// Módulo que contiene varios formularios 
 export interface ModuleForm {
   name: string;        // Nombre del módulo
   form: FormItem[];    // Array de formularios dentro del módulo
 }
 
 
-// Respuesta completa del endpoint del menú (estructura exacta de tu swagger)
+// Respuesta completa del endpoint del menú 
 export interface MenuApiResponse {
   rol: string;                    // Nombre del rol del usuario
   moduleForm: ModuleForm[];       // Array de módulos con sus formularios
 }
 
-// Elemento procesado para mostrar en el sidebar (lo que necesita el componente) 
+// Elemento procesado para mostrar en el sidebar  
 export interface MenuItem {
   children: MenuItem[]; // Sub-items para menús anidados
   title: ReactNode;
@@ -169,20 +170,20 @@ export interface SidebarMenuProps {
 
 export interface Aprendiz {
   id: string;
-  nombre: string;
-  email: string;
-  estado: string;
-  programa?: string;
-  ficha?: string;
+  person: number;
+  ficha?: number;
+  active: boolean;
 }
 
 export interface Instructor {
   id: string;
-  nombre: string;
-  email: string;
-  estado: string;
-  area?: string;
-  rol?: string;
+  person: number;
+  active: boolean;
+  contractType: string;
+  contractStartDate: string;
+  contractEndDate: string;
+  knowledgeArea: number;
+
 }
 
 export interface UsuarioRegistrado {
@@ -190,6 +191,7 @@ export interface UsuarioRegistrado {
   email: string;
   estado: string;
   person: {
+    id: string;
     first_name: string;
     second_name?: string;
     first_last_name: string;
@@ -199,4 +201,100 @@ export interface UsuarioRegistrado {
     number_identification: string;
     image?: string;
   };
+}
+
+export interface CreateInstructorPayload {
+  first_name: string;
+  second_name?: string;
+  first_last_name: string;
+  second_last_name?: string;
+  phone_number: string;
+  type_identification: string;
+  number_identification: string;
+  email: string;
+  role_id: number;
+  contractType: string;
+  contractStartDate: string;
+  contractEndDate: string;
+  knowledgeArea: number;
+  center_id: number;
+  sede_id: number;
+  regional_id: number;
+}
+
+export interface CreateAprendizPayload {
+  type_identification: string;
+  number_identification: string;
+  first_name: string;
+  second_name?: string;
+  first_last_name: string;
+  second_last_name?: string;
+  phone_number: string;
+  email: string;
+  program_id: number;
+  ficha_id: string;
+}
+
+export interface Regional {
+  id: number;
+  codeRegional: number;
+  name: string;
+  description: string;
+  address : string;
+  active: boolean;
+}
+
+export interface Sede {
+  id: number;
+  name?: string;
+  codeSede: number;
+  active: boolean;
+  address?: string;
+  phoneSede?: number;
+  emailContact?: string;
+  center: number;
+}
+
+export interface Center {
+  id: number;
+  name?: string;
+  codeCenter: number;
+  address?: string;
+  active: boolean;
+  regional: number;
+}
+
+export interface Program {
+  id: number;
+  codeProgram: number;
+  typeProgram?: string;
+  name?: string;
+  description?: string;
+  active: boolean;
+}
+
+
+export interface KnowledgeArea {
+  id: number;
+  description?: string;
+  name?: string;
+  active: boolean;
+}
+
+export interface Ficha {
+  id: number;
+  numeroFicha?: number;
+  programa?: number;
+  active: boolean;
+
+}
+
+export interface ConfirmModalProps {
+  isOpen: boolean;
+  title?: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
