@@ -13,7 +13,7 @@ import {
   isValidPhone,
   capitalizeWords
 } from '../hook/validationlogin';
-
+import { tiposDocumento } from '@/constants/selectOptions';
 interface RegisterFormProps {
   onNavigate: (view: string) => void;
 }
@@ -178,15 +178,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               className="sena-input"
               required
             >
-              <option value="">Tipo de documento</option>
-              <option value="CC">Cédula de Ciudadanía</option>
-              <option value="TI">Tarjeta de Identidad</option>
-              <option value="CE">Cédula de Extranjería</option>
-              <option value="PAS">Pasaporte</option>
-              <option value="PAS">Número ciego - SENA</option>
-              <option value="PAS">Documento Nacional de Identificación</option>
-              <option value="PAS">Número de Identificación Tributaria</option>
-              <option value="PAS">Permiso por Protección Temporal</option>
+             {tiposDocumento.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
 

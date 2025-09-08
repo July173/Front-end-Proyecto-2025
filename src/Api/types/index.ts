@@ -190,6 +190,7 @@ export interface UsuarioRegistrado {
   id: string;
   email: string;
   estado: string;
+  role: number;
   person: {
     id: string;
     first_name: string;
@@ -203,7 +204,7 @@ export interface UsuarioRegistrado {
   };
 }
 
-export interface CreateInstructorPayload {
+export interface CreateInstructor {
   first_name: string;
   second_name?: string;
   first_last_name: string;
@@ -222,7 +223,7 @@ export interface CreateInstructorPayload {
   regional_id: number;
 }
 
-export interface CreateAprendizPayload {
+export interface CreateAprendiz {
   type_identification: string;
   number_identification: string;
   first_name: string;
@@ -297,4 +298,13 @@ export interface ConfirmModalProps {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
+}
+
+export interface FieldDef {
+  name: string;
+  label: string;
+  type: 'text' | 'select' | 'date' | 'email';
+  placeholder?: string;
+  options?: Array<{ value: string | number; label: string }>;
+  colSpan?: number;
 }

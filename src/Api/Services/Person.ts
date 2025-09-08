@@ -4,7 +4,7 @@ import { ENDPOINTS } from "../config/ConfigApi";
 
 // Actualizar imagen de perfil de persona
 export async function patchPersonImage(id: string, imageFile: File): Promise<Person> {
-  const url = ENDPOINTS.person.patchPerson.replace('{id}', id);
+  const url = ENDPOINTS.person.IdPerson.replace('{id}', id);
   const formData = new FormData();
   formData.append('image', imageFile);
   const response = await fetch(url, {
@@ -20,7 +20,7 @@ export async function patchPersonImage(id: string, imageFile: File): Promise<Per
 import { Person } from "../types";
 
 export async function getPersonById(id: string): Promise<Person> {
-  const url = ENDPOINTS.person.getPerson.replace('{id}', id);
+  const url = ENDPOINTS.person.IdPerson.replace('{id}', id);
   const response = await fetch(url, {
     method: "GET",
     headers: {

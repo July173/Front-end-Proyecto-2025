@@ -4,7 +4,19 @@ import { getPersonById } from '../Api/Services/Person';
 import { User, Plus } from 'lucide-react';
 import ModalCreateUser from './ModalCreateUser';
 import ConfirmModal from './ConfirmModal';
-import type { UsuarioRegistrado, Person } from '../Api/types';
+import ModalEditGeneric from './ModalEditGeneric';
+import { putAprendiz } from '../Api/Services/Aprendiz';
+import { putInstructor } from '../Api/Services/Instructor';
+import { getPrograms } from '../Api/Services/Program';
+import { getFichas } from '../Api/Services/Ficha';
+import { getCenters } from '../Api/Services/Center';
+import { getSedes } from '../Api/Services/Sede';
+import { getRegionales } from '../Api/Services/Regional';
+import { getRoles } from '../Api/Services/Rol';
+import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
+import type { UsuarioRegistrado, Person, CreateAprendiz, CreateInstructor } from '../Api/types';
+import { tiposDocumento } from '../constants/selectOptions';
+import type { FieldDef } from '../Api/types';
 
 const estadoColor = {
   activo: 'bg-green-100 border-green-400',
@@ -21,13 +33,32 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editUser, setEditUser] = useState<UsuarioRegistrado | null>(null);
+  const [editInitialValues, setEditInitialValues] = useState<Partial<UsuarioRegistrado & Person> | null>(null);
+  const [editLoading, setEditLoading] = useState(false);
 
   // Estado para confirmación
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingUser, setPendingUser] = useState<UsuarioRegistrado | null>(null);
 
+  const [programas, setProgramas] = useState([]);
+  const [fichas, setFichas] = useState([]);
+  const [centros, setCentros] = useState([]);
+  const [sedes, setSedes] = useState([]);
+  const [regionales, setRegionales] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [areas, setAreas] = useState([]);
+
   useEffect(() => {
     fetchAll();
+    getPrograms().then(setProgramas);
+    getFichas().then(setFichas);
+    getCenters().then(setCentros);
+    getSedes().then(setSedes);
+    getRegionales().then(setRegionales);
+    getRoles().then(setRoles);
+    getKnowledgeAreas().then(setAreas);
   }, []);
 
   const fetchAll = async () => {
@@ -58,6 +89,28 @@ const Users = () => {
       alert('No se pudo cambiar el estado del usuario');
     }
     setPendingUser(null);
+  };
+
+  // Función para manejar la edición de usuario
+  const handleEditUser = async (user: UsuarioRegistrado) => {
+    setEditUser(user);
+    setEditLoading(true);
+    try {
+      // Si necesitas obtener datos adicionales de la persona, puedes hacerlo aquí
+      // const personData = await getPersonById(user.person_id);
+      // setEditInitialValues({ ...user, ...personData });
+
+      // Por ahora, solo usamos los datos actuales del usuario
+      setEditInitialValues({
+        ...user,
+        ...user.person,
+      });
+      setShowEdit(true);
+    } catch (error) {
+      alert('No se pudo cargar la información del usuario para editar');
+    } finally {
+      setEditLoading(false);
+    }
   };
 
   function RegistradoCard({ user }: { user: UsuarioRegistrado }) {
@@ -92,8 +145,11 @@ const Users = () => {
             <User className="w-4 h-4" />
             {estado === 'activo' ? 'Inhabilitar' : 'Habilitar'}
           </button>
-          <button className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 rounded-full text-sm font-semibold">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.862 3.487a2.25 2.25 0 013.182 3.182l-9.75 9.75a4.5 4.5 0 01-1.897 1.13l-3.1.886.886-3.1a4.5 4.5 0 011.13-1.897l9.75-9.75z" /></svg>
+          <button
+            className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 rounded-full text-sm font-semibold"
+            onClick={() => handleEditUser(user)}
+          >
+            {/* ...icono... */}
             Editar
           </button>
         </div>
@@ -104,6 +160,40 @@ const Users = () => {
   // Separar usuarios por estado
   const habilitados = registrados.filter(u => getUserStatus(u) === 'activo');
   const inhabilitados = registrados.filter(u => getUserStatus(u) === 'inhabilitado');
+
+  // Define los fields aquí, después de tener los arrays
+  const fieldsAprendiz: FieldDef[] = [
+    { name: 'type_identification', label: 'Tipo de documento', type: 'select', options: tiposDocumento },
+    { name: 'number_identification', label: 'Número de documento', type: 'text', placeholder: 'ej: 12324224' },
+    { name: 'first_name', label: 'Nombres', type: 'text', placeholder: 'Nombres completos' },
+    { name: 'second_name', label: 'Segundo nombre', type: 'text', placeholder: 'Segundo nombre' },
+    { name: 'first_last_name', label: 'Primer apellido', type: 'text', placeholder: 'Primer apellido' },
+    { name: 'second_last_name', label: 'Segundo apellido', type: 'text', placeholder: 'Segundo apellido' },
+    { name: 'phone_number', label: 'Teléfono', type: 'text', placeholder: 'ej: 3102936537' },
+    { name: 'email', label: 'Correo Electrónico', type: 'email', placeholder: 'ej: user@example.com' },
+    { name: 'program_id', label: 'Programa de formación', type: 'select', options: programas.map(p => ({ value: p.id, label: p.name })) },
+    { name: 'ficha_id', label: 'Ficha', type: 'select', options: fichas.map(f => ({ value: f.id, label: f.numeroFicha?.toString() || f.id.toString() })) },
+    { name: 'role_id', label: 'Rol', type: 'select', options: roles.map(r => ({ value: r.id, label: r.type_role })) },
+  ];
+
+  const fieldsInstructor: FieldDef[] = [
+    { name: 'first_name', label: 'Nombres', type: 'text', placeholder: 'Nombres completos' },
+    { name: 'second_name', label: 'Segundo nombre', type: 'text', placeholder: 'Segundo nombre' },
+    { name: 'first_last_name', label: 'Primer apellido', type: 'text', placeholder: 'Primer apellido' },
+    { name: 'second_last_name', label: 'Segundo apellido', type: 'text', placeholder: 'Segundo apellido' },
+    { name: 'phone_number', label: 'Teléfono', type: 'text', placeholder: 'ej: 3102936537' },
+    { name: 'type_identification', label: 'Tipo de documento', type: 'select', options: tiposDocumento },
+    { name: 'number_identification', label: 'Número de documento', type: 'text', placeholder: 'ej: 12324224' },
+    { name: 'email', label: 'Correo Electrónico', type: 'email', placeholder: 'ej: user@example.com' },
+    { name: 'role_id', label: 'Rol', type: 'select', options: roles.map(r => ({ value: r.id, label: r.type_role })) },
+    { name: 'contractType', label: 'Tipo de contrato', type: 'text', placeholder: 'Tipo de contrato' },
+    { name: 'contractStartDate', label: 'Fecha inicio contrato', type: 'date' },
+    { name: 'contractEndDate', label: 'Fecha fin de contrato', type: 'date' },
+    { name: 'knowledgeArea', label: 'Área de conocimiento', type: 'select', options: areas.map(a => ({ value: a.id, label: a.name })) },
+    { name: 'center_id', label: 'Centro', type: 'select', options: centros.map(c => ({ value: c.id, label: c.name })) },
+    { name: 'sede_id', label: 'Sede', type: 'select', options: sedes.map(s => ({ value: s.id, label: s.name })) },
+    { name: 'regional_id', label: 'Regional', type: 'select', options: regionales.map(r => ({ value: r.id, label: r.name })) },
+  ];
 
   return (
     <div className="bg-white p-8 rounded-lg shadow relative">
@@ -157,6 +247,31 @@ const Users = () => {
         onConfirm={handleConfirmToggle}
         onCancel={() => setShowConfirm(false)}
       />
+
+      
+      {/* Modal de editar usuario */}
+      {showEdit && editUser && editInitialValues && (
+        <ModalEditGeneric
+          isOpen={showEdit}
+          title={`Actualizar ${editUser.role === 2 ? 'Aprendiz' : 'Instructor'}`}
+          initialValues={editInitialValues}
+          fields={editUser.role === 2 ? fieldsAprendiz : fieldsInstructor}
+          onSubmit={async (values) => {
+            if (editUser.role === 2) {
+              await putAprendiz(editUser.id, values);
+            } else {
+              await putInstructor(editUser.id, values);
+            }
+            await fetchAll();
+          }}
+          onClose={() => {
+            setShowEdit(false);
+            setEditInitialValues(null);
+            setEditUser(null);
+          }}
+          submitText="Actualizar"
+        />
+      )}
     </div>
   );
 };

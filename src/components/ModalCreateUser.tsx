@@ -9,9 +9,10 @@ import { getRoles } from '../Api/Services/Rol';
 import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
 import { getFichas } from '../Api/Services/Ficha';
 import ConfirmModal from './ConfirmModal';
+import { tiposDocumento } from '@/constants/selectOptions';
 import type {
-  CreateAprendizPayload,
-  CreateInstructorPayload,
+  CreateAprendiz,
+  CreateInstructor,
   Regional,
   Sede,
   Center,
@@ -22,17 +23,6 @@ import type {
   ConfirmModalProps
 } from '../Api/types';
 
-const tiposDocumento = [
-  { value: '', label: 'Tipo de documento' },
-  { value: 'CC', label: 'Cédula de Ciudadanía' },
-  { value: 'TI', label: 'Tarjeta de Identidad' },
-  { value: 'CE', label: 'Cédula de Extranjería' },
-  { value: 'PAS', label: 'Pasaporte' },
-  { value: 'NC', label: 'Número ciego - SENA' },
-  { value: 'DNI', label: 'Documento Nacional de Identificación' },
-  { value: 'NIT', label: 'Número de Identificación Tributaria' },
-  { value: 'PPT', label: 'Permiso por Protección Temporal' },
-];
 
 const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSuccess?: () => void }) => {
   const [tab, setTab] = useState<'aprendiz' | 'instructor'>('aprendiz');
@@ -49,7 +39,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
   const [fichas, setFichas] = useState<Ficha[]>([]);
 
   // Estado para aprendiz
-  const [aprendiz, setAprendiz] = useState<CreateAprendizPayload>({
+  const [aprendiz, setAprendiz] = useState<CreateAprendiz>({
     type_identification: '',
     number_identification: '',
     first_name: '',
@@ -63,7 +53,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
   });
 
   // Estado para instructor
-  const [instructor, setInstructor] = useState<CreateInstructorPayload>({
+  const [instructor, setInstructor] = useState<CreateInstructor>({
     first_name: '',
     second_name: '',
     first_last_name: '',

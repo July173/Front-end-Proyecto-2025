@@ -9,8 +9,7 @@ export const ENDPOINTS = {
     registerAprendiz: `${API_BASE_URL}security/persons/register-aprendiz/`,
     // Otros endpoints de persona
 
-    getPerson: `${API_BASE_URL}security/persons/{id}/`,
-    patchPerson: `${API_BASE_URL}security/persons/{id}/`,
+    IdPerson: `${API_BASE_URL}security/persons/{id}/`,
   },
   user: {
     validateLogin: `${API_BASE_URL}security/users/validate-institutional-login/`,
@@ -36,12 +35,13 @@ export const ENDPOINTS = {
     deleteModule: `${API_BASE_URL}security/modules/{id}/`,
   },
   aprendiz: {
-    getAprendices: `${API_BASE_URL}general/create-aprendices/`,
-    postAprendiz: `${API_BASE_URL}general/create-aprendices/`,
+    AllAprendiz: `${API_BASE_URL}general/create-aprendices/`,
+    IdAprendiz: `${API_BASE_URL}general/create-aprendices/{id}/`,
   },
   instructor: {
-    getInstructores: `${API_BASE_URL}general/create-instructors/`,
-    postInstructor: `${API_BASE_URL}general/create-instructors/`,
+    AllInstructores: `${API_BASE_URL}general/create-instructors/`,
+    IdInstructor: `${API_BASE_URL}general/create-instructors/{id}/`,
+
   },
   regional: {
     getRegionales: `${API_BASE_URL}general/regionals/`,
