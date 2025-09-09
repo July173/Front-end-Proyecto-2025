@@ -1,14 +1,12 @@
-
-
-// Assets locales generados desde Figma
-const img = "http://localhost:3845/assets/0be1a155bd9e073efadb25cd61f689e312ff8346.svg";
-const img1 = "http://localhost:3845/assets/56c347614ddf1d0b17e81131d74161e6739a53c4.svg";
-const img2 = "http://localhost:3845/assets/0f20c16855d1367b44c6abafff412f47b3e1d889.svg";
-const img3 = "http://localhost:3845/assets/b19cf70c1928c418d9efabf49e0f0cce0189d84f.svg";
-const img4 = "http://localhost:3845/assets/5f6ce6ac4cb93c9ff86726e68afd19b4c182c4b8.svg";
-const img5 = "http://localhost:3845/assets/41b3cbcd89cf2225afb1064f3e15ccd3af0f4b0c.svg";
-const img6 = "http://localhost:3845/assets/e1e607174a0755a0e36b02f45e9cb8b31df6da54.svg";
-const img7 = "http://localhost:3845/assets/83a100f4939c3d07fa1b7b921856978bd57f8911.svg";
+// imagenes de figma exportadas a public/reportmass
+const img = "../../public/massRegistartions/tarjeta_excel.svg";
+const img1 = "../../public/massRegistartions/upload.svg";
+const img2 = "../../public/massRegistartions/tarjeta_excel_azul.svg";
+const img3 = "../../public/massRegistartions/person.svg";
+const img4 = "../../public/massRegistartions/download_B.svg";
+const img5 = "../../public/massRegistartions/people.svg";
+const img6 = "../../public/massRegistartions/download.svg";
+const img7 = "../../public/massRegistartions/upload_N.svg";
 
 function TarjetaExcel({ property1 = "instructor" }) {
   if (property1 === "Variant3") {
