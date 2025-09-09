@@ -36,11 +36,14 @@ export const ENDPOINTS = {
   form: {
     getForm: `${API_BASE_URL}security/forms/`,
     deleteForm: `${API_BASE_URL}security/forms/{id}/`,
+    post :`${API_BASE_URL}security/forms/`,
   },
   module: {
     getModule: `${API_BASE_URL}security/modules/`,
     deleteModule: `${API_BASE_URL}security/modules/{id}/`,
+    post: `${API_BASE_URL}security/form-modules/create-module-with-forms/`,
   },
+  
   aprendiz: {
     AllAprendiz: `${API_BASE_URL}general/create-aprendices/`,
     IdAprendiz: `${API_BASE_URL}general/create-aprendices/{id}/`,

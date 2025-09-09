@@ -55,3 +55,14 @@ export async function getRolesUser() {
 	if (!response.ok) throw new Error('Error al obtener roles con los usuarios');
 	return response.json();
 }
+
+// Crear rol con permisos
+export async function postRolPermissions(data) {
+  const response = await fetch(ENDPOINTS.rol.postRolPermissions, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al crear el rol');
+  return response.json();
+}
