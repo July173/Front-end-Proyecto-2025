@@ -1,3 +1,16 @@
+// Card reutilizable para dashboard, roles, módulos, etc.
+export interface InfoCardProps {
+  title: string;
+  statusLabel: string;
+  statusColor: 'green' | 'red';
+  description: string;
+  count: number;
+  buttonText: string;
+  onButtonClick?: () => void;
+  actionLabel: string;
+  actionType: 'enable' | 'disable';
+  onActionClick?: () => void;
+}
 import { ReactNode } from 'react';
 
 // Person
@@ -234,6 +247,7 @@ export interface CreateAprendiz {
   email: string;
   program_id: number;
   ficha_id: string;
+  role_id?: number;
 }
 
 export interface Regional {
@@ -284,7 +298,7 @@ export interface KnowledgeArea {
 
 export interface Ficha {
   id: number;
-  numeroFicha?: number;
+  file_number?: number;
   programa?: number;
   active: boolean;
 

@@ -194,7 +194,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                   <option value="" className='text-xs'>Seleccionar ...</option>
                   {fichas.map((opt: Ficha) => (
                     <option key={opt.id} value={opt.id}>
-                      { opt.numeroFicha || opt.id}
+                      { opt.file_number || opt.id}
                     </option>
                   ))}
                 </select>
