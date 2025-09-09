@@ -1,5 +1,7 @@
 // configuracion generica del los enpoints
 
+import { get } from "http";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://django:8000/api/";
 
 
@@ -24,8 +26,13 @@ export const ENDPOINTS = {
   },
   rol: {
     getRoles: `${API_BASE_URL}security/roles/`,
-    deleteRole: `${API_BASE_URL}security/roles/{id}/`,
+    deleteRole: `${API_BASE_URL}security/roles/{id}/soft-delete/`,
+    getRolUser: `${API_BASE_URL}security/roles/roles-with-user-count/`,
+    postRolPermissions: `${API_BASE_URL}security/rol-form-permissions/create-role-with-permissions/`,
+    getRolPermissions: `${API_BASE_URL}security/rol-form-permissions/{id}/get-role-with-permissions/`,
+    getRolesFormsPerms: `${API_BASE_URL}security/rol-form-permissions/permission-matrix/`,
   },
+  
   form: {
     getForm: `${API_BASE_URL}security/forms/`,
     deleteForm: `${API_BASE_URL}security/forms/{id}/`,

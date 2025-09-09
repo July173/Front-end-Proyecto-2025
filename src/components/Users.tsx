@@ -5,8 +5,8 @@ import { User, Plus } from 'lucide-react';
 import ModalCreateUser from './ModalCreateUser';
 import ConfirmModal from './ConfirmModal';
 import ModalEditGeneric from './ModalEditGeneric';
-import { putAprendiz } from '../Api/Services/Aprendiz';
-import { putInstructor } from '../Api/Services/Instructor';
+import { putAprendiz, getAprendizById } from '../Api/Services/Aprendiz';
+import { putInstructor, getInstructorById } from '../Api/Services/Instructor';
 import { getPrograms } from '../Api/Services/Program';
 import { getFichas } from '../Api/Services/Ficha';
 import { getCenters } from '../Api/Services/Center';
@@ -35,7 +35,7 @@ const Users = () => {
   const [showModal, setShowModal] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [editUser, setEditUser] = useState<UsuarioRegistrado | null>(null);
-  const [editInitialValues, setEditInitialValues] = useState<Partial<UsuarioRegistrado & Person> | null>(null);
+  const [editInitialValues, setEditInitialValues] = useState<Partial<CreateAprendiz & CreateInstructor & Person> | null>(null);
   const [editLoading, setEditLoading] = useState(false);
 
   // Estado para confirmación
@@ -96,15 +96,35 @@ const Users = () => {
     setEditUser(user);
     setEditLoading(true);
     try {
-      // Si necesitas obtener datos adicionales de la persona, puedes hacerlo aquí
-      // const personData = await getPersonById(user.person_id);
-      // setEditInitialValues({ ...user, ...personData });
-
-      // Por ahora, solo usamos los datos actuales del usuario
-      setEditInitialValues({
-        ...user,
+      let initialValues: Partial<CreateAprendiz & CreateInstructor & Person> = {
         ...user.person,
-      });
+        email: user.email,
+      };
+      if (user.role === 2) {
+        // Aprendiz: obtener datos completos
+        const aprendiz = await getAprendizById(user.id);
+        initialValues = {
+          ...initialValues,
+          program_id: aprendiz.program_id || '',
+          ficha_id: aprendiz.ficha_id || '',
+          role_id: user.role,
+        };
+      } else {
+        // Instructor: obtener datos completos
+        const instructor = await getInstructorById(user.id);
+        initialValues = {
+          ...initialValues,
+          role_id: user.role,
+          contractType: instructor.contractType || '',
+          contractStartDate: instructor.contractStartDate || '',
+          contractEndDate: instructor.contractEndDate || '',
+          knowledgeArea: instructor.knowledgeArea || '',
+          center_id: instructor.center_id || '',
+          sede_id: instructor.sede_id || '',
+          regional_id: instructor.regional_id || '',
+        };
+      }
+      setEditInitialValues(initialValues);
       setShowEdit(true);
     } catch (error) {
       alert('No se pudo cargar la información del usuario para editar');
@@ -256,11 +276,41 @@ const Users = () => {
           title={`Actualizar ${editUser.role === 2 ? 'Aprendiz' : 'Instructor'}`}
           initialValues={editInitialValues}
           fields={editUser.role === 2 ? fieldsAprendiz : fieldsInstructor}
-          onSubmit={async (values) => {
+          onSubmit={async (values: Partial<CreateAprendiz & CreateInstructor & Person>) => {
             if (editUser.role === 2) {
-              await putAprendiz(editUser.id, values);
+              const aprendizPayload: CreateAprendiz = {
+                type_identification: values.type_identification!,
+                number_identification: values.number_identification!,
+                first_name: values.first_name!,
+                second_name: values.second_name,
+                first_last_name: values.first_last_name!,
+                second_last_name: values.second_last_name,
+                phone_number: values.phone_number!,
+                email: values.email!,
+                program_id: values.program_id!,
+                ficha_id: values.ficha_id!,
+              };
+              await putAprendiz(editUser.id, aprendizPayload);
             } else {
-              await putInstructor(editUser.id, values);
+              const instructorPayload: CreateInstructor = {
+                first_name: values.first_name,
+                second_name: values.second_name,
+                first_last_name: values.first_last_name,
+                second_last_name: values.second_last_name,
+                phone_number: values.phone_number,
+                type_identification: values.type_identification,
+                number_identification: values.number_identification,
+                email: values.email,
+                role_id: values.role_id, // <-- igual aquí
+                contractType: values.contractType,
+                contractStartDate: values.contractStartDate,
+                contractEndDate: values.contractEndDate,
+                knowledgeArea: values.knowledgeArea,
+                center_id: values.center_id,
+                sede_id: values.sede_id,
+                regional_id: values.regional_id,
+              };
+              await putInstructor(editUser.id, instructorPayload);
             }
             await fetchAll();
           }}
