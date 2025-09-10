@@ -68,21 +68,23 @@ const SummarySecurity = () => {
             </tr>
           </thead>
           <tbody>
-            {permisos.map((perm, i) => (
-              <tr key={i} className="text-center">
-                <td className="px-3 py-2 border">
-                  <span className="inline-block bg-gray-100 border border-gray-300 rounded-full px-2 py-1 text-xs font-semibold">
-                    {perm.rol}
-                  </span>
-                </td>
-                <td className="px-3 py-2 border">{perm.formulario}</td>
-                <td className="px-3 py-2 border">{perm.Ver ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Editar ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Registrar ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Eliminar ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Activar ? iconCheck : iconCross}</td>
-              </tr>
-            ))}
+            {permisos
+              .filter(perm => perm.Ver || perm.Editar || perm.Registrar || perm.Eliminar || perm.Activar)
+              .map((perm, i) => (
+                <tr key={i} className="text-center">
+                  <td className="px-3 py-2 border">
+                    <span className="inline-block bg-gray-100 border border-gray-300 rounded-full px-2 py-1 text-xs font-semibold">
+                      {perm.rol}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 border">{perm.formulario}</td>
+                  <td className="px-3 py-2 border">{perm.Ver ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Editar ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Registrar ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Eliminar ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Activar ? iconCheck : iconCross}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
