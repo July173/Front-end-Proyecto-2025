@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import TermsModal from './TermsModal';
+import NotificationModal from './NotificationModal';
+import useNotification from '../hook/useNotification';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
@@ -19,6 +21,14 @@ interface RegisterFormProps {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
+  const {
+    notification,
+    hideNotification,
+    showRegistrationSuccess,
+    showRegistrationPending,
+    showNotification
+  } = useNotification();
+  
   const [formData, setFormData] = useState({
     email: '',
     names: '',
@@ -40,6 +50,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
 
   const [loading, setLoading] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [showPending, setShowPending] = useState(false);
 
   const validate = () => {
     let valid = true;
@@ -97,10 +108,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
       };
       try {
         const response = await registerAprendiz(payload);
-        alert('Registro exitoso. Revisa tu correo institucional.');
-        onNavigate('login');
+        // Mostrar notificación de éxito
+        showRegistrationSuccess();
+        setShowPending(true); // Para mostrar la de pendiente después
       } catch (error) {
-        alert('Error en el registro: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+        // Mostrar notificación de error
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+        showNotification('warning', 'Error en el registro', errorMessage);
       } finally {
         setLoading(false);
       }
@@ -247,8 +261,29 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
           </div>
         </form>
 
-  <FooterLinks />
-  <TermsModal isOpen={isTermsModalOpen} onClose={() => setIsTermsModalOpen(false)} />
+      <FooterLinks />
+      
+      {/* Modales */}
+      <TermsModal isOpen={isTermsModalOpen} onClose={() => setIsTermsModalOpen(false)} />
+      <NotificationModal
+        isOpen={notification.isOpen}
+        onClose={() => {
+          hideNotification();
+          // Si el registro fue exitoso, mostrar la de pendiente
+          if (notification.type === 'success' && notification.title === 'Registro exitoso' && showPending) {
+            showRegistrationPending();
+            setShowPending(false);
+            return;
+          }
+          // Si la de pendiente ya se mostró, navegar al login
+          if (notification.type === 'pending' && notification.title === 'Pendiente de revisión') {
+            onNavigate('login');
+          }
+        }}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+      />
       </div>
     </div>
   );

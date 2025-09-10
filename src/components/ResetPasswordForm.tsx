@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import NotificationModal from './NotificationModal';
+import useNotification from '../hook/useNotification';
 import { isValidPassword } from '../hook/validationlogin';
 import { resetPassword } from '../Api/Services/User';
 
@@ -10,6 +12,13 @@ interface ResetPasswordFormProps {
 }
 
 const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => {
+  const {
+    notification,
+    hideNotification,
+    showPasswordChanged,
+    showNotification
+  } = useNotification();
+  
   const [passwords, setPasswords] = useState({
     newPassword: '',
     confirmPassword: ''
@@ -42,13 +51,17 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
     const result = await resetPassword(email, code, passwords.newPassword);
     setLoading(false);
     if (result.success) {
-      // Limpiar sesión y redirigir al login
+      // Mostrar notificación de éxito
+      showPasswordChanged();
+      // Limpiar sesión
       localStorage.removeItem('user_data');
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      onNavigate('login');
+      localStorage.removeItem('recovery_email');
+      localStorage.removeItem('reset_code');
     } else {
-      setErrorMsg(result.message || 'No se pudo actualizar la contraseña.');
+      // Mostrar notificación de error
+      showNotification('warning', 'Error', result.message || 'No se pudo actualizar la contraseña.');
     }
   };
 
@@ -110,6 +123,21 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
         </form>
 
         <FooterLinks />
+        
+        {/* Modal de notificación */}
+        <NotificationModal
+          isOpen={notification.isOpen}
+          onClose={() => {
+            hideNotification();
+            // Si la contraseña se cambió exitosamente, ir al login
+            if (notification.type === 'password-changed') {
+              onNavigate('login');
+            }
+          }}
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+        />
       </div>
     </div>
   );
