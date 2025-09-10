@@ -5,6 +5,7 @@ import CardSecurity, { InfoCard } from './CardSecurity';
 import type { InfoCardProps } from '../Api/types';
 import ModalFormGeneric from './ModalFormGeneric';
 import { getForms } from '../Api/Services/Form';
+import { getPermissions } from '../Api/Services/Permission';
 
 interface RolUsuario {
   id: number;
@@ -23,6 +24,10 @@ const Roles = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [forms, setForms] = useState([]);
   const [loadingForms, setLoadingForms] = useState(true);
+  const [permissions, setPermissions] = useState([]);
+  const [loadingPermissions, setLoadingPermissions] = useState(true);
+  const [pendingRoleData, setPendingRoleData] = useState(null);
+  const [showCreateConfirm, setShowCreateConfirm] = useState(false);
 
   const handleActionClick = (rol: RolUsuario) => {
     setPendingRole(rol);
@@ -56,6 +61,7 @@ const Roles = () => {
 
   useEffect(() => {
     getForms().then(setForms).finally(() => setLoadingForms(false));
+    getPermissions().then(setPermissions).finally(() => setLoadingPermissions(false));
   }, []);
 
   if (loading) return <div className="p-8">Cargando...</div>;
@@ -66,16 +72,31 @@ const Roles = () => {
     { name: 'type_role', label: 'Nombre del Rol', type: 'text', placeholder: 'Ej: coordinador, aprendiz.' },
     { name: 'description', label: 'Descripcion', type: 'text', placeholder: 'Describe que es lo que va a administrar ese rol' },
     {
+      name: 'permission_ids',
+      label: 'Permisos de Rol',
+      type: 'checkbox-group',
+  options: permissions.map(p => ({ value: p.id, label: p.type_permission })),
+    },
+    {
       name: 'formularios',
-      label: 'Formularios',
+      label: 'Formulario',
       type: 'select',
       options: forms.map(f => ({ value: f.id, label: f.name })),
     },
-    // Aquí podrías agregar un checkbox-group para permisos si tienes los ids y nombres
   ];
 
-  const handleCreateRole = async (values) => {
+  // Al enviar el form, primero mostrar confirmación
+  const handleCreateRole = (values) => {
     // Construir el body según el formato requerido
+    let selectedPermissions = [];
+    if (permissions.length > 0) {
+      selectedPermissions = permissions
+        .filter(p => values[p.id])
+        .map(p => p.id);
+    }
+    if (Array.isArray(values.permission_ids)) {
+      selectedPermissions = values.permission_ids.map(Number);
+    }
     const data = {
       type_role: values.type_role,
       description: values.description,
@@ -83,13 +104,22 @@ const Roles = () => {
       formularios: [
         {
           form_id: Number(values.formularios),
-          permission_ids: [], // Aquí deberías mapear los permisos seleccionados
+          permission_ids: selectedPermissions,
         },
       ],
     };
+    setPendingRoleData(data);
+    setShowCreateConfirm(true);
+  };
+
+  // Si confirma, hacer el POST
+  const handleConfirmCreateRole = async () => {
+    if (!pendingRoleData) return;
     try {
-      await (data);
+      await postRolPermissions(pendingRoleData);
       setShowCreate(false);
+      setShowCreateConfirm(false);
+      setPendingRoleData(null);
       // Refrescar lista de roles
       const updated = await getRolesUser();
       setRoles(updated);
@@ -145,6 +175,15 @@ const Roles = () => {
         onSubmit={handleCreateRole}
         submitText="Registrar Rol"
         cancelText="Cancelar"
+      />
+      <ConfirmModal
+        isOpen={showCreateConfirm}
+        title="¿Confirmar registro de rol?"
+        message="¿Estás seguro de que deseas crear este nuevo rol?"
+        confirmText="Sí, crear rol"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmCreateRole}
+        onCancel={() => { setShowCreateConfirm(false); setPendingRoleData(null); }}
       />
     </div>
   );

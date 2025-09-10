@@ -1,6 +1,7 @@
 // configuracion generica del los enpoints
 
 import { get } from "http";
+import { permission } from "process";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://django:8000/api/";
 
@@ -70,7 +71,11 @@ export const ENDPOINTS = {
   },
   ficha: {
     getFichas: `${API_BASE_URL}general/fichas/`,
-  }
+  },
+  permission: {
+    getPermissions: `${API_BASE_URL}security/permissions/`,
+  },
+  // Otros grupos de endpoints...
   // Más entidades...
 };
 

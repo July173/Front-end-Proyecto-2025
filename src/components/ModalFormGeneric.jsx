@@ -26,16 +26,48 @@ const ModalFormGeneric = ({
 }) => {
   const [values, setValues] = React.useState(initialValues);
 
+  // Solo actualiza los valores si el modal se abre o initialValues cambia realmente
   React.useEffect(() => {
-    setValues(initialValues);
-  }, [initialValues, isOpen]);
+    if (isOpen) setValues(initialValues);
+    // eslint-disable-next-line
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setValues((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    // Para checkbox-group, name es el id del permiso, value es el label
+    if (type === 'checkbox' && Array.isArray(fields.find(f => f.type === 'checkbox-group')?.options)) {
+      // Si es un checkbox-group, name es el id del permiso
+      setValues((prev) => {
+        const groupField = fields.find(f => f.type === 'checkbox-group');
+        if (groupField && groupField.options.some(opt => String(opt.value) === name)) {
+          // Usar un array de ids seleccionados
+          const prevArr = Array.isArray(prev[groupField.name]) ? prev[groupField.name] : [];
+          if (checked) {
+            return {
+              ...prev,
+              [groupField.name]: [...prevArr, Number(name)],
+              [name]: true,
+            };
+          } else {
+            return {
+              ...prev,
+              [groupField.name]: prevArr.filter((id) => id !== Number(name)),
+              [name]: false,
+            };
+          }
+        }
+        // Si no es parte del checkbox-group, comportamiento normal
+        return {
+          ...prev,
+          [name]: checked,
+        };
+      });
+    } else {
+      setValues((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -73,20 +105,47 @@ const ModalFormGeneric = ({
               );
             }
             if (field.type === 'checkbox-group') {
+              // Checkbox "Todos"
+              const allChecked = Array.isArray(values[field.name]) && field.options?.length > 0 && field.options.every(opt => values[field.name].includes(opt.value));
+              const handleCheckAll = (e) => {
+                const checked = e.target.checked;
+                setValues((prev) => ({
+                  ...prev,
+                  [field.name]: checked ? field.options.map(opt => opt.value) : [],
+                }));
+              };
+              // Mostrar en dos columnas
+              const colCount = 2;
+              const rows = [];
+              for (let i = 0; i < field.options.length; i += colCount) {
+                rows.push(field.options.slice(i, i + colCount));
+              }
               return (
                 <div key={field.name}>
-                  <label className="block text-sm font-semibold mb-1">{field.label}</label>
-                  <div className="flex flex-wrap gap-4">
-                    {field.options?.map((opt) => (
-                      <label key={opt.value} className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          name={opt.value}
-                          checked={!!values[opt.value]}
-                          onChange={handleChange}
-                        />
-                        {opt.label}
-                      </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-base  font-semibold">{field.label}</label>
+                    <label className="flex items-center gap-4 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={allChecked}
+                        onChange={handleCheckAll}
+                      />
+                      Todos
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-4 gap-x-14">
+                    {rows.map((row, rowIdx) => (
+                      row.map((opt, colIdx) => (
+                        <label key={opt.value} className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            name={String(opt.value)}
+                            checked={Array.isArray(values[field.name]) ? values[field.name].includes(opt.value) : false}
+                            onChange={handleChange}
+                          />
+                          <span className="text-base">{opt.label}</span>
+                        </label>
+                      ))
                     ))}
                   </div>
                 </div>
