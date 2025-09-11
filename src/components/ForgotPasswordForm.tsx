@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import NotificationModal from './NotificationModal';
+import useNotification from '../hook/useNotification';
 import { isSenaEmail } from '../hook/validationlogin';
 import { requestPasswordResetCode } from '../Api/Services/User';
 
@@ -10,6 +12,13 @@ interface ForgotPasswordFormProps {
 }
 
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) => {
+  const {
+    notification,
+    hideNotification,
+    showEmailSent,
+    showNotification
+  } = useNotification();
+  
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,9 +39,11 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
     const result = await requestPasswordResetCode(email);
     setLoading(false);
     if (result.success) {
-      onNavigate('verify-code');
+      // Mostrar notificación de correo enviado
+      showEmailSent();
     } else {
-      setErrorMsg(result.message || 'No se pudo enviar el correo. Por favor verifica el correo e inténtalo de nuevo.');
+      // Mostrar notificación de error
+      showNotification('warning', 'Error', result.message || 'No se pudo enviar el correo. Por favor verifica el correo e inténtalo de nuevo.');
     }
   };
 
@@ -78,6 +89,21 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onNavigate }) =
         </form>
 
         <FooterLinks />
+        
+        {/* Modal de notificación */}
+        <NotificationModal
+          isOpen={notification.isOpen}
+          onClose={() => {
+            hideNotification();
+            // Si el correo se envió exitosamente, ir a verify-code
+            if (notification.type === 'email-sent') {
+              onNavigate('verify-code');
+            }
+          }}
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+        />
       </div>
     </div>
   );

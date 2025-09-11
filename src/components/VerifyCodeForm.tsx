@@ -4,12 +4,20 @@ import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
 import { isValidResetCode } from '../hook/validationlogin';
 import { verifyResetCode } from '../Api/Services/User';
+import NotificationModal from './NotificationModal';
+import useNotification from '../hook/useNotification';
 
 interface VerifyCodeFormProps {
   onNavigate: (view: string) => void;
 }
 
 const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
+  const {
+    notification,
+    hideNotification,
+    showActionCompleted,
+    showNotification
+  } = useNotification();
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +38,8 @@ const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
     const result = await verifyResetCode(email, code);
     setLoading(false);
     if (result.success) {
-      onNavigate('reset-password');
+      // Mostrar notificación de acción completada
+      showActionCompleted();
     } else {
       setErrorMsg(result.message || 'El código es incorrecto o ha expirado.');
     }
@@ -79,6 +88,20 @@ const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
         </form>
 
         <FooterLinks />
+        {/* Modal de notificación */}
+        <NotificationModal
+          isOpen={notification.isOpen}
+          onClose={() => {
+            hideNotification();
+            // Si la acción fue completada, navegar a reset-password
+            if (notification.type === 'completed') {
+              onNavigate('reset-password');
+            }
+          }}
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+        />
       </div>
     </div>
   );
