@@ -146,9 +146,8 @@ const Users = () => {
               {user.person.first_name} {user.person.second_name || ''} {user.person.first_last_name}
             </span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-            estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-          }`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`}>
             {label}
           </span>
         </div>
@@ -177,9 +176,10 @@ const Users = () => {
     );
   }
 
-  // Separar usuarios por estado
-  const habilitados = registrados.filter(u => getUserStatus(u) === 'activo');
-  const inhabilitados = registrados.filter(u => getUserStatus(u) === 'inhabilitado');
+  // Separar usuarios por estado y registro
+  const registradosUsers = registrados.filter(u => u.registered === true);
+  const habilitados = registrados.filter(u => !u.registered && getUserStatus(u) === 'activo');
+  const inhabilitados = registrados.filter(u => !u.registered && getUserStatus(u) === 'inhabilitado');
 
   // Define los fields aquí, después de tener los arrays
   const fieldsAprendiz: FieldDef[] = [
@@ -235,6 +235,13 @@ const Users = () => {
           {habilitados.map((u, i) => <RegistradoCard key={`hab-${i}`} user={u} />)}
         </div>
       </div>
+      {/* Usuarios registrados */}
+      <div className="mt-6">
+        <h3 className="text-yellow-600 text-xl font-bold mb-2">Usuarios Registrados</h3>
+        <div className="flex flex-wrap">
+          {registradosUsers.map((u, i) => <RegistradoCard key={`reg-${i}`} user={u} />)}
+        </div>
+      </div>
       {/* Usuarios inhabilitados */}
       <div className="mt-6">
         <h3 className="text-red-600 text-xl font-bold mb-2">Usuarios Inhabilitados</h3>
@@ -268,7 +275,7 @@ const Users = () => {
         onCancel={() => setShowConfirm(false)}
       />
 
-      
+
       {/* Modal de editar usuario */}
       {showEdit && editUser && editInitialValues && (
         <ModalEditGeneric
@@ -293,22 +300,22 @@ const Users = () => {
               await putAprendiz(editUser.id, aprendizPayload);
             } else {
               const instructorPayload: CreateInstructor = {
-                first_name: values.first_name,
+                first_name: values.first_name!,
                 second_name: values.second_name,
-                first_last_name: values.first_last_name,
+                first_last_name: values.first_last_name!,
                 second_last_name: values.second_last_name,
-                phone_number: values.phone_number,
-                type_identification: values.type_identification,
-                number_identification: values.number_identification,
-                email: values.email,
-                role_id: values.role_id, // <-- igual aquí
-                contractType: values.contractType,
-                contractStartDate: values.contractStartDate,
-                contractEndDate: values.contractEndDate,
-                knowledgeArea: values.knowledgeArea,
-                center_id: values.center_id,
-                sede_id: values.sede_id,
-                regional_id: values.regional_id,
+                phone_number: values.phone_number!,
+                type_identification: values.type_identification!,
+                number_identification: values.number_identification!,
+                email: values.email!,
+                role_id: values.role_id!,
+                contractType: values.contractType!,
+                contractStartDate: values.contractStartDate!,
+                contractEndDate: values.contractEndDate!,
+                knowledgeArea: values.knowledgeArea!,
+                center_id: values.center_id!,
+                sede_id: values.sede_id!,
+                regional_id: values.regional_id!,
               };
               await putInstructor(editUser.id, instructorPayload);
             }
@@ -327,3 +334,8 @@ const Users = () => {
 };
 
 export default Users;
+
+
+
+
+

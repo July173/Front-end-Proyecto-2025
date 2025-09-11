@@ -50,6 +50,7 @@ export interface User {
   is_superuser?: boolean;
   role: number; // id del rol
   person: string; // id de la persona asociada
+  registered :boolean
 }
 
 export interface RegisterResponse {
@@ -66,6 +67,7 @@ export interface ValidateLoginResponse {
     id: string;
     role?: number;
     person: string; // id de la persona asociada
+    registered ?:boolean;
   };
   // Para compatibilidad con backend antiguo/campos planos
   user_id?: string;
@@ -204,6 +206,7 @@ export interface UsuarioRegistrado {
   email: string;
   estado: string;
   role: number;
+  registered?: boolean;
   person: {
     id: string;
     first_name: string;
