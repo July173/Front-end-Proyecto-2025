@@ -47,12 +47,14 @@ export const ENDPOINTS = {
   },
   
   aprendiz: {
-    AllAprendiz: `${API_BASE_URL}general/create-aprendices/`,
-    IdAprendiz: `${API_BASE_URL}general/create-aprendices/{id}/`,
+    allAprendiz: `${API_BASE_URL}general/aprendices/Create-Aprendiz/create/`,
+    getIdAprendiz: `${API_BASE_URL}general/aprendices/{id}/Create-Aprendiz/GetById/`,
+    putIdAprendiz: `${API_BASE_URL}general/aprendices/{id}/Create-Aprendiz/update/`,
   },
   instructor: {
-    AllInstructores: `${API_BASE_URL}general/create-instructors/`,
-    IdInstructor: `${API_BASE_URL}general/create-instructors/{id}/`,
+    allInstructores: `${API_BASE_URL}general/instructors/Create-Instructor/create/`,
+    getIdInstructor: `${API_BASE_URL}general/instructors/{id}/Create-Instructor/Retrieve/`,
+    putIdInstructor: `${API_BASE_URL}general/instructors/{id}/Create-Instructor/update/`,
 
   },
   regional: {

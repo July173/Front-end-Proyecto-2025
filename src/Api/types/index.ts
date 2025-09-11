@@ -7,8 +7,8 @@ export interface InfoCardProps {
   count: number;
   buttonText: string;
   onButtonClick?: () => void;
-  actionLabel: string;
-  actionType: 'enable' | 'disable';
+  actionLabel?: string;
+  actionType?: 'enable' | 'disable';
   onActionClick?: () => void;
 }
 import { ReactNode } from 'react';

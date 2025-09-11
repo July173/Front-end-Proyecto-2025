@@ -154,7 +154,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               className="sena-input"
               required
             />
-            {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
+              {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

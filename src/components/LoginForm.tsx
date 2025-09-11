@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useValidationEmail } from '../hook/ValidationEmail';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; // ✅ AGREGAR ESTO
 import FooterLinks from './FooterLinks';

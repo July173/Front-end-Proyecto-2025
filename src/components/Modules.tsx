@@ -144,9 +144,7 @@ const Modules = () => {
             count: undefined, // No mostrar usuarios asignados
             buttonText: 'Ajustar',
             onButtonClick: () => alert(`Ajustar ${mod.name}`),
-            actionLabel: mod.active ? 'Inhabilitar' : 'Habilitar',
-            actionType: mod.active ? 'disable' : 'enable',
-            onActionClick: () => alert(`${mod.active ? 'Inhabilitar' : 'Habilitar'} módulo ${mod.name}`),
+            // Botón de habilitar/deshabilitar removido
           };
           return <InfoCard key={mod.id} {...cardProps} />;
         })}

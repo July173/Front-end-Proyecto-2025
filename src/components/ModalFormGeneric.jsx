@@ -1,4 +1,4 @@
-import React from 'react';
+  import React from 'react';
 
 /**
  * ModalFormGeneric
@@ -23,6 +23,7 @@ const ModalFormGeneric = ({
   submitText = 'Registrar',
   cancelText = 'Cancelar',
   initialValues = {},
+  customRender,
 }) => {
   const [values, setValues] = React.useState(initialValues);
 
@@ -86,6 +87,14 @@ const ModalFormGeneric = ({
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <div className="space-y-4 mb-6">
           {fields.map((field) => {
+            if (field.type === 'custom-permissions' && typeof customRender === 'function') {
+              return (
+                <div key={field.name}>
+                  <label className="block text-sm font-semibold mb-1">{field.label}</label>
+                  {customRender({ values, setValues })}
+                </div>
+              );
+            }
             if (field.type === 'select') {
               return (
                 <div key={field.name}>
@@ -105,7 +114,7 @@ const ModalFormGeneric = ({
               );
             }
             if (field.type === 'checkbox-group') {
-              // Checkbox "Todos"
+              // ...existing code...
               const allChecked = Array.isArray(values[field.name]) && field.options?.length > 0 && field.options.every(opt => values[field.name].includes(opt.value));
               const handleCheckAll = (e) => {
                 const checked = e.target.checked;

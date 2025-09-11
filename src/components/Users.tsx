@@ -66,7 +66,22 @@ const Users = () => {
     setError('');
     try {
       const reg = await getUsers();
-      setRegistrados(reg);
+      // Si el campo person es un id, obtener los datos completos de la persona
+      const usuariosConPersona = await Promise.all(
+        reg.map(async (u: any) => {
+          if (u.person && typeof u.person === 'string') {
+            try {
+              const persona = await getPersonById(u.person);
+              return { ...u, person: persona };
+            } catch (err) {
+              console.warn('No se pudo obtener la persona para el usuario', u, err);
+              return { ...u, person: null };
+            }
+          }
+          return u;
+        })
+      );
+      setRegistrados(usuariosConPersona);
     } catch (err) {
       setError('Error al cargar los usuarios');
     } finally {
@@ -137,24 +152,33 @@ const Users = () => {
     const estado = getUserStatus(user);
     const color = estadoColor[estado];
     const label = estadoLabel[estado];
+    // Validar que user.person existe y tiene los campos necesarios
+    let nombre = '';
+    if (user.person && typeof user.person === 'object') {
+      nombre = [
+        user.person.first_name,
+        user.person.second_name ? user.person.second_name : '',
+        user.person.first_last_name,
+        user.person.second_last_name ? user.person.second_last_name : ''
+      ].filter(Boolean).join(' ');
+    }
+    if (!nombre) {
+      nombre = 'Sin nombre';
+    }
+    // Obtener nombre de rol correctamente
+    const rol = (roles.find(r => r.id === user.role)?.type_role) || 'Sin rol';
     return (
-      <div className={`border ${color} rounded-lg p-4 m-2 w-[320px] min-h-[180px] flex flex-col justify-between shadow-sm`}>
+      <div className={`border ${color} rounded-lg p-4 m-2 w-[320px] min-h-[150px] flex flex-col justify-between shadow-sm`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <User className="text-blue-600" />
-            <span className="font-semibold">
-              {user.person.first_name} {user.person.second_name || ''} {user.person.first_last_name}
-            </span>
+            <span className="font-semibold">{nombre}</span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-            }`}>
-            {label}
-          </span>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>{label}</span>
         </div>
         <div className="text-sm text-gray-700 mb-1">
           <div>{user.email}</div>
-          <div>Tipo ID: <span className="font-medium">{user.person.type_identification}</span></div>
-          <div>N° ID: <span className="font-mono">{user.person.number_identification}</span></div>
+          <div>Rol : <span className="font-bold text-indigo-700">{rol}</span></div>
         </div>
         <div className="flex gap-2 mt-2">
           <button
