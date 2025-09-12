@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getModules, postModule } from '../Api/Services/Module';
+import { getModules, postModule, getModuleForms, putModuleForms } from '../Api/Services/Module';
 import { getForms } from '../Api/Services/Form';
 import { postForm } from '../Api/Services/Form';
 import { InfoCard } from './CardSecurity';
@@ -27,6 +27,12 @@ const Modules = () => {
   const [showFormConfirm, setShowFormConfirm] = useState(false);
   const [pendingModuleData, setPendingModuleData] = useState(null);
   const [showModuleConfirm, setShowModuleConfirm] = useState(false);
+  // Edición de módulo
+  const [editModule, setEditModule] = useState(null); // datos completos del módulo a editar
+  const [showEdit, setShowEdit] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [showEditConfirm, setShowEditConfirm] = useState(false);
+  const [pendingEditData, setPendingEditData] = useState(null);
 
   useEffect(() => {
     getModules()
@@ -48,7 +54,7 @@ const Modules = () => {
     { name: 'description', label: 'Descripcion', type: 'text', placeholder: 'Describe que es lo que va  a hacer' },
   ];
 
-  // Campos para el modal de crear módulo
+  // Campos para el modal de crear/editar módulo
   const moduleFields = [
     { name: 'name', label: 'Nombre del Modulo', type: 'text', placeholder: 'Ej : seguridad' },
     { name: 'description', label: 'Descripcion', type: 'text', placeholder: 'Describe que es lo que va  a hacer' },
@@ -56,7 +62,7 @@ const Modules = () => {
       name: 'form_ids',
       label: 'Formularios',
       type: 'checkbox-group',
-      options: forms.map(f => ({ value: f.id, label: f.name })),
+      options: forms.map(f => ({ value: String(f.id), label: f.name })),
     },
   ];
 
@@ -101,7 +107,22 @@ const Modules = () => {
     setShowModuleConfirm(true);
   };
 
-  // Si confirma, hacer el POST
+  // Editar módulo: primero mostrar confirmación
+  const handleEditModule = (values) => {
+    let selectedForms = [];
+    if (Array.isArray(values.form_ids)) {
+      selectedForms = values.form_ids.map(Number);
+    }
+    const data = {
+      name: values.name,
+      description: values.description,
+      form_ids: selectedForms,
+    };
+    setPendingEditData(data);
+    setShowEditConfirm(true);
+  };
+
+  // Si confirma, hacer el POST (crear)
   const handleConfirmCreateModule = async () => {
     if (!pendingModuleData) return;
     try {
@@ -117,23 +138,42 @@ const Modules = () => {
     }
   };
 
+  // Si confirma, hacer el PUT (editar)
+  const handleConfirmEditModule = async () => {
+    if (!pendingEditData || !editModule) return;
+    try {
+      await putModuleForms(editModule.id, pendingEditData);
+      setShowEdit(false);
+      setShowEditConfirm(false);
+      setPendingEditData(null);
+      setEditModule(null);
+      // Refrescar lista de módulos
+      const updated = await getModules();
+      setModules(updated);
+    } catch (e) {
+      alert(e.message || 'Error al actualizar el módulo');
+    }
+  };
+
   return (
     <div className="bg-white p-8 rounded-lg shadow">
-      <div className="flex gap-4 mb-4 justify-end">
-        <button
-          className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
-          onClick={() => setShowFormModal(true)}
-        >
-          <span className="text-xl font-bold">+</span>  Formulario
-        </button>
-        <button
-          className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
-          onClick={() => setShowModuleModal(true)}
-        >
-          <span className="text-xl font-bold">+</span>  Modulo
-        </button>
+      <div className="flex items-center gap-4 mb-6 justify-between">
+        <h2 className="text-2xl font-bold">Gestión de Módulos - Sena</h2>
+        <div className="flex gap-4">
+          <button
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
+            onClick={() => setShowFormModal(true)}
+          >
+            <span className="text-xl font-bold">+</span>  Formulario
+          </button>
+          <button
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
+            onClick={() => setShowModuleModal(true)}
+          >
+            <span className="text-xl font-bold">+</span>  Modulo
+          </button>
+        </div>
       </div>
-      <h2 className="text-2xl font-semibold mb-6">Gestión de Módulos - Sena</h2>
       <div className="flex gap-4 flex-wrap">
         {modules.map((mod) => {
           const cardProps: InfoCardProps = {
@@ -143,11 +183,48 @@ const Modules = () => {
             description: mod.description,
             count: undefined, // No mostrar usuarios asignados
             buttonText: 'Ajustar',
-            onButtonClick: () => alert(`Ajustar ${mod.name}`),
-            // Botón de habilitar/deshabilitar removido
+            onButtonClick: async () => {
+              setEditLoading(true);
+              try {
+                const data = await getModuleForms(mod.id);
+                // data: { name, description, active, forms: [{id, name, ...}] }
+                setEditModule({
+                  id: mod.id,
+                  name: data.name,
+                  description: data.description,
+                  form_ids: (data.forms || []).map(f => String(f.id)), // IDs de forms seleccionados como string
+                });
+                setShowEdit(true);
+              } catch (e) {
+                alert(e.message || 'No se pudo cargar el módulo');
+              } finally {
+                setEditLoading(false);
+              }
+            },
+            // No pasar actionLabel, actionType ni onActionClick
           };
           return <InfoCard key={mod.id} {...cardProps} />;
         })}
+      {/* Modal de edición de módulo */}
+      <ModalFormGeneric
+        isOpen={showEdit}
+        title="Editar Modulo-Sena"
+        fields={moduleFields}
+        onClose={() => { setShowEdit(false); setEditModule(null); setPendingEditData(null); }}
+        onSubmit={handleEditModule}
+        submitText="Actualizar Modulo"
+        cancelText="Cancelar"
+  initialValues={editModule ? { ...editModule, form_ids: (editModule.form_ids || []).map(String) } : {}}
+      />
+      <ConfirmModal
+        isOpen={showEditConfirm}
+        title="¿Confirmar actualización de módulo?"
+        message="¿Estás seguro de que deseas actualizar este módulo?"
+        confirmText="Sí, actualizar módulo"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmEditModule}
+        onCancel={() => { setShowEditConfirm(false); setPendingEditData(null); }}
+      />
       </div>
       <ModalFormGeneric
         isOpen={showFormModal}

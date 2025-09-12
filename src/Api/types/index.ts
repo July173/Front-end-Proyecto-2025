@@ -1,3 +1,11 @@
+// Interfaz para los roles de usuario (usada en Roles.tsx)
+export interface RolUsuario {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  active: boolean;
+  cantidad_usuarios: number;
+}
 // Card reutilizable para dashboard, roles, módulos, etc.
 export interface InfoCardProps {
   title: string;

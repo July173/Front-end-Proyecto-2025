@@ -30,8 +30,7 @@ const ModalFormGeneric = ({
   // Solo actualiza los valores si el modal se abre o initialValues cambia realmente
   React.useEffect(() => {
     if (isOpen) setValues(initialValues);
-    // eslint-disable-next-line
-  }, [isOpen]);
+  }, [isOpen, initialValues]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,18 +40,21 @@ const ModalFormGeneric = ({
       setValues((prev) => {
         const groupField = fields.find(f => f.type === 'checkbox-group');
         if (groupField && groupField.options.some(opt => String(opt.value) === name)) {
-          // Usar un array de ids seleccionados
-          const prevArr = Array.isArray(prev[groupField.name]) ? prev[groupField.name] : [];
+          // Usar un array de ids seleccionados (siempre string, sin duplicados)
+          let prevArr = Array.isArray(prev[groupField.name]) ? prev[groupField.name].map(String) : [];
           if (checked) {
+            if (!prevArr.includes(String(name))) {
+              prevArr = [...prevArr, String(name)];
+            }
             return {
               ...prev,
-              [groupField.name]: [...prevArr, Number(name)],
+              [groupField.name]: prevArr,
               [name]: true,
             };
           } else {
             return {
               ...prev,
-              [groupField.name]: prevArr.filter((id) => id !== Number(name)),
+              [groupField.name]: prevArr.filter((id) => id !== String(name)),
               [name]: false,
             };
           }
@@ -81,11 +83,12 @@ const ModalFormGeneric = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
       <form
-        className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg"
+        className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg max-h-[80vh] flex flex-col"
         onSubmit={handleSubmit}
+        style={{ maxHeight: '80vh' }}
       >
         <h2 className="text-xl font-bold mb-4">{title}</h2>
-        <div className="space-y-4 mb-6">
+        <div className="space-y-4 mb-6 overflow-y-auto" style={{ maxHeight: '48vh' }}>
           {fields.map((field) => {
             if (field.type === 'custom-permissions' && typeof customRender === 'function') {
               return (
@@ -149,7 +152,7 @@ const ModalFormGeneric = ({
                           <input
                             type="checkbox"
                             name={String(opt.value)}
-                            checked={Array.isArray(values[field.name]) ? values[field.name].includes(opt.value) : false}
+                            checked={Array.isArray(values[field.name]) ? values[field.name].map(String).includes(String(opt.value)) : false}
                             onChange={handleChange}
                           />
                           <span className="text-base">{opt.label}</span>

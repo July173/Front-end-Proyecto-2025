@@ -19,6 +19,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
   actionType,
   onActionClick,
 }) => {
+  const showAction = actionLabel && actionType && onActionClick;
   return (
     <div className="bg-white p-4 rounded-lg shadow w-[350px] min-h-[180px] flex flex-col justify-between border-2 border-gray-300">
       <div>
@@ -32,25 +33,36 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <span className="text-sm text-gray-600">{count} usuarios asignados</span>
           )}
           <div className="flex-1" />
-          <button
-            className="border border-gray-300 rounded px-3 py-1 text-sm font-semibold hover:bg-gray-100 ml-auto"
-            onClick={onButtonClick}
-          >
-            {buttonText}
-          </button>
+          {showAction && (
+            <button
+              className="border border-gray-300 rounded px-3 py-1 text-sm font-semibold hover:bg-gray-100 ml-auto"
+              onClick={onButtonClick}
+            >
+              {buttonText}
+            </button>
+          )}
         </div>
       </div>
-      <button
-        className={`flex items-center justify-center gap-2 w-full py-2 rounded ${
-          actionType === 'enable'
-            ? 'bg-green-500 hover:bg-green-600 text-white'
-            : 'bg-red-500 hover:bg-red-600 text-white'
-        } font-semibold mt-2`}
-        onClick={onActionClick}
-      >
-        <User className="w-4 h-4" />
-        {actionLabel}
-      </button>
+      {showAction ? (
+        <button
+          className={`flex items-center justify-center gap-2 w-full py-2 rounded ${
+            actionType === 'enable'
+              ? 'bg-green-500 hover:bg-green-600 text-white'
+              : 'bg-red-500 hover:bg-red-600 text-white'
+          } font-semibold mt-2`}
+          onClick={onActionClick}
+        >
+          <User className="w-4 h-4" />
+          {actionLabel}
+        </button>
+      ) : (
+        <button
+          className="w-full py-2 rounded bg-blue-700 hover:bg-blue-800 text-white font-semibold mt-2"
+          onClick={onButtonClick}
+        >
+          {buttonText}
+        </button>
+      )}
     </div>
   );
 };

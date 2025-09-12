@@ -32,6 +32,7 @@ export const ENDPOINTS = {
     getRolUser: `${API_BASE_URL}security/roles/roles-with-user-count/`,
     postRolPermissions: `${API_BASE_URL}security/rol-form-permissions/create-role-with-permissions/`,
     getRolPermissions: `${API_BASE_URL}security/rol-form-permissions/{id}/get-role-with-permissions/`,
+    putRolFormPerms: `${API_BASE_URL}security/rol-form-permissions/{id}/update-role-with-permissions/`,
     getRolesFormsPerms: `${API_BASE_URL}security/rol-form-permissions/permission-matrix/`,
   },
   
@@ -44,6 +45,8 @@ export const ENDPOINTS = {
     getModule: `${API_BASE_URL}security/modules/`,
     deleteModule: `${API_BASE_URL}security/modules/{id}/`,
     post: `${API_BASE_URL}security/form-modules/create-module-with-forms/`,
+    getModuleForms: `${API_BASE_URL}security/form-modules/{id}/get-module-with-forms/`,
+    putModuleForms: `${API_BASE_URL}security/form-modules/{id}/update-module-with-forms/`,
   },
   
   aprendiz: {

@@ -1,3 +1,22 @@
+// Obtener los datos de un rol con sus permisos y formularios
+export async function getRolPermissions(id) {
+	const url = ENDPOINTS.rol.getRolPermissions.replace('{id}', id.toString());
+	const response = await fetch(url);
+	if (!response.ok) throw new Error('Error al obtener datos del rol');
+	return response.json();
+}
+
+// Actualizar un rol con sus formularios y permisos
+export async function putRolFormPerms(id, data) {
+	const url = ENDPOINTS.rol.putRolFormPerms.replace('{id}', id.toString());
+	const response = await fetch(url, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) throw new Error('Error al actualizar el rol');
+	return response.json();
+}
 // Obtener la matriz de permisos de roles y formularios
 export async function getRolesFormsPerms() {
 	const response = await fetch(ENDPOINTS.rol.getRolesFormsPerms);
