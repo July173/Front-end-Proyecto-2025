@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Persona.
+ * Incluye datos de registro y estructura de la persona en el sistema.
+ */
+/**
+ * Tipos e interfaces para la entidad Persona.
+ * Incluye datos de registro y estructura de la persona en el sistema.
+ */
 export interface RegisterPayload {
   email: string;
   first_name: string;

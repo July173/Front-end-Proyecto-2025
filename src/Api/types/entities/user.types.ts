@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Usuario.
+ * Incluye datos de usuario, respuesta de registro y validación de login.
+ */
+/**
+ * Tipos e interfaces para la entidad Usuario.
+ * Incluye datos de usuario, respuesta de registro y validación de login.
+ */
 export interface User {
   id: string;
   email: string;

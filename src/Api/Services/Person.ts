@@ -2,9 +2,9 @@
  * Servicio para operaciones relacionadas con la entidad Persona.
  * Incluye registro de aprendiz, obtención y actualización de datos de persona.
  */
-import { RegisterPayload, RegisterResponse } from "../types";
+import {  RegisterResponse } from "../types/entities/user.types";
 import { ENDPOINTS } from "../config/ConfigApi";
-import { Person } from "../types";
+import { Person, RegisterPayload } from "../types/entities/person.types";
 
 /**
  * Actualiza la imagen de perfil de una persona.

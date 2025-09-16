@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces misceláneos y utilitarios.
+ * Incluye props de componentes y estructuras auxiliares.
+ */
+/**
+ * Tipos e interfaces misceláneos y utilitarios.
+ * Incluye props de componentes y estructuras auxiliares.
+ */
 export interface InfoCardProps {
   title: string;
   statusLabel: string;

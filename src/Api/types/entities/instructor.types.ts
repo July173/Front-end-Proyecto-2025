@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Instructor.
+ * Incluye estructura y datos de registro de instructores.
+ */
+/**
+ * Tipos e interfaces para la entidad Instructor.
+ * Incluye estructura y datos de registro de instructores.
+ */
 export interface Instructor {
   id: string;
   person: number;

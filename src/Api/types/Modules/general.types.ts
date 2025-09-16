@@ -1,3 +1,8 @@
+/**
+ * Tipos e interfaces para entidades generales del sistema.
+ * Incluye Sede, Regional, Program, KnowledgeArea, Ficha y Center.
+ * Usados para modelar la estructura de datos de módulos generales.
+ */
 export interface Sede {
   id: number;
   name?: string;

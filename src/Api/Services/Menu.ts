@@ -1,6 +1,6 @@
 
 import { ENDPOINTS } from '../config/ConfigApi';
-import { MenuApiResponse, ProcessedMenuData, MenuItem, MenuUserInfo, AppSidebarProps } from '../types'; // Importa desde tu archivo principal de tipos
+import { MenuApiResponse, ProcessedMenuData, MenuItem, MenuUserInfo, AppSidebarProps } from '../types/entities/menu.types'; // Importa desde tu archivo principal de tipos
 
 /**
  * Servicio para operaciones relacionadas con el menú dinámico del usuario.

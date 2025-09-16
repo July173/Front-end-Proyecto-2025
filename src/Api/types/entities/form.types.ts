@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Formulario.
+ * Incluye estructura de formularios, módulos y permisos relacionados.
+ */
+/**
+ * Tipos e interfaces para la entidad Formulario.
+ * Incluye estructura de formularios, módulos y permisos relacionados.
+ */
 export interface Form {
   id: string;
   name: string;

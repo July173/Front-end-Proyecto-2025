@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Rol y permisos.
+ * Incluye estructura de roles, conteo de usuarios y permisos por rol.
+ */
+/**
+ * Tipos e interfaces para la entidad Rol y permisos.
+ * Incluye estructura de roles, conteo de usuarios y permisos por rol.
+ */
 export interface Role {
   id: string;
   type_role: string;

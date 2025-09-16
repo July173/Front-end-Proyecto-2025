@@ -1,5 +1,6 @@
 import { ENDPOINTS } from "../config/ConfigApi";
-import { ValidateLoginResponse } from "../types";
+import { ValidateLoginResponse ,UserStatus} from "../types/entities/user.types";
+
 
 // Servicio para solicitar código de recuperación de contraseña
 // Obtener todos los usuarios
@@ -127,8 +128,6 @@ export async function resetPassword(email: string, code: string, new_password: s
 	return { success: false, message: data.error || "No se pudo actualizar la contraseña" };
 }
 
-// Importar la interface UserStatus desde types
-import type { UserStatus } from "../types";
 
 /**
  * Obtiene el estado textual de un usuario (activo/inhabilitado) según sus propiedades.

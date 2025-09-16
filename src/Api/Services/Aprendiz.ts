@@ -3,7 +3,7 @@
  * Incluye obtención, registro, actualización y consulta por ID.
  */
 import { ENDPOINTS } from '../config/ConfigApi';
-import { CreateAprendiz} from '../types';
+import { CreateAprendiz} from '../types/entities/aprendiz.types';
 
 /**
  * Obtiene la lista de todos los aprendices.

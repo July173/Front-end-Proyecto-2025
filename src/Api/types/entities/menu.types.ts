@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Menú y navegación.
+ * Incluye estructura de menú, usuario y datos procesados para el sidebar.
+ */
+/**
+ * Tipos e interfaces para la entidad Menú y navegación.
+ * Incluye estructura de menú, usuario y datos procesados para el sidebar.
+ */
 import { ReactNode } from 'react';
 
 export interface MenuApiResponse {

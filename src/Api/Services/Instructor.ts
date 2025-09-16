@@ -3,7 +3,7 @@
  * Incluye obtención, registro, actualización y consulta por ID.
  */
 import { ENDPOINTS } from '../config/ConfigApi';
-import { CreateInstructor } from '../types';
+import { CreateInstructor } from '../types/entities/instructor.types';
 
 /**
  * Obtiene la lista de todos los instructores.

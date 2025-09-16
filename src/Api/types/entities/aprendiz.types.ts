@@ -1,3 +1,11 @@
+/**
+ * Tipos e interfaces para la entidad Aprendiz.
+ * Incluye estructura y datos de registro de aprendices.
+ */
+/**
+ * Tipos e interfaces para la entidad Aprendiz.
+ * Incluye estructura y datos de registro de aprendices.
+ */
 export interface Aprendiz {
   id: string;
   person: number;
