@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getRolesFormsPerms, getRolesUser } from '../Api/Services/Rol';
-interface RolUserCount {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  cantidad_usuarios: number;
-}
+import type { Permiso, RolUserCount } from '../Api/types/entities/role.types';
 const roleColors: Record<string, string> = {
   Administrador: 'bg-green-50 border-green-400 text-green-700',
   Usuarios: 'bg-red-50 border-red-400 text-red-700',
@@ -14,15 +9,6 @@ const roleColors: Record<string, string> = {
   Coordinadores: 'bg-pink-50 border-pink-400 text-pink-700',
 };
 
-interface Permiso {
-  rol: string;
-  formulario: string;
-  Ver: boolean;
-  Editar: boolean;
-  Registrar: boolean;
-  Eliminar: boolean;
-  Activar: boolean;
-}
 
 const iconCheck = <span className="text-green-600 text-lg">✓</span>;
 const iconCross = <span className="text-red-600 text-lg">✗</span>;

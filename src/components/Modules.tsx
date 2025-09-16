@@ -5,7 +5,7 @@ import { postForm } from '../Api/Services/Form';
 import { InfoCard } from './CardSecurity';
 import ModalFormGeneric from './ModalFormGeneric';
 import ConfirmModal from './ConfirmModal';
-import type { InfoCardProps } from '../Api/types';
+import type { InfoCardProps } from '../Api/types/entities/misc.types';
 
 interface Module {
   id: number;
@@ -187,12 +187,12 @@ const Modules = () => {
               setEditLoading(true);
               try {
                 const data = await getModuleForms(mod.id);
-                // data: { name, description, active, forms: [{id, name, ...}] }
+                const selectedFormIds = (data.form_ids || []).map(String);
                 setEditModule({
                   id: mod.id,
                   name: data.name,
                   description: data.description,
-                  form_ids: (data.forms || []).map(f => String(f.id)), // IDs de forms seleccionados como string
+                  form_ids: selectedFormIds, // IDs de forms seleccionados como string
                 });
                 setShowEdit(true);
               } catch (e) {

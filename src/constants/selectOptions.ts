@@ -1,5 +1,4 @@
 export const tiposDocumento = [
-  { value: '', label: 'Tipo de documento' },
   { value: 'CC', label: 'Cédula de Ciudadanía' },
   { value: 'TI', label: 'Tarjeta de Identidad' },
   { value: 'CE', label: 'Cédula de Extranjería' },

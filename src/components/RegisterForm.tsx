@@ -6,7 +6,7 @@ import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
 import { registerAprendiz } from '../Api/Services/Person';
-import { RegisterPayload } from '../Api/types';
+import { RegisterPayload } from '../Api/types/entities/person.types';
 import {
   isSenaEmail,
   isValidNames,

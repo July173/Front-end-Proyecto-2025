@@ -1,6 +1,6 @@
 import React from 'react';
 import { User } from 'lucide-react';
-import type { InfoCardProps } from '../Api/types';
+import type { InfoCardProps } from '../Api/types/entities/misc.types';
 
 const statusBg: Record<string, string> = {
   green: 'bg-green-500',

@@ -1,4 +1,10 @@
-// Obtener los datos de un rol con sus permisos y formularios
+import { ENDPOINTS } from '../config/ConfigApi';
+
+/**
+ * Obtiene los datos de un rol con sus permisos y formularios.
+ * @param id - ID del rol
+ * @returns Promesa con los datos del rol
+ */
 export async function getRolPermissions(id) {
 	const url = ENDPOINTS.rol.getRolPermissions.replace('{id}', id.toString());
 	const response = await fetch(url);
@@ -6,7 +12,12 @@ export async function getRolPermissions(id) {
 	return response.json();
 }
 
-// Actualizar un rol con sus formularios y permisos
+/**
+ * Actualiza un rol con sus formularios y permisos.
+ * @param id - ID del rol
+ * @param data - Datos actualizados del rol
+ * @returns Promesa con la respuesta de la API
+ */
 export async function putRolFormPerms(id, data) {
 	const url = ENDPOINTS.rol.putRolFormPerms.replace('{id}', id.toString());
 	const response = await fetch(url, {
@@ -17,20 +28,27 @@ export async function putRolFormPerms(id, data) {
 	if (!response.ok) throw new Error('Error al actualizar el rol');
 	return response.json();
 }
-// Obtener la matriz de permisos de roles y formularios
+/**
+ * Obtiene la matriz de permisos de roles y formularios.
+ * @returns Promesa con la matriz de permisos
+ */
 export async function getRolesFormsPerms() {
 	const response = await fetch(ENDPOINTS.rol.getRolesFormsPerms);
 	if (!response.ok) throw new Error('Error al obtener la matriz de permisos');
 	return response.json();
 }
-import { ENDPOINTS } from '../config/ConfigApi';
 
+/**
+ * Cambia el estado de un rol (habilitar o inhabilitar) usando el endpoint de soft-delete.
+ * Si el rol está activo, lo desactiva; si está inactivo, lo reactiva.
+ * @param id - ID del rol
+ * @param active - Estado actual del rol
+ * @returns Promesa con la respuesta de la API (true si éxito)
+ */
 export async function toggleRoleActive(id: number, active: boolean) {
-	// Si está activo, desactiva (DELETE); si está inactivo, reactiva (PATCH)
-	const url = ENDPOINTS.rol.deleteRole.replace('{id}', id.toString());
-		const options: RequestInit = active
-			? { method: 'DELETE' }
-			: { method: 'PATCH' };
+		// Si está activo, desactiva (DELETE); si está inactivo, reactiva (DELETE)
+		const url = ENDPOINTS.rol.deleteRole.replace('{id}', id.toString());
+		const options: RequestInit = { method: 'DELETE' };
 	const response = await fetch(url, options);
 	if (!response.ok) {
 		let errorMsg = 'Error al cambiar el estado del rol';
@@ -62,6 +80,10 @@ export async function toggleRoleActive(id: number, active: boolean) {
 }
 //obtener todos los roles con fetch-get
 
+/**
+ * Obtiene la lista de todos los roles.
+ * @returns Promesa con el array de roles
+ */
 export async function getRoles() {
 	const response = await fetch(ENDPOINTS.rol.getRoles);
 	if (!response.ok) throw new Error('Error al obtener roles');
@@ -69,19 +91,27 @@ export async function getRoles() {
 }
 
 
+/**
+ * Obtiene la lista de roles junto con la cantidad de usuarios asignados a cada uno.
+ * @returns Promesa con el array de roles y usuarios
+ */
 export async function getRolesUser() {
 	const response = await fetch(ENDPOINTS.rol.getRolUser);
 	if (!response.ok) throw new Error('Error al obtener roles con los usuarios');
 	return response.json();
 }
 
-// Crear rol con permisos
+/**
+ * Crea un nuevo rol con permisos asociados.
+ * @param data - Datos del rol y permisos
+ * @returns Promesa con la respuesta de la API
+ */
 export async function postRolPermissions(data) {
-  const response = await fetch(ENDPOINTS.rol.postRolPermissions, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error('Error al crear el rol');
-  return response.json();
+	const response = await fetch(ENDPOINTS.rol.postRolPermissions, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) throw new Error('Error al crear el rol');
+	return response.json();
 }
