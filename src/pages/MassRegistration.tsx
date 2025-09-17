@@ -1,4 +1,7 @@
 // imagenes de figma exportadas a public/reportmass
+import { excelTemplateService } from '../Api/Services/ExcelTemplate';
+import { useState, useEffect } from 'react';
+
 const img = "../../public/massRegistartions/tarjeta_excel.svg";
 const img1 = "../../public/massRegistartions/upload.svg";
 const img2 = "../../public/massRegistartions/tarjeta_excel_azul.svg";
@@ -8,7 +11,7 @@ const img5 = "../../public/massRegistartions/people.svg";
 const img6 = "../../public/massRegistartions/download.svg";
 const img7 = "../../public/massRegistartions/upload_N.svg";
 
-function TarjetaExcel({ property1 = "instructor" }) {
+function TarjetaExcel({ property1 = "instructor", onDownload }: { property1?: string, onDownload?: () => void }) {
   if (property1 === "Variant3") {
     return (
       <div className="relative rounded-[10px] w-full h-[252px] bg-[#c0fbcd]">
@@ -80,7 +83,7 @@ function TarjetaExcel({ property1 = "instructor" }) {
               <li>Estado del aprendiz</li>
             </ul>
           </div>
-          <div className="bg-[#154fef] flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full">
+          <div className="bg-[#154fef] flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer" onClick={onDownload}>
             <img alt="download" className="w-4 h-4" src={img4} />
             <span className="font-semibold text-[14px] text-white">Descargar plantilla para aprendices</span>
           </div>
@@ -110,7 +113,7 @@ function TarjetaExcel({ property1 = "instructor" }) {
             <li>Dependencia y cargo</li>
           </ul>
         </div>
-        <div className="bg-green-600 flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full">
+        <div className="bg-green-600 flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer" onClick={onDownload}>
           <img alt="download" className="w-4 h-4" src={img4} />
           <span className="font-semibold text-[14px] text-white">Descargar plantilla para instructores</span>
         </div>
@@ -121,6 +124,33 @@ function TarjetaExcel({ property1 = "instructor" }) {
 }
 
 export const MassRegistration = () => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  // Funciones para manejar las descargas
+  const handleDownloadInstructorTemplate = async () => {
+    try {
+      setIsDownloading(true);
+      await excelTemplateService.downloadInstructorTemplate();
+    } catch (error) {
+      console.error('Error descargando plantilla de instructores:', error);
+      alert('Error al descargar la plantilla de instructores. Por favor, intenta de nuevo.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadAprendizTemplate = async () => {
+    try {
+      setIsDownloading(true);
+      await excelTemplateService.downloadAprendizTemplate();
+    } catch (error) {
+      console.error('Error descargando plantilla de aprendices:', error);
+      alert('Error al descargar la plantilla de aprendices. Por favor, intenta de nuevo.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5 items-center w-full py-8">
       {/* Encabezado */}
@@ -153,8 +183,8 @@ export const MassRegistration = () => {
           <span className="font-semibold text-[22px] text-black">Descargar Plantillas</span>
         </div>
         <div className="flex gap-8 w-full">
-          <TarjetaExcel />
-          <TarjetaExcel property1="aprendices" />
+          <TarjetaExcel onDownload={handleDownloadInstructorTemplate} />
+          <TarjetaExcel property1="aprendices" onDownload={handleDownloadAprendizTemplate} />
         </div>
       </div>
 
@@ -181,6 +211,16 @@ export const MassRegistration = () => {
           </div>
         </div>
       </div>
+      
+      {/* Indicador de carga */}
+      {isDownloading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg flex items-center gap-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <span>Descargando plantilla...</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

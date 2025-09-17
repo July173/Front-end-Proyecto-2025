@@ -75,6 +75,12 @@ export const ENDPOINTS = {
   permission: {
     getPermissions: `${API_BASE_URL}security/permissions/`,
   },
+  // Plantillas Excel para registro masivo
+  excelTemplates: {
+    instructorTemplate: `${API_BASE_URL}security/excel-templates/instructor-template/`,
+    aprendizTemplate: `${API_BASE_URL}security/excel-templates/aprendiz-template/`,
+    templateInfo: `${API_BASE_URL}security/excel-templates/template-info/`,
+  },
   // Otros grupos de endpoints...
   // Más entidades...
 };
