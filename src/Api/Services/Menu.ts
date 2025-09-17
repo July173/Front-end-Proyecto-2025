@@ -1,13 +1,17 @@
-// services/menuService.ts
-import { ENDPOINTS } from '../config/ConfigApi';
-import { MenuApiResponse, ProcessedMenuData, MenuItem, MenuUserInfo, AppSidebarProps } from '../types'; // Importa desde tu archivo principal de tipos
 
+import { ENDPOINTS } from '../config/ConfigApi';
+import { MenuApiResponse, ProcessedMenuData, MenuItem, MenuUserInfo, AppSidebarProps } from '../types/entities/menu.types'; // Importa desde tu archivo principal de tipos
+
+/**
+ * Servicio para operaciones relacionadas con el menú dinámico del usuario.
+ * Incluye obtención y procesamiento de los elementos del menú.
+ */
 export const menu = {
   /**
-   * Obtiene los elementos del menú para un usuario específico y los procesa
+   * Obtiene los elementos del menú para un usuario específico y los procesa.
    * @param userId - ID del usuario
    * @param userName - Nombre del usuario (opcional)
-   * @returns Promise con los datos procesados del menú
+   * @returns Promesa con los datos procesados del menú
    */
   async getMenuItems(userId: string | number, userName?: string): Promise<ProcessedMenuData> {
     try {
@@ -37,7 +41,10 @@ export const menu = {
   },
 
   /**
-   * Procesa la respuesta de la API y la convierte al formato necesario para el componente
+   * Procesa la respuesta de la API y la convierte al formato necesario para el componente.
+   * @param apiData - Respuesta de la API
+   * @param userName - Nombre del usuario (opcional)
+   * @returns Datos procesados para el menú y usuario
    */
   processApiResponse(apiData: MenuApiResponse[], userName?: string): ProcessedMenuData {
     if (!apiData || apiData.length === 0) {

@@ -1,8 +1,17 @@
-//configuracion o validaciones por separado del servicio
-import { RegisterPayload, RegisterResponse } from "../types";
+/**
+ * Servicio para operaciones relacionadas con la entidad Persona.
+ * Incluye registro de aprendiz, obtención y actualización de datos de persona.
+ */
+import {  RegisterResponse } from "../types/entities/user.types";
 import { ENDPOINTS } from "../config/ConfigApi";
+import { Person, RegisterPayload } from "../types/entities/person.types";
 
-// Actualizar imagen de perfil de persona
+/**
+ * Actualiza la imagen de perfil de una persona.
+ * @param id - ID de la persona a actualizar
+ * @param imageFile - Archivo de imagen (File)
+ * @returns Promesa con el objeto Person actualizado
+ */
 export async function patchPersonImage(id: string, imageFile: File): Promise<Person> {
   const url = ENDPOINTS.person.IdPerson.replace('{id}', id);
   const formData = new FormData();
@@ -16,9 +25,12 @@ export async function patchPersonImage(id: string, imageFile: File): Promise<Per
   }
   return response.json();
 }
-// Obtener datos de una persona por ID
-import { Person } from "../types";
 
+/**
+ * Obtiene los datos de una persona por su ID.
+ * @param id - ID de la persona
+ * @returns Promesa con el objeto Person
+ */
 export async function getPersonById(id: string): Promise<Person> {
   const url = ENDPOINTS.person.IdPerson.replace('{id}', id);
   const response = await fetch(url, {
@@ -34,6 +46,11 @@ export async function getPersonById(id: string): Promise<Person> {
 }
 
 
+/**
+ * Registra un nuevo aprendiz en el sistema.
+ * @param payload - Datos del aprendiz a registrar
+ * @returns Promesa con la respuesta del registro (persona y usuario)
+ */
 export async function registerAprendiz(payload: RegisterPayload): Promise<RegisterResponse> {
   const response = await fetch(ENDPOINTS.person.registerAprendiz, {
     method: "POST",

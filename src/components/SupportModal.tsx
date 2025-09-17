@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom'; // <-- Importa ReactDOM
 import { X, Mail, Phone, Clock, Send, ExternalLink, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import useSupportForm from '../hook/useSupportForm'; // Ajusta la ruta según tu estructura
+import CustomSelect from './CustomSelect'; // importa el componente
 
 const SupportModal = ({ isOpen, onClose }) => {
     const {
@@ -10,11 +12,22 @@ const SupportModal = ({ isOpen, onClose }) => {
         success,
         handleInputChange,
         submitForm,
-        setSuccess
+        setSuccess,
     } = useSupportForm();
+
+    const [localError, setLocalError] = React.useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // Validar correo
+        const email = formData.email || '';
+        const validEmail = /^[\w.-]+@(sena\.edu\.co|soy\.sena\.edu\.co)$/i.test(email);
+        if (!validEmail) {
+            setSuccess(false);
+            setLocalError('El correo debe terminar en @sena.edu.co o @soy.sena.edu.co');
+            return;
+        }
+        setLocalError('');
         const wasSuccessful = await submitForm();
         if (wasSuccessful) {
             // Mostrar mensaje de éxito por 2 segundos y luego cerrar
@@ -42,9 +55,10 @@ const SupportModal = ({ isOpen, onClose }) => {
 
     if (!isOpen) return null;
 
-    return (
+    // Usa portal aquí
+    return ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[95vh] overflow-y-auto">
                 {/* Header */}
                 <div className="flex flex-col items-center p-6 border-b border-gray-200 relative">
                     <button
@@ -136,13 +150,13 @@ const SupportModal = ({ isOpen, onClose }) => {
                             </div>
                         )}
 
-                        {error && (
+                        {(error || localError) && (
                             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                                 <div className="flex items-start gap-3">
                                     <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                                     <div className="flex-1">
                                         <p className="text-red-800 font-medium">Error al enviar</p>
-                                        <p className="text-red-700 text-sm">{error}</p>
+                                        <p className="text-red-700 text-sm">{error || localError}</p>
                                     </div>
                                 </div>
                             </div>
@@ -175,27 +189,23 @@ const SupportModal = ({ isOpen, onClose }) => {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all"
-                                    placeholder="correo@ejemplo.com"
+                                    placeholder="correo@soy.sena.edu.co"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Categoría de Consulta *
-                                </label>
-                                <select
-                                    name="category"
-                                    required
+                                <CustomSelect
                                     value={formData.category}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all"
-                                >
-                                    <option value="">Selecciona una categoría</option>
-                                    <option value="tecnico">Soporte Técnico</option>
-                                    <option value="academico">Consulta Académica</option>
-                                    <option value="plataforma">Problemas con la Plataforma</option>
-                                    <option value="otros">Otros</option>
-                                </select>
+                                    onChange={(val) => handleInputChange({ target: { name: "category", value: val } })}
+                                    options={[
+                                        { value: "tecnico", label: "Soporte Técnico" },
+                                        { value: "academico", label: "Consulta Académica" },
+                                        { value: "plataforma", label: "Problemas con la Plataforma" },
+                                        { value: "otros", label: "Otros" },
+                                    ]}
+                                    label="Categoría de Consulta *"
+                                    placeholder="Selecciona una categoría"
+                                />
                             </div>
 
                             <div>
@@ -261,7 +271,8 @@ const SupportModal = ({ isOpen, onClose }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

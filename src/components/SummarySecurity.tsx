@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getRolesFormsPerms, getRolesUser } from '../Api/Services/Rol';
-interface RolUserCount {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  cantidad_usuarios: number;
-}
+import type { Permiso, RolUserCount } from '../Api/types/entities/role.types';
 const roleColors: Record<string, string> = {
   Administrador: 'bg-green-50 border-green-400 text-green-700',
   Usuarios: 'bg-red-50 border-red-400 text-red-700',
@@ -14,15 +9,6 @@ const roleColors: Record<string, string> = {
   Coordinadores: 'bg-pink-50 border-pink-400 text-pink-700',
 };
 
-interface Permiso {
-  rol: string;
-  formulario: string;
-  Ver: boolean;
-  Editar: boolean;
-  Registrar: boolean;
-  Eliminar: boolean;
-  Activar: boolean;
-}
 
 const iconCheck = <span className="text-green-600 text-lg">✓</span>;
 const iconCross = <span className="text-red-600 text-lg">✗</span>;
@@ -68,21 +54,23 @@ const SummarySecurity = () => {
             </tr>
           </thead>
           <tbody>
-            {permisos.map((perm, i) => (
-              <tr key={i} className="text-center">
-                <td className="px-3 py-2 border">
-                  <span className="inline-block bg-gray-100 border border-gray-300 rounded-full px-2 py-1 text-xs font-semibold">
-                    {perm.rol}
-                  </span>
-                </td>
-                <td className="px-3 py-2 border">{perm.formulario}</td>
-                <td className="px-3 py-2 border">{perm.Ver ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Editar ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Registrar ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Eliminar ? iconCheck : iconCross}</td>
-                <td className="px-3 py-2 border">{perm.Activar ? iconCheck : iconCross}</td>
-              </tr>
-            ))}
+            {permisos
+              .filter(perm => perm.Ver || perm.Editar || perm.Registrar || perm.Eliminar || perm.Activar)
+              .map((perm, i) => (
+                <tr key={i} className="text-center">
+                  <td className="px-3 py-2 border">
+                    <span className="inline-block bg-gray-100 border border-gray-300 rounded-full px-2 py-1 text-xs font-semibold">
+                      {perm.rol}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 border">{perm.formulario}</td>
+                  <td className="px-3 py-2 border">{perm.Ver ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Editar ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Registrar ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Eliminar ? iconCheck : iconCross}</td>
+                  <td className="px-3 py-2 border">{perm.Activar ? iconCheck : iconCross}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

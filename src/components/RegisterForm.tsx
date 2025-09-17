@@ -6,7 +6,7 @@ import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
 import { registerAprendiz } from '../Api/Services/Person';
-import { RegisterPayload } from '../Api/types';
+import { RegisterPayload } from '../Api/types/entities/person.types';
 import {
   isSenaEmail,
   isValidNames,
@@ -65,7 +65,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
       phone: ''
     };
 
-    newErrors.email = !isSenaEmail(formData.email) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '';
+    newErrors.email = !isSenaEmail(formData.email) ? 'El correo debe ser institucional (@soy.sena.edu.co )' : '';
     newErrors.names = isValidNames(formData.names) || '';
     newErrors.surnames = isValidSurnames(formData.surnames) || '';
     newErrors.documentNumber = isValidDocumentNumber(formData.documentNumber) || '';
@@ -157,7 +157,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               className="sena-input"
               required
             />
-            {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
+              {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -213,9 +213,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <Lock className="sena-input-icon" />
               <input
                 type="text"
+                inputMode="numeric"
+                pattern="\d*"
                 placeholder="Numero de documento"
                 value={formData.documentNumber}
-                onChange={(e) => handleChange('documentNumber', e.target.value)}
+                onChange={(e) => {
+                  // Solo permite números
+                  const value = e.target.value.replace(/\D/g, '');
+                  handleChange('documentNumber', value);
+                }}
                 className="sena-input"
                 required
               />
@@ -225,9 +231,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <Phone className="sena-input-icon" />
               <input
                 type="tel"
+                inputMode="numeric"
+                pattern="\d*"
                 placeholder="Teléfono"
                 value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
+                onChange={(e) => {
+                  // Solo permite números
+                  const value = e.target.value.replace(/\D/g, '');
+                  handleChange('phone', value);
+                }}
                 className="sena-input"
                 required
                 maxLength={10}

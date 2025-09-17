@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Mail } from 'lucide-react';
+import { useValidationEmail } from '../hook/ValidationEmail';
 import { Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
@@ -20,6 +22,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
   } = useNotification();
   
   const [passwords, setPasswords] = useState({
+    email: '',
     newPassword: '',
     confirmPassword: ''
   });
@@ -89,6 +92,21 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="sena-input-group">
+            <Mail className="sena-input-icon" />
+            <input
+              type="email"
+              placeholder="Correo institucional · ejemplo@soy.sena.edu.co"
+              value={passwords.email}
+              onChange={(e) => setPasswords({...passwords, email: e.target.value})}
+              className="sena-input"
+              required
+            />
+            {/* Mensaje de error si el correo no es válido */}
+            {!isEmailValid && passwords.email && (
+              <span className="text-red-500 text-xs mt-1 block">{emailError}</span>
+            )}
+          </div>
           <div className="sena-input-group">
             <Lock className="sena-input-icon" />
             <input

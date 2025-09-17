@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, Shield, UserCheck, User, BarChart, Settings, ChevronDown, LogOut } from 'lucide-react';
 import { menu } from '../Api/Services/Menu';
-import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../Api/types/index';
+import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../Api/types/entities/menu.types';
 import { useUserData } from '../hook/useUserData';
 import { useNavigate } from "react-router-dom";
 import logo from '/public/logo.png';
@@ -118,7 +118,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
   }, [showModal]);
 
   return (
-    <div className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative ${className}`}> 
+    <div className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative $ {className}`}> 
       {/* Header */}
       <div className="p-6 flex items-center gap-3">
         <div className="w-12 h-12 rounded-lg flex items-center justify-center">

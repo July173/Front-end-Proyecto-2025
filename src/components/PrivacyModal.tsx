@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom'; // <-- Importa ReactDOM
 import { X } from 'lucide-react';
 
 interface PrivacyModalProps {
@@ -15,7 +16,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
         }
     };
 
-    return (
+    return ReactDOM.createPortal(
         <div
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
             onClick={handleBackdropClick}
@@ -180,7 +181,8 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

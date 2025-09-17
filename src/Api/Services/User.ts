@@ -1,8 +1,13 @@
 import { ENDPOINTS } from "../config/ConfigApi";
-import { ValidateLoginResponse } from "../types";
+import { ValidateLoginResponse ,UserStatus} from "../types/entities/user.types";
+
 
 // Servicio para solicitar código de recuperación de contraseña
 // Obtener todos los usuarios
+/**
+ * Obtiene la lista de todos los usuarios registrados.
+ * @returns Promesa con el array de usuarios
+ */
 export async function getUsers() {
 	const response = await fetch(ENDPOINTS.user.getUser);
 	if (!response.ok) throw new Error('Error al obtener usuarios');
@@ -14,6 +19,12 @@ export async function getUsers() {
  * Si el usuario está habilitado, lo inhabilita; si está inhabilitado, lo habilita.
  * @param id ID del usuario a modificar
  * @returns Promesa con la respuesta de la API
+ */
+/**
+ * Cambia el estado de un usuario (habilitar o inhabilitar) usando el endpoint de soft-delete.
+ * Si el usuario está habilitado, lo inhabilita; si está inhabilitado, lo habilita.
+ * @param id - ID del usuario a modificar
+ * @returns Promesa con la respuesta de la API (true si éxito)
  */
 export async function deleteUser(id: string) {
 	const url = ENDPOINTS.user.deleteUser.replace('{id}', id);
@@ -28,6 +39,12 @@ export async function deleteUser(id: string) {
 	}
 }
 
+/**
+ * Solicita el código de recuperación de contraseña para un correo institucional.
+ * Solo permite correos @soy.sena.edu.co.
+ * @param email - Correo institucional del usuario
+ * @returns Promesa con el resultado (success, code, message)
+ */
 export async function requestPasswordResetCode(email: string): Promise<{ success: boolean; code?: string; message?: string }> {
 	// Validar correo institucional en frontend
 	if (!email.endsWith('@soy.sena.edu.co')) {
@@ -50,6 +67,12 @@ export async function requestPasswordResetCode(email: string): Promise<{ success
 	return { success: false, message: data.error || 'No se pudo enviar el código' };
 }
 
+/**
+ * Valida el login institucional de un usuario.
+ * @param email - Correo institucional
+ * @param password - Contraseña
+ * @returns Promesa con la respuesta de validación (tokens y datos de usuario)
+ */
 export async function validateInstitutionalLogin(email: string, password: string): Promise<ValidateLoginResponse> {
 	const response = await fetch(ENDPOINTS.user.validateLogin, {
 		method: "POST",
@@ -65,6 +88,12 @@ export async function validateInstitutionalLogin(email: string, password: string
 	return response.json();
 }
 
+/**
+ * Verifica si el código de recuperación de contraseña es válido para el usuario.
+ * @param email - Correo institucional
+ * @param code - Código de recuperación
+ * @returns Promesa con el resultado (success, message)
+ */
 export async function verifyResetCode(email: string, code: string): Promise<{ success: boolean; message?: string }> {
 	console.log('Verificando código con:', { email, code }); // DEBUG
 	// Consultar a la BD si el código es correcto
@@ -82,6 +111,13 @@ export async function verifyResetCode(email: string, code: string): Promise<{ su
 	return { success: false, message: data.error || "Código incorrecto o expirado" };
 }
 
+/**
+ * Actualiza la contraseña de un usuario usando el código de recuperación.
+ * @param email - Correo institucional
+ * @param code - Código de recuperación
+ * @param new_password - Nueva contraseña
+ * @returns Promesa con el resultado (success, message)
+ */
 export async function resetPassword(email: string, code: string, new_password: string): Promise<{ success: boolean; message?: string }> {
 	const response = await fetch(ENDPOINTS.user.resetPassword, {
 		method: "POST",
@@ -95,14 +131,13 @@ export async function resetPassword(email: string, code: string, new_password: s
 	return { success: false, message: data.error || "No se pudo actualizar la contraseña" };
 }
 
-// Define a User type with the relevant properties
-interface User {
-	is_active?: boolean;
-	estado?: string;
-}
 
-// Para aprendices/instructores:
-export function getUserStatus(user: User) {
+/**
+ * Obtiene el estado textual de un usuario (activo/inhabilitado) según sus propiedades.
+ * @param user - Objeto UserStatus con propiedades de estado
+ * @returns 'activo' o 'inhabilitado'
+ */
+export function getUserStatus(user: UserStatus) {
 	return typeof user.is_active === 'boolean'
 		? (user.is_active ? 'activo' : 'inhabilitado')
 		: ((user.estado || '').toLowerCase().includes('habilitado') ? 'activo' : 'inhabilitado');
