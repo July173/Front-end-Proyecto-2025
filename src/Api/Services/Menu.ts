@@ -62,7 +62,7 @@ export const menu = {
       'inicio': 'home',
       'seguridad': 'security', 
       'administración': 'user-check',
-      'reportes': 'chart',
+      'Asignar seguimientos': 'chart',
       'configuración': 'settings',
       // Agregar más mapeos según tus módulos
     };
