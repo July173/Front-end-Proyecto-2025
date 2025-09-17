@@ -80,6 +80,8 @@ export const ENDPOINTS = {
     instructorTemplate: `${API_BASE_URL}security/excel-templates/instructor-template/`,
     aprendizTemplate: `${API_BASE_URL}security/excel-templates/aprendiz-template/`,
     templateInfo: `${API_BASE_URL}security/excel-templates/template-info/`,
+    uploadInstructorExcel: `${API_BASE_URL}security/excel-templates/upload-instructor-excel/`,
+    uploadAprendizExcel: `${API_BASE_URL}security/excel-templates/upload-aprendiz-excel/`,
   },
   // Otros grupos de endpoints...
   // Más entidades...

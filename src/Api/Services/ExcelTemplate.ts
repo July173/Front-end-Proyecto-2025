@@ -14,6 +14,22 @@ export interface TemplatesInfo {
   aprendiz_template: TemplateInfo;
 }
 
+export interface UploadResult {
+  success: Array<{
+    row: number;
+    message: string;
+    email: string;
+  }>;
+  errors: Array<{
+    row?: number;
+    errors: string[];
+    data?: Record<string, unknown>;
+    general?: string;
+  }>;
+  total_processed: number;
+  successful_registrations: number;
+}
+
 class ExcelTemplateService {
   
   /**
@@ -104,6 +120,58 @@ class ExcelTemplateService {
   }
 
   /**
+   * Sube y procesa un archivo Excel de instructores para registro masivo
+   */
+  async uploadInstructorExcel(file: File): Promise<UploadResult> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(ENDPOINTS.excelTemplates.uploadInstructorExcel, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Error al procesar archivo: ${response.status}`);
+      }
+
+      const result: UploadResult = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error subiendo archivo de instructores:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Sube y procesa un archivo Excel de aprendices para registro masivo
+   */
+  async uploadAprendizExcel(file: File): Promise<UploadResult> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(ENDPOINTS.excelTemplates.uploadAprendizExcel, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Error al procesar archivo: ${response.status}`);
+      }
+
+      const result: UploadResult = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error subiendo archivo de aprendices:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Función genérica para descargar cualquier plantilla
    */
   async downloadTemplate(type: 'instructor' | 'aprendiz'): Promise<void> {
@@ -111,6 +179,19 @@ class ExcelTemplateService {
       return this.downloadInstructorTemplate();
     } else if (type === 'aprendiz') {
       return this.downloadAprendizTemplate();
+    } else {
+      throw new Error('Tipo de plantilla no válido');
+    }
+  }
+
+  /**
+   * Función genérica para subir cualquier plantilla
+   */
+  async uploadTemplate(type: 'instructor' | 'aprendiz', file: File): Promise<UploadResult> {
+    if (type === 'instructor') {
+      return this.uploadInstructorExcel(file);
+    } else if (type === 'aprendiz') {
+      return this.uploadAprendizExcel(file);
     } else {
       throw new Error('Tipo de plantilla no válido');
     }
