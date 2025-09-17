@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, Shield, UserCheck, User, BarChart, Settings, ChevronDown, LogOut } from 'lucide-react';
 import { menu } from '../Api/Services/Menu';
-import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../Api/types/entities';
+import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../Api/types/entities/menu.types';
 import { useUserData } from '../hook/useUserData';
 import { useNavigate } from "react-router-dom";
 import logo from '/public/logo.png';

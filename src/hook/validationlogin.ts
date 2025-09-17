@@ -1,7 +1,7 @@
 // Validaciones genéricas para login y formularios
 
 export function isSenaEmail(email: string): boolean {
-  return email.endsWith('@soy.sena.edu.co') || email.endsWith('@sena.edu.co');
+  return email.endsWith('@soy.sena.edu.co') ;
 }
 
 export function isValidPassword(password: string): boolean {

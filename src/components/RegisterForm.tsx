@@ -62,7 +62,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
       phone: ''
     };
 
-    newErrors.email = !isSenaEmail(formData.email) ? 'El correo debe ser institucional (@soy.sena.edu.co o @sena.edu.co)' : '';
+    newErrors.email = !isSenaEmail(formData.email) ? 'El correo debe ser institucional (@soy.sena.edu.co )' : '';
     newErrors.names = isValidNames(formData.names) || '';
     newErrors.surnames = isValidSurnames(formData.surnames) || '';
     newErrors.documentNumber = isValidDocumentNumber(formData.documentNumber) || '';
