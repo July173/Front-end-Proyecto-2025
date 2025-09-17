@@ -118,7 +118,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
   }, [showModal]);
 
   return (
-    <div className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative ${className}`}> 
+    <div className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative $ {className}`}> 
       {/* Header */}
       <div className="p-6 flex items-center gap-3">
         <div className="w-12 h-12 rounded-lg flex items-center justify-center">
