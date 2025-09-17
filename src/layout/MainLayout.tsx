@@ -26,11 +26,11 @@ export default function MainLayout() {
 
   // 👇 ahora sí el layout siempre devuelve la estructura
   return (
-    <div className="flex h-screen w-full">
-      <Menu className="h-screen flex-shrink-0" userId={userData!.id} userName={getUserName()} />
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+    <div className="flex h-screen  w-full bg-[#D9D9D9]">
+      <Menu className="h-screen flex-shrink-0 " userId={userData!.id} userName={getUserName()} />
+      <div className="flex-1 overflow-y-auto ">
         <Header />
-        <main className="flex-1 p-4 bg-[#D9D9D9]">
+        <main className="flex-1 p-4 ">
           <Outlet />
         </main>
         <Footer />
