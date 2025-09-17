@@ -75,6 +75,10 @@ export const ENDPOINTS = {
   permission: {
     getPermissions: `${API_BASE_URL}security/permissions/`,
   },
+  // Enums del sistema
+  enums: {
+    getDocumentTypes: `${API_BASE_URL}security/enums/document-types/`,
+  },
   // Plantillas Excel para registro masivo
   excelTemplates: {
     instructorTemplate: `${API_BASE_URL}security/excel-templates/instructor-template/`,

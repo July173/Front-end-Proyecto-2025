@@ -15,7 +15,7 @@ import {
   isValidPhone,
   capitalizeWords
 } from '../hook/validationlogin';
-import { tiposDocumento } from '@/constants/selectOptions';
+import { useDocumentTypes } from '../hook/useDocumentTypes';
 interface RegisterFormProps {
   onNavigate: (view: string) => void;
 }
@@ -28,6 +28,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
     showRegistrationPending,
     showNotification
   } = useNotification();
+  
+  // Hook para obtener tipos de documento dinámicamente
+  const { documentTypes, loading: documentTypesLoading } = useDocumentTypes();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -191,8 +194,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               onChange={(e) => setFormData({...formData, documentType: e.target.value})}
               className="sena-input"
               required
+              disabled={documentTypesLoading}
             >
-             {tiposDocumento.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              {documentTypesLoading ? (
+                <option value="">Cargando tipos de documento...</option>
+              ) : (
+                documentTypes.map((tipo) => (
+                  <option key={tipo.value} value={tipo.value}>
+                    {tipo.label}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
