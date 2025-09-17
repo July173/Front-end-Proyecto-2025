@@ -1,4 +1,4 @@
-  import React from 'react';
+import React from 'react';
 
 /**
  * ModalFormGeneric
@@ -28,10 +28,16 @@ const ModalFormGeneric = ({
   const [values, setValues] = React.useState(initialValues);
   const [error, setError] = React.useState('');
 
-  // Solo actualiza los valores si el modal se abre o initialValues cambia realmente
+  // Solo actualiza los valores cuando el modal se abre por primera vez o initialValues cambian realmente
+  const prevIsOpen = React.useRef(false);
   React.useEffect(() => {
-    if (isOpen) setValues(initialValues);
-  }, [isOpen, initialValues]);
+    if (isOpen && !prevIsOpen.current) {
+      setValues(initialValues);
+    }
+    prevIsOpen.current = isOpen;
+    // Solo depende de isOpen
+    // eslint-disable-next-line
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

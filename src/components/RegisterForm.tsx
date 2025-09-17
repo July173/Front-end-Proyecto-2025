@@ -201,9 +201,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <Lock className="sena-input-icon" />
               <input
                 type="text"
+                inputMode="numeric"
+                pattern="\d*"
                 placeholder="Numero de documento"
                 value={formData.documentNumber}
-                onChange={(e) => handleChange('documentNumber', e.target.value)}
+                onChange={(e) => {
+                  // Solo permite números
+                  const value = e.target.value.replace(/\D/g, '');
+                  handleChange('documentNumber', value);
+                }}
                 className="sena-input"
                 required
               />
@@ -213,9 +219,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
               <Phone className="sena-input-icon" />
               <input
                 type="tel"
+                inputMode="numeric"
+                pattern="\d*"
                 placeholder="Teléfono"
                 value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
+                onChange={(e) => {
+                  // Solo permite números
+                  const value = e.target.value.replace(/\D/g, '');
+                  handleChange('phone', value);
+                }}
                 className="sena-input"
                 required
                 maxLength={10}
