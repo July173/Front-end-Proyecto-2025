@@ -66,11 +66,14 @@ export async function validateInstitutionalLogin(email: string, password: string
 }
 
 export async function verifyResetCode(email: string, code: string): Promise<{ success: boolean; message?: string }> {
+	console.log('Verificando código con:', { email, code }); // DEBUG
 	// Consultar a la BD si el código es correcto
+	const requestBody = { email, code, new_password: "dummy" };
+	console.log('Enviando al backend:', requestBody); // DEBUG
 	const response = await fetch(ENDPOINTS.user.resetPassword, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ email, code, new_password: "dummy" }) // new_password dummy para solo validar
+		body: JSON.stringify(requestBody)
 	});
 	const data = await response.json();
 	if (response.ok && !data.error) {
