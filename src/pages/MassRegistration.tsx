@@ -246,9 +246,33 @@ function ResultModal({ isOpen, onClose, results, type }: ResultModalProps) {
           {/* Errores */}
           {results.errors.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-red-600 mb-2">
-                ❌ Errores encontrados ({results.errors.length})
-              </h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold text-red-600">
+                  ❌ Errores encontrados ({results.errors.length})
+                </h3>
+                {results.error_report_url && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await excelTemplateService.downloadErrorReport(results.error_report_url!);
+                      } catch (error) {
+                        console.error('Error descargando reporte:', error);
+                        alert('Error al descargar el reporte de errores');
+                      }
+                    }}
+                    className="flex items-center gap-2 px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    📥 Descargar Reporte
+                  </button>
+                )}
+              </div>
+              
+              {results.error_report_message && (
+                <div className="mb-3 p-2 bg-orange-50 border border-orange-200 rounded text-sm text-orange-700">
+                  💡 {results.error_report_message}
+                </div>
+              )}
+
               <div className="max-h-40 overflow-y-auto bg-red-50 p-4 rounded-lg">
                 {results.errors.map((error, index) => (
                   <div key={index} className="mb-3 last:mb-0 border-b border-red-200 last:border-b-0 pb-2 last:pb-0">

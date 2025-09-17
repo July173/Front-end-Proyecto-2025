@@ -28,6 +28,8 @@ export interface UploadResult {
   }>;
   total_processed: number;
   successful_registrations: number;
+  error_report_url?: string;
+  error_report_message?: string;
 }
 
 class ExcelTemplateService {
@@ -194,6 +196,29 @@ class ExcelTemplateService {
       return this.uploadAprendizExcel(file);
     } else {
       throw new Error('Tipo de plantilla no válido');
+    }
+  }
+
+  /**
+   * Descarga reporte de errores desde URL
+   */
+  async downloadErrorReport(errorReportUrl: string): Promise<void> {
+    try {
+      // Construir URL completa del servidor
+      const fullUrl = errorReportUrl.startsWith('http') 
+        ? errorReportUrl 
+        : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${errorReportUrl}`;
+
+      // Crear elemento temporal para descarga
+      const link = document.createElement('a');
+      link.href = fullUrl;
+      link.download = errorReportUrl.split('/').pop() || 'error_report.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error al descargar reporte de errores:', error);
+      throw new Error('Error al descargar el reporte de errores');
     }
   }
 }
