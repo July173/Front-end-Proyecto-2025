@@ -47,7 +47,7 @@ export const Perfil = () => {
   useEffect(() => {
     if (showModal && modalStep === 'send' && userData?.email) {
       setModalLoading(true);
-      setModalMsg(' o de recuperación...');
+      setModalMsg(' enviando correo de recuperación...');
       requestPasswordResetCode(userData.email)
         .then(res => {
           if (res.success) {
