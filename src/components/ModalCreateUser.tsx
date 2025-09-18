@@ -1,4 +1,28 @@
-  // Validaciones para aprendiz
+import React, { useState, useEffect } from 'react';
+import { postAprendiz } from '../Api/Services/Aprendiz';
+import { postInstructor } from '../Api/Services/Instructor';
+import { getRegionales } from '../Api/Services/Regional';
+import { getSedes } from '../Api/Services/Sede';
+import { getCenters } from '../Api/Services/Center';
+import { getPrograms, getProgramFichas } from '../Api/Services/Program';
+import { getRoles } from '../Api/Services/Rol';
+import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
+import ConfirmModal from './ConfirmModal';
+import { useDocumentTypes } from '../hook/useDocumentTypes';
+import type {
+  Regional,
+  Sede,
+  Center,
+  Program,
+  KnowledgeArea,
+  Ficha,
+} from '../Api/types/Modules/general.types';
+import type {Role} from '../Api/types/entities/role.types';
+import type {CreateAprendiz} from '../Api/types/entities/aprendiz.types';
+import type {CreateInstructor} from '../Api/types/entities/instructor.types';
+import CustomSelect from './CustomSelect';
+ 
+ // Validaciones para aprendiz
   const validateAprendiz = (data) => {
     if (!data.type_identification || !data.number_identification || !data.first_name || !data.first_last_name || !data.phone_number || !data.email || !data.program_id || !data.ficha_id) {
       return 'Todos los campos con * son obligatorios.';
@@ -31,28 +55,6 @@
     }
     return null;
   };
-import React, { useState, useEffect } from 'react';
-import { postAprendiz } from '../Api/Services/Aprendiz';
-import { postInstructor } from '../Api/Services/Instructor';
-import { getRegionales } from '../Api/Services/Regional';
-import { getSedes } from '../Api/Services/Sede';
-import { getCenters } from '../Api/Services/Center';
-import { getPrograms, getProgramFichas } from '../Api/Services/Program';
-import { getRoles } from '../Api/Services/Rol';
-import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
-import ConfirmModal from './ConfirmModal';
-import { useDocumentTypes } from '../hook/useDocumentTypes';
-import type {
-  Regional,
-  Sede,
-  Center,
-  Program,
-  KnowledgeArea,
-  Ficha,
-} from '../Api/types/Modules/general.types';
-import type {Role} from '../Api/types/entities/role.types';
-import type {CreateAprendiz} from '../Api/types/entities/aprendiz.types';
-import type {CreateInstructor} from '../Api/types/entities/instructor.types';
 
 
 
@@ -63,6 +65,9 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
 
   // Hook para obtener tipos de documento dinámicamente
   const { documentTypes } = useDocumentTypes();
+  const documentTypesOptions = documentTypes
+    .filter(opt => opt.value !== '')
+    .map(opt => ({ value: String(opt.value), label: String(opt.label) }));
 
   // Estado para selects dinámicos
   const [regionales, setRegionales] = useState<Regional[]>([]);
@@ -203,13 +208,22 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
         <form onSubmit={handleSubmit}>
           {tab === 'aprendiz' ? (
             <div className="grid grid-cols-2 gap-5">
+
               <div>
                 <label className="block text-sm">Tipo de documento <span className="text-red-600">*</span></label>
-                <select name="type_identification" value={aprendiz.type_identification} onChange={e => handleChange(e, 'aprendiz')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="" className='text-xs'>Seleccionar ...</option>
-                  {documentTypes.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
+                <CustomSelect
+                  value={aprendiz.type_identification}
+                  onChange={value => setAprendiz(prev => ({ ...prev, type_identification: value }))}
+                  options={documentTypesOptions}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
+
+
               <div>
                 <label className="block text-sm">Número de documento <span className="text-red-600">*</span></label>
                 <input name="number_identification" value={aprendiz.number_identification} onChange={e => handleChange(e, 'aprendiz')} className="w-full border rounded-lg px-2 py-1 placeholder:text-xs" placeholder="ej: 12324224" />
@@ -232,41 +246,50 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Programa de formación <span className="text-red-600">*</span></label>
-                <select name="program_id" value={aprendiz.program_id} onChange={e => handleChange(e, 'aprendiz')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="" className='text-xs'>Seleccionar ...</option>
-                  {programas.map((opt: Program) => (
-                    <option key={opt.id} value={opt.id}>{ opt.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={aprendiz.program_id ? String(aprendiz.program_id) : ""}
+                  onChange={value => setAprendiz(prev => ({ ...prev, program_id: Number(value) }))}
+                  options={programas.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
               <div>
                 <label className="block text-sm">Ficha <span className="text-red-600">*</span></label>
-                <select
-                  name="ficha_id"
+                <CustomSelect
                   value={aprendiz.ficha_id}
-                  onChange={e => handleChange(e, 'aprendiz')}
-                  className="w-full border rounded-lg px-2 py-2 text-xs"
-                >
-                  <option value="" className='text-xs'>Seleccionar ...</option>
-                  {fichas.map((opt: Ficha) => (
-                    <option key={opt.id} value={opt.id}>
-                      { opt.file_number || opt.id}
-                    </option>
-                  ))}
-                </select>
+                  onChange={value => setAprendiz(prev => ({ ...prev, ficha_id: value }))}
+                  options={fichas.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.file_number || opt.id) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
             </div>
 
             
           ) : (
             <div className="grid grid-cols-2 gap-3">
+              
               <div>
                 <label className="block text-sm">Tipo de documento <span className="text-red-600">*</span></label>
-                <select name="type_identification" value={instructor.type_identification} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="" className='text-xs'>Seleccionar ...</option>
-                  {documentTypes.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
+                <CustomSelect
+                  value={instructor.type_identification}
+                  onChange={value => setInstructor(prev => ({ ...prev, type_identification: value }))}
+                  options={documentTypesOptions}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
+
               <div>
                 <label className="block text-sm">Número de documento <span className="text-red-600">*</span></label>
                 <input name="number_identification" value={instructor.number_identification} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded px-2 py-1 placeholder:text-xs" placeholder="ej: 12324224" />
@@ -289,39 +312,55 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Regional <span className="text-red-600">*</span></label>
-                <select name="regional_id" value={instructor.regional_id} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="">Seleccionar ...</option>
-                  {regionales.map((opt: Regional) => (
-                    <option key={opt.id} value={opt.id}>{ opt.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={instructor.regional_id ? String(instructor.regional_id) : ""}
+                  onChange={value => setInstructor(prev => ({ ...prev, regional_id: Number(value) }))}
+                  options={regionales.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
               <div>
                 <label className="block text-sm">Sede <span className="text-red-600">*</span></label>
-                <select name="sede_id" value={instructor.sede_id} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="">Seleccionar ...</option>
-                  {sedes.map((opt: Sede) => (
-                    <option key={opt.id} value={opt.id}>{ opt.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={instructor.sede_id ? String(instructor.sede_id) : ""}
+                  onChange={value => setInstructor(prev => ({ ...prev, sede_id: Number(value) }))}
+                  options={sedes.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
               <div>
                 <label className="block text-sm">Centro <span className="text-red-600">*</span></label>
-                <select name="center_id" value={instructor.center_id} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="">Seleccionar ...</option>
-                  {centros.map((opt: Center) => (
-                    <option key={opt.id} value={opt.id}>{opt.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={instructor.center_id ? String(instructor.center_id) : ""}
+                  onChange={value => setInstructor(prev => ({ ...prev, center_id: Number(value) }))}
+                  options={centros.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
               <div>
                 <label className="block text-sm">Área de conocimiento <span className="text-red-600">*</span></label>
-                <select name="knowledgeArea" value={instructor.knowledgeArea} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="">Seleccionar ...</option>
-                  {areas.map((opt: KnowledgeArea) => (
-                    <option key={opt.id} value={opt.id}>{opt.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={instructor.knowledgeArea ? String(instructor.knowledgeArea) : ""}
+                  onChange={value => setInstructor(prev => ({ ...prev, knowledgeArea: Number(value) }))}
+                  options={areas.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
               <div>
                 <label className="block text-sm">Tipo de contrato <span className="text-red-600">*</span></label>
@@ -337,12 +376,16 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Rol <span className="text-red-600">*</span></label>
-                <select name="role_id" value={instructor.role_id} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
-                  <option value="">Seleccionar ...</option>
-                  {roles.map((opt: Role) => (
-                    <option key={opt.id} value={opt.id}>{opt.type_role}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={instructor.role_id ? String(instructor.role_id) : ""}
+                  onChange={value => setInstructor(prev => ({ ...prev, role_id: Number(value) }))}
+                  options={roles.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.type_role) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
               </div>
             </div>
           )}
