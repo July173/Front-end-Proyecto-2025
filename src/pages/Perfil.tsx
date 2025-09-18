@@ -47,7 +47,7 @@ export const Perfil = () => {
   useEffect(() => {
     if (showModal && modalStep === 'send' && userData?.email) {
       setModalLoading(true);
-      setModalMsg(' o de recuperación...');
+      setModalMsg(' enviando correo de recuperación...');
       requestPasswordResetCode(userData.email)
         .then(res => {
           if (res.success) {
@@ -249,7 +249,12 @@ export const Perfil = () => {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
-            <button className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-xl" onClick={() => setShowModal(false)}>&times;</button>
+            <button className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-xl" onClick={() => {
+              // Limpiar datos temporales al cerrar el modal
+              localStorage.removeItem('recovery_email');
+              localStorage.removeItem('reset_code');
+              setShowModal(false);
+            }}>&times;</button>
             {modalStep === 'verify' && (
               <>
                 <h2 className="text-xl font-bold mb-2 text-[#263238]">Verifica tu correo</h2>
@@ -264,9 +269,13 @@ export const Perfil = () => {
                     return;
                   }
                   setCodeError('');
+                  console.log('Email para verificación:', userData.email); // DEBUG
                   const res = await verifyResetCode(userData.email, code);
                   setModalLoading(false);
                   if (res.success) {
+                    // Guardar email y código en localStorage para ResetPasswordForm
+                    localStorage.setItem('recovery_email', userData.email);
+                    localStorage.setItem('reset_code', code);
                     setModalStep('reset');
                   } else {
                     setModalError(res.message || 'Código incorrecto o expirado.');
@@ -301,6 +310,9 @@ export const Perfil = () => {
             )}
             {modalStep === 'reset' && (
               <ResetPasswordForm onNavigate={() => {
+                // Limpiar datos temporales del reset
+                localStorage.removeItem('recovery_email');
+                localStorage.removeItem('reset_code');
                 // Cerrar sesión y redirigir al login global
                 localStorage.removeItem('user_data');
                 localStorage.removeItem('access_token');

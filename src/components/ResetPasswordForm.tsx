@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
-import { useValidationEmail } from '../hook/ValidationEmail';
 import { Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
@@ -22,7 +21,6 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
   } = useNotification();
   
   const [passwords, setPasswords] = useState({
-    email: '',
     newPassword: '',
     confirmPassword: ''
   });
@@ -30,6 +28,9 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
   const [confirmError, setConfirmError] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Obtener email desde localStorage (guardado desde ForgotPasswordForm)
+  const email = localStorage.getItem('recovery_email') || '';
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -49,7 +50,6 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
     if (passwordError || confirmError) return;
     setLoading(true);
     setErrorMsg('');
-    const email = localStorage.getItem('recovery_email') || '';
     const code = localStorage.getItem('reset_code') || '';
     const result = await resetPassword(email, code, passwords.newPassword);
     setLoading(false);
@@ -92,21 +92,21 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => 
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="sena-input-group">
+          {/* Mostrar el email de solo lectura */}
+          {/* <div className="sena-input-group">
             <Mail className="sena-input-icon" />
             <input
               type="email"
-              placeholder="Correo institucional · ejemplo@soy.sena.edu.co"
-              value={passwords.email}
-              onChange={(e) => setPasswords({...passwords, email: e.target.value})}
-              className="sena-input"
-              required
+              placeholder="Correo institucional"
+              value={email}
+              readOnly
+              className="sena-input bg-gray-50 text-gray-600"
+              disabled
             />
-            {/* Mensaje de error si el correo no es válido */}
-            {!isEmailValid && passwords.email && (
-              <span className="text-red-500 text-xs mt-1 block">{emailError}</span>
-            )}
-          </div>
+            <span className="text-xs text-gray-500 mt-1 block">
+              Código de recuperación enviado a este correo
+            </span>
+          </div> */}
           <div className="sena-input-group">
             <Lock className="sena-input-icon" />
             <input

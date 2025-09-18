@@ -41,7 +41,7 @@ import { getPrograms, getProgramFichas } from '../Api/Services/Program';
 import { getRoles } from '../Api/Services/Rol';
 import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
 import ConfirmModal from './ConfirmModal';
-import { tiposDocumento } from '@/constants/selectOptions';
+import { useDocumentTypes } from '../hook/useDocumentTypes';
 import type {
   Regional,
   Sede,
@@ -60,6 +60,9 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
   const [tab, setTab] = useState<'aprendiz' | 'instructor'>('aprendiz');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Hook para obtener tipos de documento dinámicamente
+  const { documentTypes } = useDocumentTypes();
 
   // Estado para selects dinámicos
   const [regionales, setRegionales] = useState<Regional[]>([]);
@@ -204,7 +207,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <label className="block text-sm">Tipo de documento <span className="text-red-600">*</span></label>
                 <select name="type_identification" value={aprendiz.type_identification} onChange={e => handleChange(e, 'aprendiz')} className="w-full border rounded-lg px-2 py-2 text-xs">
                   <option value="" className='text-xs'>Seleccionar ...</option>
-                  {tiposDocumento.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  {documentTypes.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               </div>
               <div>
@@ -261,7 +264,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <label className="block text-sm">Tipo de documento <span className="text-red-600">*</span></label>
                 <select name="type_identification" value={instructor.type_identification} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs">
                   <option value="" className='text-xs'>Seleccionar ...</option>
-                  {tiposDocumento.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  {documentTypes.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               </div>
               <div>

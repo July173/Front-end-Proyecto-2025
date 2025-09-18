@@ -138,6 +138,18 @@ export const ENDPOINTS = {
   permission: {
     getPermissions: `${API_BASE_URL}security/permissions/`,
   },
+  // Enums del sistema
+  enums: {
+    getDocumentTypes: `${API_BASE_URL}security/enums/document-types/`,
+  },
+  // Plantillas Excel para registro masivo
+  excelTemplates: {
+    instructorTemplate: `${API_BASE_URL}security/excel-templates/instructor-template/`,
+    aprendizTemplate: `${API_BASE_URL}security/excel-templates/aprendiz-template/`,
+    templateInfo: `${API_BASE_URL}security/excel-templates/template-info/`,
+    uploadInstructorExcel: `${API_BASE_URL}security/excel-templates/upload-instructor-excel/`,
+    uploadAprendizExcel: `${API_BASE_URL}security/excel-templates/upload-aprendiz-excel/`,
+  },
   // Otros grupos de endpoints...
   // Más entidades...
 };
