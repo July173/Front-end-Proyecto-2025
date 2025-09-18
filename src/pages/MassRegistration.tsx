@@ -174,7 +174,7 @@ function TarjetaExcel({ property1 = "instructor", onDownload, onUpload, isUpload
           </ul>
         </div>
         <div className="bg-green-600 flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer" onClick={onDownload}>
-          <img alt="download" className="w-4 h-4" src={img6} />
+          <img alt="download" className="w-4 h-4" src={img4} />
           <span className="font-semibold text-[14px] text-white">Descargar plantilla para instructores</span>
         </div>
       </div>
