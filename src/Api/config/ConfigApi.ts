@@ -76,6 +76,7 @@ export const ENDPOINTS = {
     getRolPermissions: `${API_BASE_URL}security/rol-form-permissions/{id}/get-role-with-permissions/`,
     putRolFormPerms: `${API_BASE_URL}security/rol-form-permissions/{id}/update-role-with-permissions/`,
     getRolesFormsPerms: `${API_BASE_URL}security/rol-form-permissions/permission-matrix/`,
+    deleteRolUsers: `${API_BASE_URL}security/roles/{id}/logical-delete-with-users/`
   },
   
   /** Endpoints para formularios */

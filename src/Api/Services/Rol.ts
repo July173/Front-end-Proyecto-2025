@@ -47,7 +47,7 @@ export async function getRolesFormsPerms() {
  */
 export async function toggleRoleActive(id: number, active: boolean) {
 		// Si está activo, desactiva (DELETE); si está inactivo, reactiva (DELETE)
-		const url = ENDPOINTS.rol.deleteRole.replace('{id}', id.toString());
+		const url = ENDPOINTS.rol.deleteRolUsers.replace('{id}', id.toString());
 		const options: RequestInit = { method: 'DELETE' };
 	const response = await fetch(url, options);
 	if (!response.ok) {
