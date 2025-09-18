@@ -193,6 +193,7 @@ const Roles = () => {
       </div>
       <div className="flex gap-4 flex-wrap">
         {roles.map((rol) => {
+          const isAdministrador = rol.nombre?.toLowerCase() === 'administrador';
           const cardProps: InfoCardProps = {
             title: rol.nombre,
             statusLabel: rol.active ? rol.cantidad_usuarios.toString() : 'Inhabilitado',
@@ -203,7 +204,7 @@ const Roles = () => {
             onButtonClick: () => handleEditClick(rol),
             actionLabel: rol.active ? 'Inhabilitar' : 'Habilitar',
             actionType: rol.active ? 'disable' : 'enable',
-            onActionClick: () => handleActionClick(rol),
+            onActionClick: isAdministrador ? undefined : () => handleActionClick(rol),
           };
           return <InfoCard key={rol.id} {...cardProps} />;
         })}
