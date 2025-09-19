@@ -24,6 +24,7 @@ const ModalFormGeneric = ({
   cancelText = 'Cancelar',
   initialValues = {},
   customRender,
+  onProgramChange,
 }) => {
   const [values, setValues] = React.useState(initialValues);
   const [error, setError] = React.useState('');

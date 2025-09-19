@@ -35,9 +35,9 @@ export default function CustomSelect({
         {label}
       </label>
       <Select.Root value={value} onValueChange={onChange}>
-        <Select.Trigger className={classNames.trigger || "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all font-semibold bg-white flex items-center justify-between"}>
+        <Select.Trigger className={classNames.trigger || "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all font-semibold bg-white flex items-center justify-between h-11"}>
           <Select.Value placeholder={placeholder} />
-          <Select.Icon>
+          <Select.Icon className="flex-shrink-0">
             <ChevronDown className="h-4 w-4" />
           </Select.Icon>
         </Select.Trigger>

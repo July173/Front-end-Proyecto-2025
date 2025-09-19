@@ -87,7 +87,6 @@ const Users = () => {
     setShowConfirm(false);
     try {
       await deleteUser(pendingUser.id);
-      window.location.reload(); // Solo si no hay error
     } catch (e) {
       alert('No se pudo cambiar el estado del usuario');
     }

@@ -180,6 +180,99 @@ const Roles = () => {
     }
   };
 
+  // Componente reutilizable para el renderizado de formularios y permisos
+  const renderFormPermissions = ({ values, setValues }) => (
+    <div className="space-y-4">
+      {forms.map(form => {
+        const formChecked = Array.isArray(values.formularios_permisos?.[form.id]) && values.formularios_permisos[form.id].length > 0;
+        const allPermsChecked = permissions.length > 0 && Array.isArray(values.formularios_permisos?.[form.id]) && permissions.every(perm => values.formularios_permisos[form.id].includes(perm.id));
+        const isOpen = openFormId === form.id;
+        return (
+          <div key={form.id} className="border rounded-lg mb-2 bg-gray-50">
+            <div className="flex items-center p-4 cursor-pointer select-none" onClick={() => setOpenFormId(isOpen ? null : form.id)}>
+              <span className={`mr-2 transition-transform ${isOpen ? 'rotate-90' : ''}`}>▶</span>
+              <input
+                type="checkbox"
+                checked={formChecked}
+                onClick={e => e.stopPropagation()}
+                onChange={e => {
+                  setValues(prev => {
+                    let newPerms = [];
+                    if (e.target.checked) {
+                      newPerms = permissions.map(perm => perm.id);
+                    }
+                    return {
+                      ...prev,
+                      formularios_permisos: {
+                        ...prev.formularios_permisos,
+                        [form.id]: newPerms
+                      }
+                    };
+                  });
+                }}
+              />
+              <span className="font-semibold ml-2">{form.name}</span>
+              <button
+                type="button"
+                className="ml-4 text-xs text-blue-600 underline"
+                onClick={e => {
+                  e.stopPropagation();
+                  // Toggle all permissions for this form
+                  setValues(prev => {
+                    const prevPerms = Array.isArray(prev.formularios_permisos?.[form.id]) ? prev.formularios_permisos[form.id] : [];
+                    let newPerms = [];
+                    if (prevPerms.length < permissions.length) {
+                      newPerms = permissions.map(perm => perm.id);
+                    }
+                    return {
+                      ...prev,
+                      formularios_permisos: {
+                        ...prev.formularios_permisos,
+                        [form.id]: newPerms
+                      }
+                    };
+                  });
+                }}
+              >{allPermsChecked ? 'Desmarcar todos' : 'Marcar todos'}</button>
+            </div>
+            {isOpen && (
+              <div className="flex flex-wrap gap-4 ml-10 pb-4">
+                {permissions.map(perm => (
+                  <label key={perm.id} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={Array.isArray(values.formularios_permisos?.[form.id]) ? values.formularios_permisos[form.id].includes(perm.id) : false}
+                      disabled={!formChecked}
+                      onChange={e => {
+                        setValues(prev => {
+                          const prevPerms = Array.isArray(prev.formularios_permisos?.[form.id]) ? prev.formularios_permisos[form.id] : [];
+                          let newPerms;
+                          if (e.target.checked) {
+                            newPerms = [...prevPerms, perm.id];
+                          } else {
+                            newPerms = prevPerms.filter(pid => pid !== perm.id);
+                          }
+                          return {
+                            ...prev,
+                            formularios_permisos: {
+                              ...prev.formularios_permisos,
+                              [form.id]: newPerms
+                            }
+                          };
+                        });
+                      }}
+                    />
+                    <span>{perm.type_permission}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div className="bg-white p-8 rounded-lg shadow">
       <div className="flex items-center gap-4 mb-6 justify-between">
@@ -208,6 +301,8 @@ const Roles = () => {
           };
           return <InfoCard key={rol.id} {...cardProps} />;
         })}
+      </div>
+
       {/* Modal de edición de rol */}
       <ModalFormGeneric
         isOpen={showEdit}
@@ -218,98 +313,10 @@ const Roles = () => {
         submitText="Actualizar Rol"
         cancelText="Cancelar"
         initialValues={editRole || {}}
-        customRender={({ values, setValues }) => (
-          <div className="space-y-4">
-            {forms.map(form => {
-              const formChecked = Array.isArray(values.formularios_permisos?.[form.id]) && values.formularios_permisos[form.id].length > 0;
-              const allPermsChecked = permissions.length > 0 && Array.isArray(values.formularios_permisos?.[form.id]) && permissions.every(perm => values.formularios_permisos[form.id].includes(perm.id));
-              const isOpen = openFormId === form.id;
-              return (
-                <div key={form.id} className="border rounded-lg mb-2 bg-gray-50">
-                  <div className="flex items-center p-4 cursor-pointer select-none" onClick={() => setOpenFormId(isOpen ? null : form.id)}>
-                    <span className={`mr-2 transition-transform ${isOpen ? 'rotate-90' : ''}`}>▶</span>
-                    <input
-                      type="checkbox"
-                      checked={formChecked}
-                      onClick={e => e.stopPropagation()}
-                      onChange={e => {
-                        setValues(prev => {
-                          let newPerms = [];
-                          if (e.target.checked) {
-                            newPerms = permissions.map(perm => perm.id);
-                          }
-                          return {
-                            ...prev,
-                            formularios_permisos: {
-                              ...prev.formularios_permisos,
-                              [form.id]: newPerms
-                            }
-                          };
-                        });
-                      }}
-                    />
-                    <span className="font-semibold ml-2">{form.name}</span>
-                    <button
-                      type="button"
-                      className="ml-4 text-xs text-blue-600 underline"
-                      onClick={e => {
-                        e.stopPropagation();
-                        // Toggle all permissions for this form
-                        setValues(prev => {
-                          const prevPerms = Array.isArray(prev.formularios_permisos?.[form.id]) ? prev.formularios_permisos[form.id] : [];
-                          let newPerms = [];
-                          if (prevPerms.length < permissions.length) {
-                            newPerms = permissions.map(perm => perm.id);
-                          }
-                          return {
-                            ...prev,
-                            formularios_permisos: {
-                              ...prev.formularios_permisos,
-                              [form.id]: newPerms
-                            }
-                          };
-                        });
-                      }}
-                    >{allPermsChecked ? 'Desmarcar todos' : 'Marcar todos'}</button>
-                  </div>
-                  {isOpen && (
-                    <div className="flex flex-wrap gap-4 ml-10 pb-4">
-                      {permissions.map(perm => (
-                        <label key={perm.id} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={Array.isArray(values.formularios_permisos?.[form.id]) ? values.formularios_permisos[form.id].includes(perm.id) : false}
-                            disabled={!formChecked}
-                            onChange={e => {
-                              setValues(prev => {
-                                const prevPerms = Array.isArray(prev.formularios_permisos?.[form.id]) ? prev.formularios_permisos[form.id] : [];
-                                let newPerms;
-                                if (e.target.checked) {
-                                  newPerms = [...prevPerms, perm.id];
-                                } else {
-                                  newPerms = prevPerms.filter(pid => pid !== perm.id);
-                                }
-                                return {
-                                  ...prev,
-                                  formularios_permisos: {
-                                    ...prev.formularios_permisos,
-                                    [form.id]: newPerms
-                                  }
-                                };
-                              });
-                            }}
-                          />
-                          <span>{perm.type_permission}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+        customRender={renderFormPermissions}
+        onProgramChange={undefined}
       />
+
       <ConfirmModal
         isOpen={showEditConfirm}
         title="¿Confirmar actualización de rol?"
@@ -319,7 +326,7 @@ const Roles = () => {
         onConfirm={handleConfirmEditRole}
         onCancel={() => { setShowEditConfirm(false); setPendingEditData(null); }}
       />
-      </div>
+
       <ConfirmModal
         isOpen={showConfirm}
         title={pendingRole?.active ? '¿Inhabilitar rol?' : '¿Habilitar rol?'}
@@ -331,6 +338,7 @@ const Roles = () => {
         onConfirm={handleConfirmAction}
         onCancel={() => setShowConfirm(false)}
       />
+
       <ModalFormGeneric
         isOpen={showCreate}
         title="Registrar Nuevo Rol-Sena"
@@ -339,98 +347,10 @@ const Roles = () => {
         onSubmit={handleCreateRole}
         submitText="Registrar Rol"
         cancelText="Cancelar"
-        customRender={({ values, setValues }) => (
-          <div className="space-y-4">
-            {forms.map(form => {
-              const formChecked = Array.isArray(values.formularios_permisos?.[form.id]) && values.formularios_permisos[form.id].length > 0;
-              const allPermsChecked = permissions.length > 0 && Array.isArray(values.formularios_permisos?.[form.id]) && permissions.every(perm => values.formularios_permisos[form.id].includes(perm.id));
-              const isOpen = openFormId === form.id;
-              return (
-                <div key={form.id} className="border rounded-lg mb-2 bg-gray-50">
-                  <div className="flex items-center p-4 cursor-pointer select-none" onClick={() => setOpenFormId(isOpen ? null : form.id)}>
-                    <span className={`mr-2 transition-transform ${isOpen ? 'rotate-90' : ''}`}>▶</span>
-                    <input
-                      type="checkbox"
-                      checked={formChecked}
-                      onClick={e => e.stopPropagation()}
-                      onChange={e => {
-                        setValues(prev => {
-                          let newPerms = [];
-                          if (e.target.checked) {
-                            newPerms = permissions.map(perm => perm.id);
-                          }
-                          return {
-                            ...prev,
-                            formularios_permisos: {
-                              ...prev.formularios_permisos,
-                              [form.id]: newPerms
-                            }
-                          };
-                        });
-                      }}
-                    />
-                    <span className="font-semibold ml-2">{form.name}</span>
-                    <button
-                      type="button"
-                      className="ml-4 text-xs text-blue-600 underline"
-                      onClick={e => {
-                        e.stopPropagation();
-                        // Toggle all permissions for this form
-                        setValues(prev => {
-                          const prevPerms = Array.isArray(prev.formularios_permisos?.[form.id]) ? prev.formularios_permisos[form.id] : [];
-                          let newPerms = [];
-                          if (prevPerms.length < permissions.length) {
-                            newPerms = permissions.map(perm => perm.id);
-                          }
-                          return {
-                            ...prev,
-                            formularios_permisos: {
-                              ...prev.formularios_permisos,
-                              [form.id]: newPerms
-                            }
-                          };
-                        });
-                      }}
-                    >{allPermsChecked ? 'Desmarcar todos' : 'Marcar todos'}</button>
-                  </div>
-                  {isOpen && (
-                    <div className="flex flex-wrap gap-4 ml-10 pb-4">
-                      {permissions.map(perm => (
-                        <label key={perm.id} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={Array.isArray(values.formularios_permisos?.[form.id]) ? values.formularios_permisos[form.id].includes(perm.id) : false}
-                            disabled={!formChecked}
-                            onChange={e => {
-                              setValues(prev => {
-                                const prevPerms = Array.isArray(prev.formularios_permisos?.[form.id]) ? prev.formularios_permisos[form.id] : [];
-                                let newPerms;
-                                if (e.target.checked) {
-                                  newPerms = [...prevPerms, perm.id];
-                                } else {
-                                  newPerms = prevPerms.filter(pid => pid !== perm.id);
-                                }
-                                return {
-                                  ...prev,
-                                  formularios_permisos: {
-                                    ...prev.formularios_permisos,
-                                    [form.id]: newPerms
-                                  }
-                                };
-                              });
-                            }}
-                          />
-                          <span>{perm.type_permission}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+        customRender={renderFormPermissions}
+        onProgramChange={undefined}
       />
+
       <ConfirmModal
         isOpen={showCreateConfirm}
         title="¿Confirmar registro de rol?"

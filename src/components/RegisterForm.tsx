@@ -5,6 +5,7 @@ import useNotification from '../hook/useNotification';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
 import FooterLinks from './FooterLinks';
+import CustomSelect from './CustomSelect';
 import { registerAprendiz } from '../Api/Services/Person';
 import { RegisterPayload } from '../Api/types/entities/person.types';
 import {
@@ -189,23 +190,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
 
           <div className="sena-input-group">
             <FileText className="sena-input-icon" />
-            <select
-              value={formData.documentType}
-              onChange={(e) => setFormData({...formData, documentType: e.target.value})}
-              className="sena-input"
-              required
-              disabled={documentTypesLoading}
-            >
-              {documentTypesLoading ? (
-                <option value="">Cargando tipos de documento...</option>
-              ) : (
-                documentTypes.map((tipo) => (
-                  <option key={tipo.value} value={tipo.value}>
-                    {tipo.label}
-                  </option>
-                ))
-              )}
-            </select>
+            <div className="relative">
+              <CustomSelect
+                value={formData.documentType}
+                onChange={(value) => setFormData({...formData, documentType: value})}
+                options={documentTypesLoading ? [] : documentTypes.filter(type => type.value !== '')}
+                placeholder={documentTypesLoading ? "Cargando tipos de documento..." : "Selecciona tipo de documento"}
+                classNames={{
+                  trigger: "sena-input pl-10 pr-10 flex items-center justify-between",
+                  label: "sr-only"
+                }}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
