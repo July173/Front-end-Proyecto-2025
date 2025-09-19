@@ -112,6 +112,10 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
     regional_id: 0,
   });
 
+  // Filtrar centros y sedes según selección (después de inicializar los estados)
+  const centrosFiltrados = centros.filter(c => c.regional === instructor.regional_id);
+  const sedesFiltradas = sedes.filter(s => s.center === instructor.center_id);
+
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingSubmit, setPendingSubmit] = useState<'aprendiz' | 'instructor' | null>(null);
 
@@ -161,6 +165,24 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
     setLoading(true);
     setError('');
     let errorMsg = null;
+    // Función para extraer el mensaje del backend
+    const getBackendErrorMsg = (err) => {
+      if (err?.response?.data) {
+        if (typeof err.response.data === 'string') {
+          return err.response.data;
+        } else if (err.response.data.detalle) {
+          return err.response.data.detalle;
+        } else if (err.response.data.error) {
+          return err.response.data.error;
+        } else if (err.response.data.message) {
+          return err.response.data.message;
+        } else {
+          return Object.values(err.response.data).join(' ');
+        }
+      }
+      return err?.message || 'Error al registrar usuario';
+    };
+
     if (pendingSubmit === 'aprendiz') {
       errorMsg = validateAprendiz(aprendiz);
       if (errorMsg) {
@@ -179,7 +201,14 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
         first_last_name: apellidos[0] || '',
         second_last_name: apellidos.slice(1).join(' '),
       };
-      await postAprendiz(payload);
+      try {
+        await postAprendiz(payload);
+      } catch (err) {
+        setError(getBackendErrorMsg(err));
+        setLoading(false);
+        setPendingSubmit(null);
+        return;
+      }
     } else if (pendingSubmit === 'instructor') {
       errorMsg = validateInstructor(instructor);
       if (errorMsg) {
@@ -188,7 +217,24 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
         setPendingSubmit(null);
         return;
       }
-      await postInstructor(instructor);
+      // Separar nombres y apellidos para instructor
+      const nombres = instructor.first_name.trim().split(' ');
+      const apellidos = instructor.first_last_name.trim().split(' ');
+      const payload = {
+        ...instructor,
+        first_name: nombres[0] || '',
+        second_name: nombres.slice(1).join(' '),
+        first_last_name: apellidos[0] || '',
+        second_last_name: apellidos.slice(1).join(' '),
+      };
+      try {
+        await postInstructor(payload);
+      } catch (err) {
+        setError(getBackendErrorMsg(err));
+        setLoading(false);
+        setPendingSubmit(null);
+        return;
+      }
     }
     if (onSuccess) onSuccess();
     if (onClose) onClose();
@@ -324,8 +370,21 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <label className="block text-sm">Regional <span className="text-red-600">*</span></label>
                 <CustomSelect
                   value={instructor.regional_id ? String(instructor.regional_id) : ""}
-                  onChange={value => setInstructor(prev => ({ ...prev, regional_id: Number(value) }))}
+                  onChange={value => setInstructor(prev => ({ ...prev, regional_id: Number(value), center_id: 0, sede_id: 0 }))}
                   options={regionales.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                    label: "hidden",
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm">Centro <span className="text-red-600">*</span></label>
+                <CustomSelect
+                  value={instructor.center_id ? String(instructor.center_id) : ""}
+                  onChange={value => setInstructor(prev => ({ ...prev, center_id: Number(value), sede_id: 0 }))}
+                  options={centrosFiltrados.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
@@ -338,20 +397,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <CustomSelect
                   value={instructor.sede_id ? String(instructor.sede_id) : ""}
                   onChange={value => setInstructor(prev => ({ ...prev, sede_id: Number(value) }))}
-                  options={sedes.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
-                  placeholder="Seleccionar ..."
-                  classNames={{
-                    trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
-                    label: "hidden",
-                  }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm">Centro <span className="text-red-600">*</span></label>
-                <CustomSelect
-                  value={instructor.center_id ? String(instructor.center_id) : ""}
-                  onChange={value => setInstructor(prev => ({ ...prev, center_id: Number(value) }))}
-                  options={centros.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  options={sedesFiltradas.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
