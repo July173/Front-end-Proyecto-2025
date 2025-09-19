@@ -286,11 +286,17 @@ export const Perfil = () => {
                     <input
                       type="text"
                       value={code}
-                      onChange={e => setCode(e.target.value)}
+                      onChange={e => {
+                        // Solo números y máximo 6 caracteres
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        setCode(value);
+                      }}
                       className="w-full border rounded px-3 py-2"
                       placeholder="Ingresa el código"
                       disabled={modalLoading}
                       maxLength={6}
+                      inputMode="numeric"
+                      pattern="\\d*"
                     />
                     {codeError && <span className="text-red-500 text-xs">{codeError}</span>}
                   </div>

@@ -75,9 +75,17 @@ const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
               type="text"
               placeholder="Código de recuperación"
               value={code}
-              onChange={handleCodeChange}
+              onChange={e => {
+                // Solo números y máximo 6 caracteres
+                const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                setCode(value);
+                setCodeError(!isValidResetCode(value) ? 'El código debe ser de 6 dígitos numéricos.' : '');
+              }}
               className="sena-input"
               required
+              maxLength={6}
+              inputMode="numeric"
+              pattern="\d*"
             />
             {codeError && <span className="text-red-500 text-xs">{codeError}</span>}
           </div>
