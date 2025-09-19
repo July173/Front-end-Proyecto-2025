@@ -252,7 +252,21 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Teléfono <span className="text-red-600">*</span></label>
-                <input name="phone_number" value={aprendiz.phone_number} onChange={e => handleChange(e, 'aprendiz')} className="w-full border rounded-lg px-2 py-1 placeholder:text-xs" placeholder="ej: 3102936537" />
+                <input 
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="\d*"
+                  name="phone_number" 
+                  value={aprendiz.phone_number} 
+                  onChange={e => {
+                    // Solo permite números
+                    const value = e.target.value.replace(/\D/g, '');
+                    handleChange({ ...e, target: { ...e.target, value } }, 'aprendiz');
+                  }} 
+                  className="w-full border rounded-lg px-2 py-1 placeholder:text-xs" 
+                  placeholder="ej: 3102936537" 
+                  maxLength={10}
+                />
               </div>
               <div>
                 <label className="block text-sm">Programa de formación <span className="text-red-600">*</span></label>
@@ -318,7 +332,21 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Teléfono <span className="text-red-600">*</span></label>
-                <input name="phone_number" value={instructor.phone_number} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded px-2 py-1 placeholder:text-xs" placeholder="ej: 3102936537" />
+                <input 
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="\d*"
+                  name="phone_number" 
+                  value={instructor.phone_number} 
+                  onChange={e => {
+                    // Solo permite números
+                    const value = e.target.value.replace(/\D/g, '');
+                    handleChange({ ...e, target: { ...e.target, value } }, 'instructor');
+                  }} 
+                  className="w-full border rounded px-2 py-1 placeholder:text-xs" 
+                  placeholder="ej: 3102936537" 
+                  maxLength={10}
+                />
               </div>
               <div>
                 <label className="block text-sm">Regional <span className="text-red-600">*</span></label>
