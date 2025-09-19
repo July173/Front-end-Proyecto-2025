@@ -1,6 +1,12 @@
 import React from "react";
-// import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import { 
+  JournalText,
+  Person,
+  Buildings,
+  FileEarmarkPdf,
+  BoxArrowUp,
+  Send
+} from 'react-bootstrap-icons';
 // Colores usados
 const COLORS = {
   green: "#0C672D",
@@ -17,10 +23,12 @@ export const RequestRegistration = () => {
     <div className="w-full flex flex-col items-center py-8" style={{ background: COLORS.white }}>
       {/* Encabezado */}
       <div className="w-full max-w-3xl mx-auto mb-4">
-        <div className="flex items-center gap-3 mb-2">
-            <i className="bi bi-box-arrow-up" style={{ fontSize: 32, color: COLORS.green }}></i>
+        <div className="flex items-center gap-3 mb-2 justify-center">
+            <div className="bg-green-600 p-2 rounded-full flex items-center justify-center">
+              <JournalText size={32} color={COLORS.white} />
+            </div>
             <h1 className="font-bold text-2xl" style={{ color: COLORS.green }}>Formulario de Asignación</h1>
-          </div>
+        </div>
         <h2 className="font-semibold text-lg mb-2" style={{ color: COLORS.green2 }}>Asignación instructor acompañamiento etapa práctica</h2>
         <p className="text-sm text-gray-700 mb-2">
           Unicamente para la alternativa de Contrato de Aprendizaje. Acepto el tratamiento de mis datos personales conforme a lo consagrado en el artículo 15 Constitución Política y en la Resolución No. 0924 del MINTIC.
@@ -58,7 +66,7 @@ export const RequestRegistration = () => {
       {/* Datos del Aprendiz */}
       <div className="w-full max-w-3xl mx-auto bg-green-50 rounded-lg p-4 mb-4 border" style={{ borderColor: COLORS.green3 }}>
         <div className="flex items-center gap-2 mb-2">
-          <i className="bi bi-person" style={{ color: COLORS.green, fontSize: 22 }}></i>
+          <Person size={22} color={COLORS.green} />
           <span className="font-semibold text-lg" style={{ color: COLORS.green }}>Datos del Aprendiz</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -125,7 +133,7 @@ export const RequestRegistration = () => {
       {/* Datos de la Empresa */}
       <div className="w-full max-w-3xl mx-auto bg-green-50 rounded-lg p-4 mb-4 border" style={{ borderColor: COLORS.green3 }}>
         <div className="flex items-center gap-2 mb-2">
-          <i className="bi bi-buildings" style={{ color: COLORS.green, fontSize: 22 }}></i>
+          <Buildings size={22} color={COLORS.green} />
           <span className="font-semibold text-lg" style={{ color: COLORS.green }}>Datos de la Empresa</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -150,7 +158,7 @@ export const RequestRegistration = () => {
       {/* Datos del Jefe Inmediato */}
       <div className="w-full max-w-3xl mx-auto bg-green-50 rounded-lg p-4 mb-4 border" style={{ borderColor: COLORS.green3 }}>
         <div className="flex items-center gap-2 mb-2">
-          <i className="bi bi-person" style={{ color: COLORS.green, fontSize: 22 }}></i>
+          <Person size={22} color={COLORS.green} />
           <span className="font-semibold text-lg" style={{ color: COLORS.green }}>Datos del Jefe Inmediato</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,7 +183,7 @@ export const RequestRegistration = () => {
       {/* Datos del Encargado de contratación */}
       <div className="w-full max-w-3xl mx-auto bg-green-50 rounded-lg p-4 mb-4 border" style={{ borderColor: COLORS.green3 }}>
         <div className="flex items-center gap-2 mb-2">
-          <i className="bi bi-person" style={{ color: COLORS.green, fontSize: 22 }}></i>
+          <Person size={22} color={COLORS.green} />
           <span className="font-semibold text-lg" style={{ color: COLORS.green }}>Datos del Encargado de contratación o área de Talento Humano</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -196,14 +204,14 @@ export const RequestRegistration = () => {
       {/* Archivo PDF */}
       <div className="w-full max-w-3xl mx-auto bg-green-50 rounded-lg p-4 mb-4 border" style={{ borderColor: COLORS.green3 }}>
         <div className="flex items-center gap-2 mb-2">
-          <i className="bi bi-file-earmark-pdf" style={{ color: COLORS.green, fontSize: 22 }}></i>
+          <FileEarmarkPdf size={22} color={COLORS.green} />
           <span className="font-semibold text-lg" style={{ color: COLORS.green }}>Cargue aquí un solo archivo en PDF con el documento que soporte su solicitud (máximo 1MB)<span style={{ color: COLORS.error }}>*</span></span>
         </div>
         <p className="text-xs text-gray-600 mb-2">
           Favor tenga en cuenta que, para Contrato de Aprendizaje debe cargar la copia del contrato celebrado con la empresa. Para las modalidades de Desempeño a través de vinculación laboral o contractual, Participación en un proyecto productivo, De apoyo a una unidad productiva familiar o Pasantías, debe cargar la evidencia mediante la cual el Coordinador Académico le Aprobó realizar su etapa práctica bajo algunas de estas modalidades. Si aún no cuenta con dicha autorización puede ingresar al siguiente enlace y solicitar la aprobación. <a href="#" className="text-green-700 underline">1-2-2 Autorización Modalidad Etapa Práctica Aprendiz, diferente a Contrato de Aprendizaje.</a>
         </p>
         <div className="w-full flex flex-col items-center border-2 border-dashed rounded-lg py-6 mb-2" style={{ borderColor: COLORS.green3 }}>
-          <i className="bi bi-box-arrow-up" style={{ fontSize: 32, color: COLORS.green }}></i>
+          <BoxArrowUp size={32} color={COLORS.green} />
           <span className="font-medium mb-2">Seleccionar archivo PDF</span>
           <input type="file" accept="application/pdf" className="w-full max-w-xs" required />
           <span className="text-xs text-gray-500 mt-2">Arrastra y suelta tu archivo aquí o haz clic para seleccionar</span>
@@ -212,7 +220,7 @@ export const RequestRegistration = () => {
       {/* Botón enviar */}
       <div className="w-full max-w-3xl mx-auto flex flex-col items-center mb-4">
         <button type="submit" className="w-full bg-green-600 text-white font-bold py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-green-700 transition">
-          <i className="bi bi-send"></i> Enviar Formulario
+          <Send size={22} /> Enviar Formulario
         </button>
         <span className="text-xs text-gray-600 mt-2">Asegúrate de completar todos los campos obligatorios (<span style={{ color: COLORS.error }}>*</span>)</span>
       </div>
