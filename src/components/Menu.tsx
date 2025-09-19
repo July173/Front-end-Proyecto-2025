@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, Shield, UserCheck, User, BarChart, Settings, ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut } from 'lucide-react';
+import { 
+  House, 
+  Shield, 
+  PersonCheck, 
+  Person, 
+  BarChart, 
+  Gear,
+  Fingerprint,
+  PersonWorkspace
+} from 'react-bootstrap-icons';
 import { menu } from '../Api/Services/Menu';
 import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../Api/types/entities/menu.types';
 import { useUserData } from '../hook/useUserData';
@@ -7,17 +17,19 @@ import { useNavigate } from "react-router-dom";
 import logo from '/public/logo.png';
 
 const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-  'home': Home,
-  'inicio': Home,
-  'security': Shield,
-  'seguridad': Shield,
-  'user-check': UserCheck,
-  'administración': UserCheck,
-  'user': User,
+  'home': House,
+  'inicio': House,
+  'security': Fingerprint,
+  'seguridad': Fingerprint,
+  'user-check': PersonCheck,
+  'administración': PersonCheck,
+  'asignar seguimiento': PersonWorkspace,
+  'asignar seguimientos': PersonWorkspace,
+  'user': Person,
   'chart': BarChart,
   'reportes': BarChart,
-  'settings': Settings,
-  'configuración': Settings,
+  'settings': Gear,
+  'configuración': Gear,
 };
 
 const Menu: React.FC<SidebarMenuProps> = ({ 
@@ -32,9 +44,9 @@ const Menu: React.FC<SidebarMenuProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [activeModule, setActiveModule] = useState<string | null>(null);
   const [openModules, setOpenModules] = useState<Record<string, boolean>>({});
   const [showModal, setShowModal] = useState(false);
-  const [modalPos, setModalPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
 
   // Obtener email real del usuario
   const { userData } = useUserData();
@@ -86,16 +98,9 @@ const Menu: React.FC<SidebarMenuProps> = ({
     return a.localeCompare(b);
   });
 
-  // 👉 abre el modal justo encima del botón
+  // 👉 abre el modal justo encima del botón, dentro del contenedor del menú
   const handleOpenModal = () => {
-    if (userBtnRef.current) {
-      const rect = userBtnRef.current.getBoundingClientRect();
-      setModalPos({
-        top: rect.top + window.scrollY - 200, // ajusta 200 según el alto real de tu modal
-        left: rect.left + window.scrollX,
-      });
-      setShowModal(true);
-    }
+    setShowModal(true);
   };
 
   // 👉 cerrar al hacer clic fuera
@@ -131,22 +136,58 @@ const Menu: React.FC<SidebarMenuProps> = ({
       <nav className="flex-1 px-4">
         <ul className="space-y-2">
           {orderedModules.map(([moduleName, forms]) => {
-            const IconComponent = iconMap[moduleName.toLowerCase()] || Home;
+            const IconComponent = iconMap[moduleName.toLowerCase()] || House;
             const isOpen = openModules[moduleName] || false;
+            const isInicio = moduleName.toLowerCase() === 'inicio';
+            const isActiveModule = activeModule === moduleName;
+            
+            // Si es "Inicio", renderizar como botón directo sin submódulos
+            if (isInicio) {
+              return (
+                <li key={moduleName}>
+                  <button
+                    onClick={() => {
+                      setActiveModule(moduleName);
+                      setActiveItem(null); // Limpiar item activo de submódulos
+                      if (onNavigate) {
+                        onNavigate('/home'); // Redirige a la vista Home
+                      } else {
+                        navigate('/home');
+                      }
+                    }}
+                    className={`w-full flex items-start gap-2 px-4 py-3 rounded-lg text-left transition-colors ${
+                      isActiveModule 
+                        ? "bg-white/20 text-white" 
+                        : "hover:bg-white/10"
+                    }`}
+                  >
+                    <IconComponent className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span className="font-medium leading-tight">{moduleName}</span>
+                  </button>
+                </li>
+              );
+            }
+            
+            // Para otros módulos, mantener la funcionalidad expandible
             return (
               <li key={moduleName}>
                 <button
-                  onClick={() =>
-                    setOpenModules(prev => ({ ...prev, [moduleName]: !prev[moduleName] }))
-                  }
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-left hover:bg-white/10"
+                  onClick={() => {
+                    setOpenModules(prev => ({ ...prev, [moduleName]: !prev[moduleName] }));
+                    setActiveModule(moduleName);
+                  }}
+                  className={`w-full flex items-start justify-between px-4 py-3 rounded-lg text-left transition-colors ${
+                    isActiveModule 
+                      ? "bg-white/20 text-white" 
+                      : "hover:bg-white/10"
+                  }`}
                 >
-                  <span className="flex items-center gap-2">
-                    <IconComponent className="w-5 h-5" />
-                    <span className="font-medium">{moduleName}</span>
+                  <span className="flex items-start gap-2 flex-1">
+                    <IconComponent className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span className="font-medium leading-tight">{moduleName}</span>
                   </span>
                   <ChevronDown
-                    className={`w-4 h-4 transform transition-transform ${
+                    className={`w-4 h-4 mt-0.5 flex-shrink-0 transform transition-transform ${
                       isOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -154,13 +195,13 @@ const Menu: React.FC<SidebarMenuProps> = ({
                 {isOpen && (
                   <ul className="ml-8 mt-2 space-y-1">
                     {forms.map(form => {
-                      const FormIcon = iconMap[form.icon] || Home;
                       const isActive = activeItem === form.id;
                       return (
                         <li key={form.id}>
                           <button
                             onClick={() => {
                               setActiveItem(form.id);
+                              setActiveModule(moduleName); // Mantener módulo activo
                               if (onMenuItemClick) onMenuItemClick(form);
                               if (onNavigate) {
                                 onNavigate(form.path);
@@ -174,7 +215,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
                                 : "text-white/80 hover:bg-white/10"
                             }`}
                           >
-                            <FormIcon className="w-4 h-4" />
+                            <span className="w-4 h-4 flex items-center justify-center text-white/80">•</span>
                             {form.name}
                           </button>
                         </li>
@@ -196,13 +237,15 @@ const Menu: React.FC<SidebarMenuProps> = ({
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#D9D9D9] rounded-full flex items-center justify-center">
-            <span className="text-white text-sm font-medium">
+            <span className="text-gray-600 text-sm font-medium">
               {userInfo.name.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white font-medium truncate">{userInfo.name}</p>
-            <p className="text-white/70 text-sm truncate">{userInfo.role}</p>
+            <div className="inline-block bg-[#0F172A] text-[#61F659] text-xs px-2 py-1 rounded-full mt-1">
+              {userInfo.role}
+            </div>
           </div>
         </div>
       </div>
@@ -211,8 +254,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
       {showModal && (
         <div
           ref={modalRef}
-          className="absolute z-50 bg-white rounded-xl shadow-lg w-72 p-4"
-          style={{ top: modalPos.top, left: modalPos.left }}
+          className="absolute bottom-20 left-4 right-4 z-50 bg-white rounded-xl shadow-lg p-4"
         >
           {/* Info usuario: nombre y correo */}
           <div className="flex flex-col items-start mb-4">
@@ -232,13 +274,13 @@ const Menu: React.FC<SidebarMenuProps> = ({
             }}
             className="w-full flex items-center gap-2 py-2 px-3 rounded-lg text-gray-700 hover:bg-green-50 mb-2"
           >
-            <User className="w-4 h-4" />
+            <Person className="w-4 h-4" />
             Ver perfil
           </button>
 
           {/* Rol */}
           <div className="flex items-center gap-2 text-gray-700 text-sm font-medium mb-4 pl-1">
-            <UserCheck className="w-4 h-4" />
+            <PersonCheck className="w-4 h-4" />
             {userInfo.role}
             {userInfo.role && (
               <span className="ml-1 w-2 h-2 bg-green-500 rounded-full inline-block"></span>
