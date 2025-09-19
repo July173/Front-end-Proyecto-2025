@@ -169,7 +169,17 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
         setPendingSubmit(null);
         return;
       }
-      await postAprendiz(aprendiz);
+      // Separar nombres y apellidos
+      const nombres = aprendiz.first_name.trim().split(' ');
+      const apellidos = aprendiz.first_last_name.trim().split(' ');
+      const payload = {
+        ...aprendiz,
+        first_name: nombres[0] || '',
+        second_name: nombres.slice(1).join(' '),
+        first_last_name: apellidos[0] || '',
+        second_last_name: apellidos.slice(1).join(' '),
+      };
+      await postAprendiz(payload);
     } else if (pendingSubmit === 'instructor') {
       errorMsg = validateInstructor(instructor);
       if (errorMsg) {
