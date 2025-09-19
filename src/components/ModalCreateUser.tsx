@@ -198,7 +198,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-lg relative">
+      <div className={`bg-white rounded-xl p-6 w-full max-w-lg shadow-lg relative ${tab === 'instructor' ? 'max-h-[90vh] overflow-y-auto' : ''}`}>
         <h2 className="text-xl font-bold mb-4">Registrar Nuevo Usuario-Sena</h2>
         {/* Barra de tabs */}
         <div className="flex mb-4 bg-gray-300 rounded-lg overflow-hidden p-2">
@@ -314,7 +314,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Correo Electrónico <span className="text-red-600">*</span></label>
-                <input name="email" value={instructor.email} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded px-2 py-1 placeholder:text-xs" placeholder="ej: user@example.com" />
+                <input name="email" value={instructor.email} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded px-2 py-1 placeholder:text-xs" placeholder="ej: user@sena.edu.co" />
               </div>
               <div>
                 <label className="block text-sm">Teléfono <span className="text-red-600">*</span></label>
@@ -382,14 +382,23 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
               </div>
               <div>
                 <label className="block text-sm">Fecha fin de contrato <span className="text-red-600">*</span></label>
-                <input type="date" name="contractEndDate" value={instructor.contractEndDate} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs" />
+                <input 
+                  type="date" 
+                  name="contractEndDate" 
+                  value={instructor.contractEndDate} 
+                  onChange={e => handleChange(e, 'instructor')} 
+                  className="w-full border rounded-lg px-2 py-2 text-xs" 
+                  min={instructor.contractStartDate || undefined}
+                />
               </div>
               <div>
                 <label className="block text-sm">Rol <span className="text-red-600">*</span></label>
                 <CustomSelect
                   value={instructor.role_id ? String(instructor.role_id) : ""}
                   onChange={value => setInstructor(prev => ({ ...prev, role_id: Number(value) }))}
-                  options={roles.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.type_role) }))}
+                  options={roles
+                    .filter(opt => opt.id != null && opt.type_role?.toLowerCase() !== 'aprendiz')
+                    .map(opt => ({ value: String(opt.id), label: String(opt.type_role) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
