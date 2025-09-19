@@ -62,7 +62,7 @@ function TarjetaExcel({ property1 = "instructor", onDownload, onUpload, isUpload
             <div aria-hidden="true" className="absolute border border-dashed border-green-600 inset-0 pointer-events-none rounded-[10.5px]" />
           </div>
           <div
-            className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 cursor-pointer'} flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full transition-colors`}
+            className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 cursor-pointer'} flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full transition-colors duration-200`}
             onClick={!isUploading ? handleUploadClick : undefined}
           >
             {isUploading ? (
@@ -105,7 +105,7 @@ function TarjetaExcel({ property1 = "instructor", onDownload, onUpload, isUpload
             <div aria-hidden="true" className="absolute border border-[#154fef] border-dashed inset-0 pointer-events-none rounded-[10.5px]" />
           </div>
           <div
-            className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#154fef] cursor-pointer'} flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full transition-colors`}
+            className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#154fef] hover:bg-[#1145d4] cursor-pointer'} flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full transition-colors duration-200`}
             onClick={!isUploading ? handleUploadClick : undefined}
           >
             {isUploading ? (
@@ -143,7 +143,7 @@ function TarjetaExcel({ property1 = "instructor", onDownload, onUpload, isUpload
               <li>Estado del aprendiz</li>
             </ul>
           </div>
-          <div className="bg-[#154fef] flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer" onClick={onDownload}>
+          <div className="bg-[#154fef] hover:bg-[#1145d4] flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer transition-colors duration-200" onClick={onDownload}>
             <img alt="download" className="w-4 h-4" src={img4} />
             <span className="font-semibold text-[14px] text-white">Descargar plantilla para aprendices</span>
           </div>
@@ -173,7 +173,7 @@ function TarjetaExcel({ property1 = "instructor", onDownload, onUpload, isUpload
             <li>Credenciales de acceso</li>
           </ul>
         </div>
-        <div className="bg-green-600 flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer" onClick={onDownload}>
+        <div className="bg-green-600 hover:bg-green-700 flex gap-3 items-center justify-center py-1.5 rounded-[10px] w-full cursor-pointer transition-colors duration-200" onClick={onDownload}>
           <img alt="download" className="w-4 h-4" src={img4} />
           <span className="font-semibold text-[14px] text-white">Descargar plantilla para instructores</span>
         </div>
