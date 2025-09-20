@@ -126,7 +126,7 @@ export const ENDPOINTS = {
     allPrograms: `${API_BASE_URL}general/programs/`,
     getProgramFicha: `${API_BASE_URL}general/programs/{id}/fichas/`,
     IdProgram: `${API_BASE_URL}general/programs/{id}/`,
-    deleteIdProgram: `${API_BASE_URL}general/programs/{id}/soft-delete/`,
+    deleteIdProgram: `${API_BASE_URL}general/programs/{id}/disable-with-fichas/`,
   },
   /** Endpoints para áreas de conocimiento */
   KnowledgeArea: {

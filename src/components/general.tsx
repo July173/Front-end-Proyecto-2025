@@ -460,7 +460,7 @@ const General = () => {
         isOpen={showFichaModal}
         title="Agregar Ficha"
         fields={[
-          { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
+          { label: 'Número de Ficha', name: 'file_number', type: 'number', placeholder: 'Ingrese el número de ficha', required: true },
           { 
             label: 'Programa', 
             name: 'programa', 
@@ -549,7 +549,7 @@ const General = () => {
         isOpen={showEditFicha}
         title="Editar Ficha"
         fields={[
-          { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
+          { label: 'Número de Ficha', name: 'file_number', type: 'number', placeholder: 'Ingrese el número de ficha', required: true },
           { 
             label: 'Programa', 
             name: 'programa', 

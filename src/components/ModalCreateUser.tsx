@@ -305,9 +305,8 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                   name="phone_number" 
                   value={aprendiz.phone_number} 
                   onChange={e => {
-                    // Solo permite números
-                    const value = e.target.value.replace(/\D/g, '');
-                    handleChange({ ...e, target: { ...e.target, value } }, 'aprendiz');
+                    const onlyNumbers = e.target.value.replace(/\D/g, '');
+                    setAprendiz(prev => ({ ...prev, phone_number: onlyNumbers }));
                   }} 
                   className="w-full border rounded-lg px-2 py-1 placeholder:text-xs" 
                   placeholder="ej: 3102936537" 
@@ -385,9 +384,8 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                   name="phone_number" 
                   value={instructor.phone_number} 
                   onChange={e => {
-                    // Solo permite números
-                    const value = e.target.value.replace(/\D/g, '');
-                    handleChange({ ...e, target: { ...e.target, value } }, 'instructor');
+                    const onlyNumbers = e.target.value.replace(/\D/g, '');
+                    setInstructor(prev => ({ ...prev, phone_number: onlyNumbers }));
                   }} 
                   className="w-full border rounded px-2 py-1 placeholder:text-xs" 
                   placeholder="ej: 3102936537" 
