@@ -1,11 +1,14 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { getFichas } from '../Api/Services/Ficha';
 import { getPrograms } from '../Api/Services/Program';
 import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
 import type { Ficha, Program, KnowledgeArea } from '../Api/types/Modules/general.types';
 import { ChevronDown, ChevronUp, Plus, Settings, Power } from 'lucide-react';
+import ModalFormGeneric from './ModalFormGeneric';
+import ConfirmModal from './ConfirmModal';
+import { createFicha } from '../Api/Services/Ficha';
+import { createProgram } from '../Api/Services/Program';
+import { createKnowledgeArea } from '../Api/Services/KnowledgeArea';
 
 const General = () => {
   // Estados para los datos
@@ -23,6 +26,19 @@ const General = () => {
     programs: true,
     knowledgeAreas: true
   });
+
+  // Estados para modales y datos
+  const [showFichaModal, setShowFichaModal] = useState(false);
+  const [pendingFichaData, setPendingFichaData] = useState(null);
+  const [showFichaConfirm, setShowFichaConfirm] = useState(false);
+
+  const [showProgramModal, setShowProgramModal] = useState(false);
+  const [pendingProgramData, setPendingProgramData] = useState(null);
+  const [showProgramConfirm, setShowProgramConfirm] = useState(false);
+
+  const [showAreaModal, setShowAreaModal] = useState(false);
+  const [pendingAreaData, setPendingAreaData] = useState(null);
+  const [showAreaConfirm, setShowAreaConfirm] = useState(false);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -111,6 +127,74 @@ const General = () => {
     // Aquí implementarías la lógica de editar
   };
 
+  // Handlers para abrir modales
+  const handleAddFicha = () => setShowFichaModal(true);
+  const handleAddProgram = () => setShowProgramModal(true);
+  const handleAddArea = () => setShowAreaModal(true);
+
+  // Handlers para submit de formularios
+  const handleSubmitFicha = (values) => {
+    // Renombra 'programa' a 'program' para el backend
+    const fichaData = {
+      ...values,
+      program: values.programa, // El backend espera 'program'
+    };
+    delete fichaData.programa; // Elimina el campo 'programa'
+    setPendingFichaData(fichaData);
+    setShowFichaConfirm(true);
+  };
+  const handleSubmitProgram = (values) => {
+    setPendingProgramData(values);
+    setShowProgramConfirm(true);
+  };
+  const handleSubmitArea = (values) => {
+    setPendingAreaData(values);
+    setShowAreaConfirm(true);
+  };
+
+  // Handlers para confirmar creación
+  const handleConfirmFicha = async () => {
+    try {
+      await createFicha(pendingFichaData); // Aquí se envía el id del programa
+      setShowFichaModal(false);
+      setShowFichaConfirm(false);
+      setPendingFichaData(null);
+      const fichasData = await getFichas();
+      setFichas(fichasData);
+    } catch (e) {
+      alert(e.message || 'Error al crear ficha');
+    }
+  };
+  const handleConfirmProgram = async () => {
+    try {
+      await createProgram(pendingProgramData);
+      setShowProgramModal(false);
+      setShowProgramConfirm(false);
+      setPendingProgramData(null);
+      const programsData = await getPrograms();
+      setPrograms(programsData);
+    } catch (e) {
+      alert(e.message || 'Error al crear programa');
+    }
+  };
+  const handleConfirmArea = async () => {
+    try {
+      await createKnowledgeArea(pendingAreaData);
+      setShowAreaModal(false);
+      setShowAreaConfirm(false);
+      setPendingAreaData(null);
+      const areasData = await getKnowledgeAreas();
+      setKnowledgeAreas(areasData);
+    } catch (e) {
+      alert(e.message || 'Error al crear área');
+    }
+  };
+
+  const fichaFields = [
+    { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
+    { label: 'Programa', name: 'programa', type: 'select', options: programs.map(p => ({ value: p.id, label: p.name })), required: true },
+  ];
+
   if (loading) return <div className="p-8">Cargando...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
@@ -119,17 +203,14 @@ const General = () => {
       <div className="flex items-center gap-4 mb-6 justify-between">
         <h2 className="text-2xl font-bold">Gestión General - Sena</h2>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition-colors">
-            <Plus className="w-4 h-4" />
-            Agregar Ficha
+          <button onClick={handleAddFicha} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition-colors">
+            <Plus className="w-4 h-4" /> Agregar Ficha
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition-colors">
-            <Plus className="w-4 h-4" />
-            Agregar Programa
+          <button onClick={handleAddProgram} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition-colors">
+            <Plus className="w-4 h-4" /> Agregar Programa
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition-colors">
-            <Plus className="w-4 h-4" />
-            Agregar Área
+          <button onClick={handleAddArea} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow transition-colors">
+            <Plus className="w-4 h-4" /> Agregar Área
           </button>
         </div>
       </div>
@@ -155,16 +236,21 @@ const General = () => {
           </button>
           {sectionsOpen.fichas && (
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {fichas.map((ficha) => (
-                <InfoCard
-                  key={ficha.id}
-                  title={`Ficha #${ficha.file_number || ficha.id}`}
-                  subtitle={`Programa: ${ficha.programa || 'N/A'}`}
-                  isActive={ficha.active}
-                  onToggle={() => handleToggle('ficha', ficha.id)}
-                  onEdit={() => handleEdit('ficha', ficha.id)}
-                />
-              ))}
+              {fichas.map((ficha) => {
+                // Buscar el programa por id
+                const programObj = programs.find(p => p.id === ficha.program);
+                const programName = programObj ? programObj.name : ficha.program;
+                return (
+                  <InfoCard
+                    key={ficha.id}
+                    title={`Ficha #${ficha.file_number || ficha.id}`}
+                    subtitle={`Programa: ${programName}`}
+                    isActive={ficha.active}
+                    onToggle={() => handleToggle('ficha', ficha.id)}
+                    onEdit={() => handleEdit('ficha', ficha.id)}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -237,6 +323,81 @@ const General = () => {
           )}
         </div>
       </div>
+
+      {/* Modales */}
+      <ModalFormGeneric
+        isOpen={showFichaModal}
+        title="Agregar Ficha"
+        fields={[
+          { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
+          { label: 'Programa', name: 'programa', type: 'select', options: programs.map(p => ({ value: p.id, label: p.name })), required: true },
+        ]}
+        onClose={() => setShowFichaModal(false)}
+        onSubmit={handleSubmitFicha}
+        submitText="Registrar Ficha"
+        cancelText="Cancelar"
+        customRender={undefined}
+        onProgramChange={undefined}
+      />
+      <ModalFormGeneric
+        isOpen={showProgramModal}
+        title="Agregar Programa"
+        fields={[
+          { label: 'Nombre del Programa', name: 'name', type: 'text', placeholder: 'Ingrese el nombre del programa', required: true },
+          { label: 'Código del Programa', name: 'codeProgram', type: 'text', placeholder: 'Ingrese el código del programa', required: true },
+          { label: 'Descripción', name: 'description', type: 'text', placeholder: 'Ingrese una descripción', required: false },
+          { label: 'Tipo de Programa', name: 'typeProgram', type: 'text', placeholder: 'Ingrese el tipo de programa', required: false },
+        ]}
+        onClose={() => setShowProgramModal(false)}
+        onSubmit={handleSubmitProgram}
+        submitText="Registrar Programa"
+        cancelText="Cancelar"
+        customRender={undefined}
+        onProgramChange={undefined}
+      />
+      <ModalFormGeneric
+        isOpen={showAreaModal}
+        title="Agregar Área de Conocimiento"
+        fields={[
+          { label: 'Nombre del Área', name: 'name', type: 'text', placeholder: 'Ingrese el nombre del área', required: true },
+          { label: 'Descripción', name: 'description', type: 'text', placeholder: 'Ingrese una descripción', required: false },
+        ]}
+        onClose={() => setShowAreaModal(false)}
+        onSubmit={handleSubmitArea}
+        submitText="Registrar Área"
+        cancelText="Cancelar"
+        customRender={undefined}
+        onProgramChange={undefined}
+      />
+
+      {/* Confirmaciones */}
+      <ConfirmModal
+        isOpen={showFichaConfirm}
+        title="¿Confirmar registro de ficha?"
+        message="¿Estás seguro de que deseas crear esta ficha?"
+        confirmText="Sí, crear ficha"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmFicha}
+        onCancel={() => { setShowFichaConfirm(false); setPendingFichaData(null); }}
+      />
+      <ConfirmModal
+        isOpen={showProgramConfirm}
+        title="¿Confirmar registro de programa?"
+        message="¿Estás seguro de que deseas crear este programa?"
+        confirmText="Sí, crear programa"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmProgram}
+        onCancel={() => { setShowProgramConfirm(false); setPendingProgramData(null); }}
+      />
+      <ConfirmModal
+        isOpen={showAreaConfirm}
+        title="¿Confirmar registro de área?"
+        message="¿Estás seguro de que deseas crear esta área de conocimiento?"
+        confirmText="Sí, crear área"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmArea}
+        onCancel={() => { setShowAreaConfirm(false); setPendingAreaData(null); }}
+      />
     </div>
   );
 };

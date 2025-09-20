@@ -39,7 +39,7 @@ export interface KnowledgeArea {
 export interface Ficha {
   id: number;
   file_number?: number;
-  programa?: number;
+  program?: number;
   active: boolean;
 }
 

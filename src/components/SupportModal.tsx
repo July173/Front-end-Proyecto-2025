@@ -82,8 +82,15 @@ const SupportModal = ({ isOpen, onClose }) => {
 
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* Email falta editar el correo por uno real */}
-                        <div className="bg-white shadow rounded-lg p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-200" 
-                             onClick={() => window.open('mailto:servicio@sena.edu.co?subject=Solicitud de Soporte - Sistema de Gestión&body=Hola,%0D%0A%0D%0APor favor, describe tu consulta o problema:%0D%0A%0D%0A', '_blank')}>
+                        <div
+                            className="bg-white shadow rounded-lg p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                            onClick={() => {
+                                const subject = encodeURIComponent('Solicitud de Soporte - Sistema de Gestión');
+                                const body = encodeURIComponent('Hola,\n\nPor favor, describe tu consulta o problema:\n\n');
+                                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=servicio@sena.edu.co&su=${subject}&body=${body}`;
+                                window.open(gmailUrl, '_blank');
+                            }}
+                        >
                             <Mail className="w-8 h-8 mx-auto text-orange-600 mb-3" />
                             <h3 className="font-semibold text-lg">Email</h3>
                             <p className="text-gray-600 text-sm">Soporte por correo electrónico</p>
