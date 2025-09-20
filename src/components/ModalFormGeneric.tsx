@@ -144,7 +144,7 @@ const ModalFormGeneric = ({
                   label={field.label}
                   placeholder={field.placeholder}
                   classNames={{
-                    trigger: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all font-semibold bg-white flex items-center justify-between h-11",
+                    trigger: "w-full border border-gray-300 rounded px-3 py-2 bg-white flex items-center justify-between",
                     content: "bg-white border border-gray-300 rounded-lg shadow-lg z-50",
                     item: "px-4 py-2 cursor-pointer hover:bg-[#bdbdbd] hover:text-white focus:bg-[#bdbdbd] focus:text-gray-700 rounded-md flex items-center gap-2",
                     label: "block text-sm font-medium text-gray-700 mb-2"
@@ -190,6 +190,7 @@ const ModalFormGeneric = ({
                             name={String(opt.value)}
                             checked={Array.isArray(values[field.name]) ? values[field.name].map(String).includes(String(opt.value)) : false}
                             onChange={handleChange}
+                            disabled={opt.disabled === true}
                           />
                           <span className="text-base">{opt.label}</span>
                         </label>
