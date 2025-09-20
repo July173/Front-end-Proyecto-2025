@@ -82,7 +82,17 @@ const ModalEditUser = ({ isOpen, user, onClose, onSuccess }: {
 
   // Cargar datos del usuario
   useEffect(() => {
-    if (!isOpen || !user) return;
+    if (
+      !isOpen ||
+      !user ||
+      programas.length === 0 ||
+      roles.length === 0 ||
+      centros.length === 0 ||
+      sedes.length === 0 ||
+      regionales.length === 0 ||
+      areas.length === 0
+    ) return;
+
     setLoading(true);
     setError('');
     const fetchData = async () => {
