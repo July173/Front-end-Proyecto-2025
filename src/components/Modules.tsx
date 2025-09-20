@@ -44,6 +44,18 @@ const Modules = () => {
       .finally(() => setLoadingForms(false));
   }, []);
 
+  useEffect(() => {
+    if (showEdit && editModule?.name?.toLowerCase() === 'seguridad') {
+      // Forzar que el formulario de administración (id=1) esté siempre presente
+      if (editModule.form_ids && !editModule.form_ids.includes('1')) {
+        setEditModule(prev => ({
+          ...prev,
+          form_ids: [...prev.form_ids, '1']
+        }));
+      }
+    }
+  }, [showEdit, editModule]);
+
   if (loading) return <div className="p-8">Cargando...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
@@ -62,7 +74,11 @@ const Modules = () => {
       name: 'form_ids',
       label: 'Formularios',
       type: 'checkbox-group',
-      options: forms.filter(f => f.active).map(f => ({ value: String(f.id), label: f.name })),
+      options: forms.filter(f => f.active).map(f => ({
+        value: String(f.id),
+        label: f.name,
+        disabled: (editModule?.name?.toLowerCase() === 'seguridad' && String(f.id) === '1') // Deshabilita administración en seguridad
+      })),
     },
   ];
 
@@ -112,6 +128,10 @@ const Modules = () => {
     let selectedForms = [];
     if (Array.isArray(values.form_ids)) {
       selectedForms = values.form_ids.map(Number);
+      // Si es seguridad, fuerza el id 1
+      if (editModule?.name?.toLowerCase() === 'seguridad' && !selectedForms.includes(1)) {
+        selectedForms.push(1);
+      }
     }
     const data = {
       name: values.name,

@@ -113,7 +113,8 @@ const Users = () => {
 
   // Obtén el ID del usuario actual desde localStorage, contexto, props, etc.
   // Aquí se asume que el ID está guardado en localStorage bajo la clave 'currentUserId'
-  const currentUserId = localStorage.getItem('UserId');
+  const userData = localStorage.getItem('user_data');
+  const currentUserId = userData ? JSON.parse(userData).id : null;
 
   function RegistradoCard({ user }: { user: UsuarioRegistrado }) {
     const estado = getUserStatus(user);
@@ -154,7 +155,7 @@ const Users = () => {
         </div>
         <div className="flex gap-2 mt-2">
           {/* Solo mostrar el botón si NO es el usuario actual */}
-          {String(user.id) !== String(currentUserId) && (
+          {Number(user.id) !== Number(currentUserId) && (
             <button
               className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-3xl text-base font-semibold`}
               onClick={() => handleToggleEstado(user)}

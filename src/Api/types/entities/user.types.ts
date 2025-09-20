@@ -7,7 +7,7 @@
  * Incluye datos de usuario, respuesta de registro y validación de login.
  */
 export interface User {
-  id: string;
+  id: number;
   email: string;
   password: string;
   is_active: boolean;
