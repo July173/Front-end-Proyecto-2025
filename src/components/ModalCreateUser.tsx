@@ -319,7 +319,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <CustomSelect
                   value={aprendiz.program_id ? String(aprendiz.program_id) : ""}
                   onChange={value => setAprendiz(prev => ({ ...prev, program_id: Number(value) }))}
-                  options={programas.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  options={programas.filter(opt => opt.active).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
@@ -332,7 +332,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <CustomSelect
                   value={aprendiz.ficha_id}
                   onChange={value => setAprendiz(prev => ({ ...prev, ficha_id: value }))}
-                  options={fichas.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.file_number || opt.id) }))}
+                  options={fichas.filter(opt => opt.active).map(opt => ({ value: String(opt.id), label: String(opt.file_number || opt.id) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
@@ -438,7 +438,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <CustomSelect
                   value={instructor.knowledgeArea ? String(instructor.knowledgeArea) : ""}
                   onChange={value => setInstructor(prev => ({ ...prev, knowledgeArea: Number(value) }))}
-                  options={areas.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  options={areas.filter(opt => opt.active).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
@@ -470,9 +470,7 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                 <CustomSelect
                   value={instructor.role_id ? String(instructor.role_id) : ""}
                   onChange={value => setInstructor(prev => ({ ...prev, role_id: Number(value) }))}
-                  options={roles
-                    .filter(opt => opt.id != null && opt.type_role?.toLowerCase() !== 'aprendiz')
-                    .map(opt => ({ value: String(opt.id), label: String(opt.type_role) }))}
+                  options={roles.filter(opt => opt.active && opt.type_role?.toLowerCase() !== 'aprendiz').map(opt => ({ value: String(opt.id), label: String(opt.type_role) }))}
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",

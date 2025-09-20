@@ -62,7 +62,7 @@ const Modules = () => {
       name: 'form_ids',
       label: 'Formularios',
       type: 'checkbox-group',
-      options: forms.map(f => ({ value: String(f.id), label: f.name })),
+      options: forms.filter(f => f.active).map(f => ({ value: String(f.id), label: f.name })),
     },
   ];
 

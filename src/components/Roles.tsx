@@ -104,8 +104,8 @@ const Roles = () => {
       name: 'formularios_permisos',
       label: 'Formularios y Permisos',
       type: 'custom-permissions',
-      forms,
-      permissions,
+      forms: forms.filter(f => f.active), // solo formularios activos
+      permissions: permissions.filter(p => p.active), // solo permisos activos si aplica
     },
   ];
 

@@ -9,6 +9,12 @@ import ConfirmModal from './ConfirmModal';
 import { createFicha } from '../Api/Services/Ficha';
 import { createProgram } from '../Api/Services/Program';
 import { createKnowledgeArea } from '../Api/Services/KnowledgeArea';
+import { deleteFicha } from '../Api/Services/Ficha';
+import { deleteProgram } from '../Api/Services/Program';
+import { deleteKnowledgeArea } from '../Api/Services/KnowledgeArea';
+import { updateFicha } from '../Api/Services/Ficha';
+import { updateProgram } from '../Api/Services/Program';
+import { updateKnowledgeArea } from '../Api/Services/KnowledgeArea';
 
 const General = () => {
   // Estados para los datos
@@ -39,6 +45,24 @@ const General = () => {
   const [showAreaModal, setShowAreaModal] = useState(false);
   const [pendingAreaData, setPendingAreaData] = useState(null);
   const [showAreaConfirm, setShowAreaConfirm] = useState(false);
+
+  const [showDisableConfirm, setShowDisableConfirm] = useState(false);
+  const [pendingDisable, setPendingDisable] = useState<{ type: string, id: number | string } | null>(null);
+
+  const [editFicha, setEditFicha] = useState(null);
+  const [showEditFicha, setShowEditFicha] = useState(false);
+  const [pendingEditFicha, setPendingEditFicha] = useState(null);
+  const [showEditFichaConfirm, setShowEditFichaConfirm] = useState(false);
+
+  const [editProgram, setEditProgram] = useState(null);
+  const [showEditProgram, setShowEditProgram] = useState(false);
+  const [pendingEditProgram, setPendingEditProgram] = useState(null);
+  const [showEditProgramConfirm, setShowEditProgramConfirm] = useState(false);
+
+  const [editArea, setEditArea] = useState(null);
+  const [showEditArea, setShowEditArea] = useState(false);
+  const [pendingEditArea, setPendingEditArea] = useState(null);
+  const [showEditAreaConfirm, setShowEditAreaConfirm] = useState(false);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -95,20 +119,18 @@ const General = () => {
       <div className="flex gap-2">
         <button
           onClick={onEdit}
-          className="flex items-center gap-1 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
         >
-          <Settings className="w-3 h-3" />
           Ajustar
         </button>
         <button
           onClick={onToggle}
-          className={`flex items-center gap-1 px-3 py-1 text-sm rounded transition-colors ${
+          className={`px-3 py-1 text-sm rounded transition-colors ${
             isActive 
               ? 'bg-red-600 text-white hover:bg-red-700' 
               : 'bg-green-600 text-white hover:bg-green-700'
           }`}
         >
-          <Power className="w-3 h-3" />
           {isActive ? 'Deshabilitar' : 'Habilitar'}
         </button>
       </div>
@@ -117,14 +139,29 @@ const General = () => {
 
   // Función placeholder para toggle
   const handleToggle = (type: string, id: number) => {
-    console.log(`Toggle ${type} with ID: ${id}`);
-    // Aquí implementarías la lógica de habilitar/deshabilitar
+    setPendingDisable({ type, id });
+    setShowDisableConfirm(true);
   };
 
   // Función placeholder para editar
   const handleEdit = (type: string, id: number) => {
-    console.log(`Edit ${type} with ID: ${id}`);
-    // Aquí implementarías la lógica de editar
+    if (type === 'ficha') {
+      const ficha = fichas.find(f => f.id === id);
+      // Adaptar initialValues para el modal
+      setEditFicha({
+        ...ficha,
+        programa: ficha.program, // para el select
+      });
+      setShowEditFicha(true);
+    } else if (type === 'program') {
+      const program = programs.find(p => p.id === id);
+      setEditProgram(program);
+      setShowEditProgram(true);
+    } else if (type === 'knowledgeArea') {
+      const area = knowledgeAreas.find(a => a.id === id);
+      setEditArea(area);
+      setShowEditArea(true);
+    }
   };
 
   // Handlers para abrir modales
@@ -190,10 +227,104 @@ const General = () => {
     }
   };
 
+  const handleConfirmDisable = async () => {
+    if (!pendingDisable) return;
+    try {
+      if (pendingDisable.type === 'ficha') {
+        await deleteFicha(pendingDisable.id);
+        setFichas(await getFichas());
+      } else if (pendingDisable.type === 'program') {
+        await deleteProgram(pendingDisable.id);
+        setPrograms(await getPrograms());
+      } else if (pendingDisable.type === 'knowledgeArea') {
+        await deleteKnowledgeArea(pendingDisable.id);
+        setKnowledgeAreas(await getKnowledgeAreas());
+      }
+      setShowDisableConfirm(false);
+      setPendingDisable(null);
+    } catch (e) {
+      alert(e.message || 'Error al deshabilitar');
+    }
+  };
+
+  const handleSubmitEditFicha = (values) => {
+    // Renombrar programa a program
+    const data = { ...values, program: values.programa };
+    delete data.programa;
+    setPendingEditFicha(data);
+    setShowEditFichaConfirm(true);
+  };
+  const handleConfirmEditFicha = async () => {
+    try {
+      await updateFicha(editFicha.id, pendingEditFicha);
+      setShowEditFicha(false);
+      setShowEditFichaConfirm(false);
+      setPendingEditFicha(null);
+      setEditFicha(null);
+      setFichas(await getFichas());
+    } catch (e) {
+      alert(e.message || 'Error al actualizar ficha');
+    }
+  };
+
+  const handleSubmitEditProgram = (values) => {
+    setPendingEditProgram(values);
+    setShowEditProgramConfirm(true);
+  };
+  const handleConfirmEditProgram = async () => {
+    try {
+      await updateProgram(editProgram.id, pendingEditProgram);
+      setShowEditProgram(false);
+      setShowEditProgramConfirm(false);
+      setPendingEditProgram(null);
+      setEditProgram(null);
+      setPrograms(await getPrograms());
+    } catch (e) {
+      alert(e.message || 'Error al actualizar programa');
+    }
+  };
+
+  const handleSubmitEditArea = (values) => {
+    setPendingEditArea(values);
+    setShowEditAreaConfirm(true);
+  };
+  const handleConfirmEditArea = async () => {
+    try {
+      await updateKnowledgeArea(editArea.id, pendingEditArea);
+      setShowEditArea(false);
+      setShowEditAreaConfirm(false);
+      setPendingEditArea(null);
+      setEditArea(null);
+      setKnowledgeAreas(await getKnowledgeAreas());
+    } catch (e) {
+      alert(e.message || 'Error al actualizar área');
+    }
+  };
+
   const fichaFields = [
-    { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
-    { label: 'Programa', name: 'programa', type: 'select', options: programs.map(p => ({ value: p.id, label: p.name })), required: true },
+    { 
+      label: 'Número de Ficha', 
+      name: 'file_number', 
+      type: 'text', 
+      placeholder: 'Ingrese el número de ficha', 
+      required: true 
+    },
+    { 
+      label: 'Programa', 
+      name: 'programa', 
+      type: 'select', 
+      options: programs.filter(p => p.active).map(p => ({ value: p.id, label: p.name })), 
+      required: true,
+      customSelect: true // Indicador para usar CustomSelect
+    },
   ];
+
+  const getDisableText = (type: string) => {
+    if (type === 'ficha') return 'deshabilitar la ficha';
+    if (type === 'program') return 'deshabilitar el programa';
+    if (type === 'knowledgeArea') return 'deshabilitar el área de conocimiento';
+    return 'deshabilitar';
+  };
 
   if (loading) return <div className="p-8">Cargando...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
@@ -330,7 +461,14 @@ const General = () => {
         title="Agregar Ficha"
         fields={[
           { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
-          { label: 'Programa', name: 'programa', type: 'select', options: programs.map(p => ({ value: p.id, label: p.name })), required: true },
+          { 
+            label: 'Programa', 
+            name: 'programa', 
+            type: 'select', 
+            options: programs.filter(p => p.active).map(p => ({ value: p.id, label: p.name })),
+            required: true,
+            customSelect: true
+          },
         ]}
         onClose={() => setShowFichaModal(false)}
         onSubmit={handleSubmitFicha}
@@ -397,6 +535,105 @@ const General = () => {
         cancelText="Cancelar"
         onConfirm={handleConfirmArea}
         onCancel={() => { setShowAreaConfirm(false); setPendingAreaData(null); }}
+      />
+      <ConfirmModal
+        isOpen={showDisableConfirm}
+        title="¿Confirmar acción?"
+        message={`¿Estás seguro de que deseas ${pendingDisable && getDisableText(pendingDisable.type)} este registro?`}
+        confirmText="Sí, continuar"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmDisable}
+        onCancel={() => { setShowDisableConfirm(false); setPendingDisable(null); }}
+      />
+      <ModalFormGeneric
+        isOpen={showEditFicha}
+        title="Editar Ficha"
+        fields={[
+          { label: 'Número de Ficha', name: 'file_number', type: 'text', placeholder: 'Ingrese el número de ficha', required: true },
+          { 
+            label: 'Programa', 
+            name: 'programa', 
+            type: 'select', 
+            options: [
+              ...programs.filter(p => p.active).map(p => ({ value: p.id, label: p.name })),
+              // Si el programa actual está inactivo, inclúyelo en las opciones
+              ...(editFicha && !programs.find(p => p.id === editFicha.programa && p.active)
+                ? programs.filter(p => p.id === editFicha.programa).map(p => ({ value: p.id, label: p.name }))
+                : []
+              )
+            ],
+            required: true,
+            customSelect: true
+          },
+        ]}
+        onClose={() => { setShowEditFicha(false); setEditFicha(null); setPendingEditFicha(null); }}
+        onSubmit={handleSubmitEditFicha}
+        submitText="Actualizar Ficha"
+        cancelText="Cancelar"
+        initialValues={editFicha || {}}
+        customRender={undefined}
+        onProgramChange={undefined}
+      />
+      <ConfirmModal
+        isOpen={showEditFichaConfirm}
+        title="¿Confirmar actualización de ficha?"
+        message="¿Estás seguro de que deseas actualizar esta ficha?"
+        confirmText="Sí, actualizar ficha"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmEditFicha}
+        onCancel={() => { setShowEditFichaConfirm(false); setPendingEditFicha(null); }}
+      />
+
+      <ModalFormGeneric
+        isOpen={showEditProgram}
+        title="Editar Programa"
+        fields={[
+          { label: 'Nombre del Programa', name: 'name', type: 'text', placeholder: 'Ingrese el nombre del programa', required: true },
+          { label: 'Código del Programa', name: 'codeProgram', type: 'text', placeholder: 'Ingrese el código del programa', required: true },
+          { label: 'Descripción', name: 'description', type: 'text', placeholder: 'Ingrese una descripción', required: false },
+          { label: 'Tipo de Programa', name: 'typeProgram', type: 'text', placeholder: 'Ingrese el tipo de programa', required: false },
+        ]}
+        onClose={() => { setShowEditProgram(false); setEditProgram(null); setPendingEditProgram(null); }}
+        onSubmit={handleSubmitEditProgram}
+        submitText="Actualizar Programa"
+        cancelText="Cancelar"
+        initialValues={editProgram || {}}
+        customRender={undefined}
+        onProgramChange={undefined}
+      />
+      <ConfirmModal
+        isOpen={showEditProgramConfirm}
+        title="¿Confirmar actualización de programa?"
+        message="¿Estás seguro de que deseas actualizar este programa?"
+        confirmText="Sí, actualizar programa"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmEditProgram}
+        onCancel={() => { setShowEditProgramConfirm(false); setPendingEditProgram(null); }}
+      />
+
+      <ModalFormGeneric
+        isOpen={showEditArea}
+        title="Editar Área de Conocimiento"
+        fields={[
+          { label: 'Nombre del Área', name: 'name', type: 'text', placeholder: 'Ingrese el nombre del área', required: true },
+          { label: 'Descripción', name: 'description', type: 'text', placeholder: 'Ingrese una descripción', required: false },
+        ]}
+        onClose={() => { setShowEditArea(false); setEditArea(null); setPendingEditArea(null); }}
+        onSubmit={handleSubmitEditArea}
+        submitText="Actualizar Área"
+        cancelText="Cancelar"
+        initialValues={editArea || {}}
+        customRender={undefined}
+        onProgramChange={undefined}
+      />
+      <ConfirmModal
+        isOpen={showEditAreaConfirm}
+        title="¿Confirmar actualización de área?"
+        message="¿Estás seguro de que deseas actualizar esta área?"
+        confirmText="Sí, actualizar área"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmEditArea}
+        onCancel={() => { setShowEditAreaConfirm(false); setPendingEditArea(null); }}
       />
     </div>
   );

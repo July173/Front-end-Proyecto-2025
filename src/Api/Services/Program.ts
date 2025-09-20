@@ -40,3 +40,34 @@ export async function createProgram(data) {
   if (!response.ok) throw new Error('Error al crear programa');
   return response.json();
 }
+
+/**
+ * Elimina (deshabilita) un programa existente.
+ * @param id - ID del programa a eliminar
+ * @returns Promesa con el programa eliminado
+ */
+export async function deleteProgram(id: number | string) {
+  const url = ENDPOINTS.program.deleteIdProgram.replace('{id}', String(id));
+  const response = await fetch(url, { method: 'DELETE' });
+  if (!response.ok) throw new Error('Error al deshabilitar programa');
+  // Solo intenta leer JSON si hay contenido
+  const text = await response.text();
+  return text ? JSON.parse(text) : {};
+}
+
+/**
+ * Actualiza un programa existente.
+ * @param id - ID del programa a actualizar
+ * @param data - Nuevos datos del programa
+ * @returns Promesa con el programa actualizado
+ */
+export async function updateProgram(id: number | string, data) {
+  const url = ENDPOINTS.program.IdProgram.replace('{id}', String(id));
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Error al actualizar programa');
+  return response.json();
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import CustomSelect from './CustomSelect';
 
 /**
  * ModalFormGeneric
@@ -112,7 +113,7 @@ const ModalFormGeneric = ({
           <div className="text-red-600 text-sm mb-2 font-semibold">{error}</div>
         )}
         <div className="space-y-4 mb-6 overflow-y-auto" style={{ maxHeight: '48vh' }}>
-          {fields.map((field) => {
+          {fields.map(field => {
             // Determinar si el campo es obligatorio
             const isRequired = field.required !== false;
             // Renderizar label con asterisco rojo si es obligatorio
@@ -130,22 +131,25 @@ const ModalFormGeneric = ({
                 </div>
               );
             }
-            if (field.type === 'select') {
+            if (field.type === 'select' && field.customSelect) {
               return (
-                <div key={field.name}>
-                  <label className="block text-sm font-semibold mb-1">{labelContent}</label>
-                  <select
-                    name={field.name}
-                    value={values[field.name] || ''}
-                    onChange={handleChange}
-                    className="w-full border rounded px-3 py-2"
-                  >
-                    <option value="">Seleccionar ...</option>
-                    {field.options?.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
+                <CustomSelect
+                  key={field.name}
+                  value={values[field.name] !== undefined && values[field.name] !== null ? String(values[field.name]) : ''}
+                  onChange={val => setValues(prev => ({ ...prev, [field.name]: val }))}
+                  options={field.options.map(opt => ({
+                    ...opt,
+                    value: String(opt.value)
+                  }))}
+                  label={field.label}
+                  placeholder={field.placeholder}
+                  classNames={{
+                    trigger: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all font-semibold bg-white flex items-center justify-between h-11",
+                    content: "bg-white border border-gray-300 rounded-lg shadow-lg z-50",
+                    item: "px-4 py-2 cursor-pointer hover:bg-[#bdbdbd] hover:text-white focus:bg-[#bdbdbd] focus:text-gray-700 rounded-md flex items-center gap-2",
+                    label: "block text-sm font-medium text-gray-700 mb-2"
+                  }}
+                />
               );
             }
             if (field.type === 'checkbox-group') {
