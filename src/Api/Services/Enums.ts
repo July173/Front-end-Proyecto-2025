@@ -52,3 +52,48 @@ export async function getDocumentTypesWithEmpty(): Promise<DocumentType[]> {
     ];
   }
 }
+
+/**
+ * Obtiene todos los tipos de documento disponibles desde el backend
+ * @returns Promise<DocumentType[]> - Lista de tipos de documento
+ */
+export async function getContractTypes(): Promise<DocumentType[]> {
+  const response = await fetch(ENDPOINTS.enums.getContractTypes, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  
+  if (!response.ok) {
+    throw new Error("Error al obtener los tipos de contrato");
+  }
+  
+  return response.json();
+}
+
+/**
+ * Obtiene los tipos de documento con una opción vacía por defecto para selects
+ * @returns Promise<DocumentType[]> - Lista de tipos de documento con opción vacía
+ */
+export async function getContractTypesWithEmpty(): Promise<DocumentType[]> {
+  try {
+    const documentTypes = await getContractTypes();
+    return [
+      { value: '', label: 'Seleccione tipo de documento' },
+      ...documentTypes
+    ];
+  } catch (error) {
+    console.error('Error obteniendo tipos de documento:', error);
+    // En caso de error, devolver las constantes locales como fallback
+    return [
+      { value: '', label: 'Seleccione tipo de contrato' },
+      { value: 'PLANTA', label: 'Planta' },
+      { value: 'CONTRATO', label: 'Contrato' },
+      { value: 'OPS', label: 'OPS' },
+      { value: 'PROVISIONAL', label: 'Provisional' },
+      { value: 'TEMPORAL', label: 'Temporal' },
+      { value: 'PRESTACION_SERVICIOS', label: 'Prestación de Servicios' }
+    ];
+  }
+}

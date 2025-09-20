@@ -9,6 +9,7 @@ import { getRoles } from '../Api/Services/Rol';
 import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
 import ConfirmModal from './ConfirmModal';
 import { useDocumentTypes } from '../hook/useDocumentTypes';
+import { useContractTypes } from '../hook/useContractTypes';
 import type {
   Regional,
   Sede,
@@ -65,8 +66,13 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
 
   // Hook para obtener tipos de documento dinámicamente
   const { documentTypes } = useDocumentTypes();
+  const { contractTypes } = useContractTypes();
   const documentTypesOptions = documentTypes
     .filter(opt => opt.value !== '')
+    .map(opt => ({ value: String(opt.value), label: String(opt.label) }));
+
+  const contractTypesOptions = contractTypes
+    .filter(opt => opt.value !== '') // <-- filtra la opción vacía
     .map(opt => ({ value: String(opt.value), label: String(opt.label) }));
 
   // Estado para selects dinámicos
@@ -444,10 +450,19 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
                   }}
                 />
               </div>
-              <div>
-                <label className="block text-sm">Tipo de contrato <span className="text-red-600">*</span></label>
-                <input name="contractType" value={instructor.contractType} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs" placeholder="Tipo de contrato" />
-              </div>
+                <div>
+                   <label className="block text-sm">Tipo de contrato <span className="text-red-600">*</span></label>
+                <CustomSelect
+                  value={instructor.contractType}
+                  onChange={value => setInstructor(prev => ({ ...prev, contractType: value }))}
+                  options={contractTypesOptions}
+                  placeholder="Seleccionar ..."
+                  classNames={{
+                  trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
+                  label: "hidden",
+                  }}
+                />
+                </div>
               <div>
                 <label className="block text-sm">Fecha inicio contrato <span className="text-red-600">*</span></label>
                 <input type="date" name="contractStartDate" value={instructor.contractStartDate} onChange={e => handleChange(e, 'instructor')} className="w-full border rounded-lg px-2 py-2 text-xs" />
