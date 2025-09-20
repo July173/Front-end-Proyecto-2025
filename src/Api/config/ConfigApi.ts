@@ -125,14 +125,20 @@ export const ENDPOINTS = {
   program: {
     allPrograms: `${API_BASE_URL}general/programs/`,
     getProgramFicha: `${API_BASE_URL}general/programs/{id}/fichas/`,
+    IdProgram: `${API_BASE_URL}general/programs/{id}/`,
+    deleteIdProgram: `${API_BASE_URL}general/programs/{id}/soft-delete/`,
   },
   /** Endpoints para áreas de conocimiento */
   KnowledgeArea: {
     allKnowledgeAreas: `${API_BASE_URL}general/knowledge-areas/`,
+    IdKnowledgeArea: `${API_BASE_URL}general/knowledge-areas/{id}/`,
+    deleteIdKnowledgeArea: `${API_BASE_URL}general/knowledge-areas/{id}/soft-delete/`,
   },
   /** Endpoints para fichas */
   ficha: {
     allFichas: `${API_BASE_URL}general/fichas/`,
+    IdFicha: `${API_BASE_URL}general/fichas/{id}/`,
+    deleteIdFicha: `${API_BASE_URL}general/fichas/{id}/soft-delete/`,
   },
   /** Endpoints para permisos */
   permission: {

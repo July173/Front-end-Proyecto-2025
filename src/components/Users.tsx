@@ -135,7 +135,7 @@ const Users = () => {
       if (foundRol && foundRol.type_role) rol = foundRol.type_role;
     }
     return (
-      <div className={`border ${color} rounded-lg p-4 m-2 w-[320px] min-h-[150px] flex flex-col justify-between shadow-sm`}>
+      <div className={`border ${color} rounded-lg p-6 m-3 w-[390px] min-h-[120px] flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-200`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <User className="text-blue-600" />
