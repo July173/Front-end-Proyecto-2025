@@ -111,6 +111,10 @@ const Users = () => {
   };
 
 
+  // Obtén el ID del usuario actual desde localStorage, contexto, props, etc.
+  // Aquí se asume que el ID está guardado en localStorage bajo la clave 'currentUserId'
+  const currentUserId = localStorage.getItem('UserId');
+
   function RegistradoCard({ user }: { user: UsuarioRegistrado }) {
     const estado = getUserStatus(user);
     const color = estadoColor[estado];
@@ -149,13 +153,16 @@ const Users = () => {
           <div>Rol : <span className="font-bold text-indigo-700">{rol}</span></div>
         </div>
         <div className="flex gap-2 mt-2">
-          <button
-            className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-3xl text-base font-semibold`}
-            onClick={() => handleToggleEstado(user)}
-          >
-            <User className="w-5 h-5" />
-            {estado === 'activo' ? 'Inhabilitar' : 'Habilitar'}
-          </button>
+          {/* Solo mostrar el botón si NO es el usuario actual */}
+          {String(user.id) !== String(currentUserId) && (
+            <button
+              className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-3xl text-base font-semibold`}
+              onClick={() => handleToggleEstado(user)}
+            >
+              <User className="w-5 h-5" />
+              {estado === 'activo' ? 'Inhabilitar' : 'Habilitar'}
+            </button>
+          )}
           <button
             className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 rounded-3xl text-base font-semibold border border-gray-400"
             onClick={() => { setEditUser(user); setShowEditModal(true); }}
