@@ -274,18 +274,18 @@ const Roles = () => {
   );
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow">
+    <div className="bg-white p-8 rounded-lg shadow animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <div className="flex items-center gap-4 mb-6 justify-between">
         <h2 className="text-2xl font-bold">Gestión de Roles - Sena</h2>
         <button
-          className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
+          className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-in slide-in-from-right delay-200"
           onClick={() => setShowCreate(true)}
         >
           <span className="text-xl font-bold">+</span> Registro Rol
         </button>
       </div>
       <div className="flex gap-4 flex-wrap">
-        {roles.map((rol) => {
+        {roles.map((rol, index) => {
           const isAdministrador = rol.nombre?.toLowerCase() === 'administrador';
           const cardProps: InfoCardProps = {
             title: rol.nombre,
@@ -299,7 +299,15 @@ const Roles = () => {
             actionType: rol.active ? 'disable' : 'enable',
             onActionClick: isAdministrador ? undefined : () => handleActionClick(rol),
           };
-          return <InfoCard key={rol.id} {...cardProps} />;
+          return (
+            <div 
+              key={rol.id}
+              className={`transform transition-all duration-300 hover:scale-105 animate-in slide-in-from-left`}
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              <InfoCard {...cardProps} />
+            </div>
+          );
         })}
       </div>
 

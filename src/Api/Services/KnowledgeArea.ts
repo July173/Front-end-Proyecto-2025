@@ -10,7 +10,7 @@ import { ENDPOINTS } from '../config/ConfigApi';
  * @returns Promesa con el array de áreas de conocimiento
  */
 export async function getKnowledgeAreas() {
-  const response = await fetch(ENDPOINTS.KnowledgeArea.getKnowledgeAreas);
+  const response = await fetch(ENDPOINTS.KnowledgeArea.allKnowledgeAreas);
   if (!response.ok) throw new Error('Error al obtener áreas de conocimiento');
   return response.json();
 }

@@ -71,7 +71,7 @@ const SupportModal = ({ isOpen, onClose }) => {
                         <div className="w-10 h-10 bg-[#43A047] rounded-full flex items-center justify-center">
                             <span className="text-white text-2xl font-bold">?</span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900 text-center">Centro de Soporte</h2>
+                        <h2 className="text-3xl font-bold text-gray-900 text-center">Centro de soporte</h2>
                     </div>
                     <p className="text-gray-600 text-center mt-2">Estamos aquí para ayudarte. Encuentra respuestas rápidas o contáctanos directamente.</p>
                 </div>
@@ -82,14 +82,17 @@ const SupportModal = ({ isOpen, onClose }) => {
 
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* Email falta editar el correo por uno real */}
-                        <div className="bg-white shadow rounded-lg p-6 text-center">
+                        <div className="bg-white shadow rounded-lg p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-200" 
+                             onClick={() => window.open('mailto:servicio@sena.edu.co?subject=Solicitud de Soporte - Sistema de Gestión&body=Hola,%0D%0A%0D%0APor favor, describe tu consulta o problema:%0D%0A%0D%0A', '_blank')}>
                             <Mail className="w-8 h-8 mx-auto text-orange-600 mb-3" />
                             <h3 className="font-semibold text-lg">Email</h3>
                             <p className="text-gray-600 text-sm">Soporte por correo electrónico</p>
-                            <p className="font-semibold text-lg mt-2">servicio@sena.edu.co</p>
+                            <p className="font-semibold text-lg mt-2 text-orange-600 hover:text-orange-700">servicio@sena.edu.co</p>
                             <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mt-3">
                                 <Clock className="w-4 h-4" />
                                 <span>Respuesta en 24-48 horas</span>
+                            </div>
+                            <div className="mt-2 text-xs text-gray-400">
                             </div>
                         </div>
 
@@ -111,7 +114,7 @@ const SupportModal = ({ isOpen, onClose }) => {
                     <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2 text-xl">
                             <Clock className="w-5 h-5 text-[#43A047]" />
-                            Horarios de Atención
+                            Horarios de atención
                         </h3>
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between border-b border-gray-300 py-2">
@@ -136,7 +139,7 @@ const SupportModal = ({ isOpen, onClose }) => {
 
                     {/* Contact Form */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="font-semibold text-gray-900  text-xl">Envíanos un Mensaje</h3>
+                        <h3 className="font-semibold text-gray-900  text-xl">Envíanos un mensaje</h3>
                         <h4 className='mb-6 text-gray-500'>Complete el formulario y nos pondremos en contacto con usted dentro de 24 horas.</h4>
 
                         {/* Estados de éxito y error */}
@@ -165,7 +168,7 @@ const SupportModal = ({ isOpen, onClose }) => {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Nombre Completo *
+                                    Nombre completo *
                                 </label>
                                 <input
                                     type="text"
@@ -180,7 +183,7 @@ const SupportModal = ({ isOpen, onClose }) => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Correo Electrónico *
+                                    Correo electrónico *
                                 </label>
                                 <input
                                     type="email"
@@ -254,7 +257,7 @@ const SupportModal = ({ isOpen, onClose }) => {
 
                     {/* Useful Links */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="font-semibold text-gray-900 mb-4 text-xl">Enlaces Útiles</h3>
+                        <h3 className="font-semibold text-gray-900 mb-4 text-xl">Enlaces útiles</h3>
                         <div className="space-y-3">
                             <a
                                 href="https://betowa.sena.edu.co/"
@@ -262,7 +265,7 @@ const SupportModal = ({ isOpen, onClose }) => {
                                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
                             >
                                 <span className="text-gray-700 group-hover:text-gray-900">
-                                    Sofia Plus - Oferta Educativa
+                                    Sofia Plus - Oferta educativa
                                 </span>
                                 <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
                             </a>

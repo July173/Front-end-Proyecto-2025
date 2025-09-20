@@ -38,8 +38,8 @@ const SummarySecurity = () => {
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (
-    <div className="space-y-8">
-      <div className="bg-white p-8 rounded-lg shadow overflow-x-auto">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+      <div className="bg-white p-8 rounded-lg shadow overflow-x-auto transform transition-all duration-500 hover:shadow-lg">
         <h2 className="text-2xl font-semibold mb-4">Resumen del modelo de seguridad</h2>
         <table className="min-w-full border text-sm">
           <thead>
@@ -74,7 +74,7 @@ const SummarySecurity = () => {
           </tbody>
         </table>
       </div>
-      <div className="bg-white p-8 rounded-lg shadow">
+      <div className="bg-white p-8 rounded-lg shadow transform transition-all duration-500 hover:shadow-lg delay-100">
         <h3 className="text-xl font-bold mb-1">Distribución por Roles</h3>
         <p className="mb-4 text-gray-700">Usuarios asignados por rol</p>
         {loadingRoles ? (
@@ -83,7 +83,7 @@ const SummarySecurity = () => {
           <div className="text-red-500">{errorRoles}</div>
         ) : (
           <div className="flex flex-col gap-3">
-            {rolesUser.map((rol) => {
+            {rolesUser.map((rol, index) => {
               // Elige color según el nombre del rol, por defecto azul
               const color = roleColors[rol.nombre] || 'bg-blue-50 border-blue-400 text-blue-700';
               const label =
@@ -95,7 +95,8 @@ const SummarySecurity = () => {
               return (
                 <div
                   key={rol.id}
-                  className={`flex items-center justify-between border-2 rounded-xl px-4 py-3 ${color}`}
+                  className={`flex items-center justify-between border-2 rounded-xl px-4 py-3 ${color} transform transition-all duration-300 hover:scale-105 animate-in slide-in-from-left`}
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div>
                     <div className="font-semibold text-lg">{rol.nombre}</div>

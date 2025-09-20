@@ -156,18 +156,18 @@ const Modules = () => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow">
+    <div className="bg-white p-8 rounded-lg shadow animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <div className="flex items-center gap-4 mb-6 justify-between">
         <h2 className="text-2xl font-bold">Gestión de Módulos - Sena</h2>
         <div className="flex gap-4">
           <button
-            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-in slide-in-from-right delay-200"
             onClick={() => setShowFormModal(true)}
           >
             <span className="text-xl font-bold">+</span>  Formulario
           </button>
           <button
-            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow"
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-in slide-in-from-right delay-300"
             onClick={() => setShowModuleModal(true)}
           >
             <span className="text-xl font-bold">+</span>  Modulo
@@ -175,7 +175,7 @@ const Modules = () => {
         </div>
       </div>
       <div className="flex gap-4 flex-wrap">
-        {modules.map((mod) => {
+        {modules.map((mod, index) => {
           const cardProps: InfoCardProps = {
             title: mod.name,
             statusLabel: mod.active ? 'Activo' : 'Inhabilitado',
@@ -203,7 +203,15 @@ const Modules = () => {
             },
             // No pasar actionLabel, actionType ni onActionClick
           };
-          return <InfoCard key={mod.id} {...cardProps} />;
+          return (
+            <div 
+              key={mod.id}
+              className={`transform transition-all duration-300 hover:scale-105 animate-in slide-in-from-bottom`}
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              <InfoCard {...cardProps} />
+            </div>
+          );
         })}
       {/* Modal de edición de módulo */}
       <ModalFormGeneric
@@ -214,7 +222,9 @@ const Modules = () => {
         onSubmit={handleEditModule}
         submitText="Actualizar Modulo"
         cancelText="Cancelar"
-  initialValues={editModule ? { ...editModule, form_ids: (editModule.form_ids || []).map(String) } : {}}
+        initialValues={editModule ? { ...editModule, form_ids: (editModule.form_ids || []).map(String) } : {}}
+        customRender={undefined}
+        onProgramChange={undefined}
       />
       <ConfirmModal
         isOpen={showEditConfirm}
@@ -234,6 +244,8 @@ const Modules = () => {
         onSubmit={handleCreateForm}
         submitText="Registrar Formulario"
         cancelText="Cancelar"
+        customRender={undefined}
+        onProgramChange={undefined}
       />
       <ModalFormGeneric
         isOpen={showModuleModal}
@@ -243,6 +255,8 @@ const Modules = () => {
         onSubmit={handleCreateModule}
         submitText="Registrar Modulo"
         cancelText="Cancelar"
+        customRender={undefined}
+        onProgramChange={undefined}
       />
       <ConfirmModal
         isOpen={showFormConfirm}

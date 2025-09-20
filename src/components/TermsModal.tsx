@@ -28,7 +28,7 @@ const TermsModal = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <h2 className="text-3xl font-semibold text-gray-900 text-center">
-                Términos y Condiciones
+                Términos y condiciones
               </h2>
             </div>
             <p className="text-sm text-gray-500 mt-1 text-center">
@@ -57,7 +57,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 1. Aceptación */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              1. Aceptación de los Términos
+              1. Aceptación de los términos
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               Al acceder y utilizar los servicios del SENA (Servicio Nacional de
@@ -73,7 +73,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 2. Descripción */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              2. Descripción de los Servicios
+              2. Descripción de los servicios
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               El SENA ofrece formación profesional integral gratuita en los
@@ -92,10 +92,10 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 3. Obligaciones */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              3. Obligaciones del Usuario
+              3. Obligaciones del usuario
             </h3>
             <h4 className="text-base font-semibold mb-2 mt-2">
-              3.1 Requisitos de Registro
+              3.1 Requisitos de registro
             </h4>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">
               <li>Proporcionar información verdadera, precisa y completa</li>
@@ -106,7 +106,7 @@ const TermsModal = ({ isOpen, onClose }) => {
               <li>Cumplir con los requisitos académicos establecidos</li>
             </ul>
             <h4 className="text-base font-semibold mb-2 mt-2">
-              3.2 Conducta del Usuario
+              3.2 Conducta del usuario
             </h4>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
               <li>Respetar las normas de convivencia institucional</li>
@@ -120,7 +120,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 4. Propiedad Intelectual */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              4. Derechos de Propiedad Intelectual
+              4. Derechos de propiedad intelectual
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               Todo el contenido disponible en las plataformas del SENA,
@@ -137,7 +137,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 5. Protección de Datos */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              5. Protección de Datos Personales
+              5. Protección de datos personales
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               El SENA se compromete a proteger la privacidad de los usuarios
@@ -151,7 +151,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 6. Responsabilidad */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              6. Limitación de Responsabilidad
+              6. Limitación de responsabilidad
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               El SENA no será responsable por daños directos, indirectos,
@@ -165,7 +165,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 7. Terminación del Servicio */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              7. . Terminación del Servicio
+              7. . Terminación del servicio
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               El SENA se reserva el derecho de suspender o terminar el acceso a
@@ -179,7 +179,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           {/* 8. Ley Aplicable y Jurisdicción */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">
-              8. Ley Aplicable y Jurisdicción
+              8. Ley Aplicable y jurisdicción
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
               Estos términos y condiciones se rigen por las leyes de la República

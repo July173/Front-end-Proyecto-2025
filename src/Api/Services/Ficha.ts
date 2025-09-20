@@ -10,7 +10,7 @@ import { ENDPOINTS } from '../config/ConfigApi';
  * @returns Promesa con el array de fichas
  */
 export async function getFichas() {
-  const response = await fetch(ENDPOINTS.ficha.getFichas);
+  const response = await fetch(ENDPOINTS.ficha.allFichas);
   if (!response.ok) throw new Error('Error al obtener fichas');
   return response.json();
 }

@@ -39,7 +39,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-semibold text-gray-900 text-center">Política de Privacidad</h2>
+                            <h2 className="text-3xl font-semibold text-gray-900 text-center">Política de privacidad</h2>
                         </div>
                         <p className="text-sm text-gray-500 mt-1 text-center">
                             Cómo el SENA protege y utiliza su información personal
@@ -55,10 +55,10 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                    {/* 1. Información que Recopilamos */}
+                    {/* 1. Información que recopilamos */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">1. Información que Recopilamos</h3>
-                        <h4 className="text-base font-semibold mb-2">1.1 Información Personal</h4>
+                        <h3 className="text-xl font-bold mb-3">1. Información que recopilamos</h3>
+                        <h4 className="text-base font-semibold mb-2">1.1 Información personal</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">
                             <li>Nombres y apellidos completos</li>
                             <li>Número de identificación (cédula, tarjeta de identidad, etc.)</li>
@@ -69,7 +69,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                             <li>Información académica y profesional</li>
                             <li>Estado socioeconómico (cuando aplique)</li>
                         </ul>
-                        <h4 className="text-base font-semibold mb-2">1.2 Información Técnica</h4>
+                        <h4 className="text-base font-semibold mb-2">1.2 Información técnica</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                             <li>Dirección IP</li>
                             <li>Tipo de navegador y versión</li>
@@ -81,22 +81,22 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
 
                     {/* 2. Uso de la Información */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">2. Uso de la Información</h3>
-                        <h4 className="text-base font-semibold mb-2">2.1 Servicios Educativos</h4>
+                        <h3 className="text-xl font-bold mb-3">2. Uso de la información</h3>
+                        <h4 className="text-base font-semibold mb-2">2.1 Servicios educativos</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">
                             <li>Gestión de inscripciones y matrículas</li>
                             <li>Seguimiento académico y evaluación</li>
                             <li>Emisión de certificados y títulos</li>
                             <li>Comunicación sobre programas y cursos</li>
                         </ul>
-                        <h4 className="text-base font-semibold mb-2">2.2 Servicios Administrativos</h4>
+                        <h4 className="text-base font-semibold mb-2">2.2 Servicios administrativos</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">
                             <li>Verificación de identidad</li>
                             <li>Gestión de pagos (cuando aplique)</li>
                             <li>Soporte técnico y atención al usuario</li>
                             <li>Cumplimiento de obligaciones legales</li>
                         </ul>
-                        <h4 className="text-base font-semibold mb-2">2.3 Mejora de Servicios</h4>
+                        <h4 className="text-base font-semibold mb-2">2.3 Mejora de servicios</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                             <li>Análisis estadístico y de rendimiento</li>
                             <li>Personalización de la experiencia educativa</li>
@@ -105,10 +105,10 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                         </ul>
                     </div>
 
-                    {/* 3. Protección de Datos */}
+                    {/* 3. Protección de datos */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">3. Protección de Datos</h3>
-                        <h4 className="text-base font-semibold mb-2">3.1 Medidas Técnicas</h4>
+                        <h3 className="text-xl font-bold mb-3">3. Protección de datos</h3>
+                        <h4 className="text-base font-semibold mb-2">3.1 Medidas técnicas</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">
                             <li>Cifrado de datos en tránsito y en reposo</li>
                             <li>Firewalls y sistemas de detección de intrusiones</li>
@@ -116,7 +116,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                             <li>Actualizaciones de seguridad constantes</li>
                             <li>Control de acceso basado en roles</li>
                         </ul>
-                        <h4 className="text-base font-semibold mb-2">3.2 Medidas Organizativas</h4>
+                        <h4 className="text-base font-semibold mb-2">3.2 Medidas organizativas</h4>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                             <li>Políticas internas de manejo de datos</li>
                             <li>Capacitación del personal en protección de datos</li>
@@ -126,9 +126,9 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                         </ul>
                     </div>
 
-                    {/* 4. Derechos sobre los Datos */}
+                    {/* 4. Derechos sobre los datos */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">4. Derechos sobre los Datos</h3>
+                        <h3 className="text-xl font-bold mb-3">4. Derechos sobre los datos</h3>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                             <li><strong>Acceso:</strong> Conocer qué datos tenemos sobre usted</li>
                             <li><strong>Rectificación:</strong> Corregir datos inexactos o incompletos</li>
@@ -142,9 +142,9 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                         </p>
                     </div>
 
-                    {/* 5. Compartir Información */}
+                    {/* 5. Compartir información */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">5. Compartir Información</h3>
+                        <h3 className="text-xl font-bold mb-3">5. Compartir información</h3>
                         <h4 className="text-base font-semibold mb-2">5.1 Entidades Gubernamentales</h4>
                         <p className="text-sm text-gray-700 mb-2">Con entidades del gobierno colombiano cuando sea requerido por ley o para cumplir con obligaciones regulatorias.</p>
                         <h4 className="text-base font-semibold mb-2">5.2 Proveedores de Servicios</h4>
@@ -155,9 +155,9 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                         <p className="text-sm text-gray-700">Con empleadores potenciales, con su consentimiento expreso, para fines de empleabilidad.</p>
                     </div>
 
-                    {/* 6. Retención de Datos */}
+                    {/* 6. Retención de datos    */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">6. Retención de Datos</h3>
+                        <h3 className="text-xl font-bold mb-3">6. Retención de datos</h3>
                         <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                             <li><strong>Datos académicos:</strong> De forma permanente para efectos de certificación</li>
                             <li><strong>Datos de contacto:</strong> Mientras mantenga una relación activa con el SENA</li>
@@ -166,9 +166,9 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                         </ul>
                     </div>
 
-                    {/* 7. Menores de Edad */}
+                    {/* 7. Menores de edad */}
                     <div className="bg-white shadow rounded-lg p-6">
-                        <h3 className="text-xl font-bold mb-3">7. Menores de Edad</h3>
+                        <h3 className="text-xl font-bold mb-3">7. Menores de edad</h3>
                         <p className="text-sm text-gray-700 leading-relaxed mb-2">
                             Los menores de edad pueden utilizar nuestros servicios con el consentimiento de sus padres o tutores legales. Implementamos medidas adicionales de protección para los datos de menores:
                         </p>

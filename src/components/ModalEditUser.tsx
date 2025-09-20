@@ -280,6 +280,7 @@ const ModalEditUser = ({ isOpen, user, onClose, onSuccess }: {
         submitText={loading ? 'Guardando...' : 'Guardar cambios'}
         cancelText="Cancelar"
         onProgramChange={handleProgramChange}
+        customRender={null}
       />
       <ConfirmModal
         isOpen={showConfirm}

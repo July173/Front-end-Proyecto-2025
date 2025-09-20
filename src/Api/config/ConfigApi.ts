@@ -123,16 +123,16 @@ export const ENDPOINTS = {
   },
   /** Endpoints para programas */
   program: {
-    getPrograms: `${API_BASE_URL}general/programs/`,
+    allPrograms: `${API_BASE_URL}general/programs/`,
     getProgramFicha: `${API_BASE_URL}general/programs/{id}/fichas/`,
   },
   /** Endpoints para áreas de conocimiento */
   KnowledgeArea: {
-    getKnowledgeAreas: `${API_BASE_URL}general/knowledge-areas/`,
+    allKnowledgeAreas: `${API_BASE_URL}general/knowledge-areas/`,
   },
   /** Endpoints para fichas */
   ficha: {
-    getFichas: `${API_BASE_URL}general/fichas/`,
+    allFichas: `${API_BASE_URL}general/fichas/`,
   },
   /** Endpoints para permisos */
   permission: {
@@ -141,6 +141,7 @@ export const ENDPOINTS = {
   // Enums del sistema
   enums: {
     getDocumentTypes: `${API_BASE_URL}security/enums/document-types/`,
+    getContractTypes : `${API_BASE_URL}security/enums/contract-types/`,
   },
   // Plantillas Excel para registro masivo
   excelTemplates: {

@@ -82,7 +82,6 @@ export async function validateInstitutionalLogin(email: string, password: string
 		body: JSON.stringify({ email, password }),
 	});
 	if (!response.ok) {
-		// Puedes mejorar el manejo de errores según la respuesta del backend
 		throw new Error("Credenciales inválidas o error de validación");
 	}
 	return response.json();

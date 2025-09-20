@@ -9,7 +9,7 @@ import { ENDPOINTS } from '../config/ConfigApi';
  * @returns Promesa con el array de programas
  */
 export async function getPrograms() {
-  const response = await fetch(ENDPOINTS.program.getPrograms);
+  const response = await fetch(ENDPOINTS.program.allPrograms);
   if (!response.ok) throw new Error('Error al obtener programas');
   return response.json();
 }

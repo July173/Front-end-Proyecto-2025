@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUsers, deleteUser, getUserStatus } from '../Api/Services/User';
 import { getPersonById } from '../Api/Services/Person';
-import { User, Plus } from 'lucide-react';
+import { User, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import ModalCreateUser from './ModalCreateUser';
 import ConfirmModal from './ConfirmModal';
 import ModalEditUser from './ModalEditUser';
@@ -27,6 +27,13 @@ const Users = () => {
   const [pendingUser, setPendingUser] = useState<UsuarioRegistrado | null>(null);
   const [editUser, setEditUser] = useState<UsuarioRegistrado | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  
+  // Estados para secciones desplegables
+  const [sectionsOpen, setSectionsOpen] = useState({
+    habilitados: true,
+    registrados: true,
+    inhabilitados: true
+  });
 
   // Obtener todos los roles para mostrar el nombre
   const fetchRoles = async () => {
@@ -87,10 +94,20 @@ const Users = () => {
     setShowConfirm(false);
     try {
       await deleteUser(pendingUser.id);
+      // Refrescar la lista de usuarios después del cambio
+      await fetchAll();
     } catch (e) {
       alert('No se pudo cambiar el estado del usuario');
     }
     setPendingUser(null);
+  };
+
+  // Función para alternar secciones
+  const toggleSection = (section: keyof typeof sectionsOpen) => {
+    setSectionsOpen(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
   };
 
 
@@ -128,6 +145,7 @@ const Users = () => {
         </div>
         <div className="text-sm text-gray-700 mb-1">
           <div>{user.email}</div>
+          <div>Documento: <span className="font-bold text-gray-800">{user.person?.number_identification || 'Sin documento'}</span></div>
           <div>Rol : <span className="font-bold text-indigo-700">{rol}</span></div>
         </div>
         <div className="flex gap-2 mt-2">
@@ -166,28 +184,99 @@ const Users = () => {
         <Plus className="w-5 h-5" />
         Registro usuario
       </button>
-      <h2 className="text-2xl font-bold mb-2">Gestión De Usuarios-Sena</h2>
+      <h2 className="text-2xl font-bold mb-6">Gestión De Usuarios-Sena</h2>
       {loading && <div className="text-gray-500">Cargando...</div>}
       {error && <div className="text-red-500">{error}</div>}
-      {/* Usuarios habilitados */}
-      <div className="mt-6">
-        <h3 className="text-green-700 text-xl font-bold mb-2">Usuarios Habilitados</h3>
-        <div className="flex flex-wrap">
-          {habilitados.map((u, i) => <RegistradoCard key={`hab-${i}`} user={u} />)}
+      
+      <div className="space-y-6">
+        {/* Sección Usuarios Habilitados */}
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => toggleSection('habilitados')}
+            className="w-full px-6 py-4 bg-green-50 hover:bg-green-100 flex items-center justify-between transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-semibold text-green-700">Usuarios Habilitados</h3>
+              <span className="bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full">
+                {habilitados.length} usuarios
+              </span>
+            </div>
+            {sectionsOpen.habilitados ? (
+              <ChevronUp className="w-5 h-5 text-gray-500" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            )}
+          </button>
+          {sectionsOpen.habilitados && (
+            <div className="p-6">
+              <div className="flex flex-wrap">
+                {habilitados.map((u, i) => <RegistradoCard key={`hab-${i}`} user={u} />)}
+                {habilitados.length === 0 && (
+                  <p className="text-gray-500 italic">No hay usuarios habilitados</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-      {/* Usuarios registrados */}
-      <div className="mt-6">
-        <h3 className="text-yellow-600 text-xl font-bold mb-2">Usuarios Registrados</h3>
-        <div className="flex flex-wrap">
-          {registradosUsers.map((u, i) => <RegistradoCard key={`reg-${i}`} user={u} />)}
+
+        {/* Sección Usuarios Registrados */}
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => toggleSection('registrados')}
+            className="w-full px-6 py-4 bg-yellow-50 hover:bg-yellow-100 flex items-center justify-between transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-semibold text-yellow-700">Usuarios Registrados</h3>
+              <span className="bg-yellow-100 text-yellow-800 text-sm px-2 py-1 rounded-full">
+                {registradosUsers.length} usuarios
+              </span>
+            </div>
+            {sectionsOpen.registrados ? (
+              <ChevronUp className="w-5 h-5 text-gray-500" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            )}
+          </button>
+          {sectionsOpen.registrados && (
+            <div className="p-6">
+              <div className="flex flex-wrap">
+                {registradosUsers.map((u, i) => <RegistradoCard key={`reg-${i}`} user={u} />)}
+                {registradosUsers.length === 0 && (
+                  <p className="text-gray-500 italic">No hay usuarios registrados</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-      {/* Usuarios inhabilitados */}
-      <div className="mt-6">
-        <h3 className="text-red-600 text-xl font-bold mb-2">Usuarios Inhabilitados</h3>
-        <div className="flex flex-wrap">
-          {inhabilitados.map((u, i) => <RegistradoCard key={`inh-${i}`} user={u} />)}
+
+        {/* Sección Usuarios Inhabilitados */}
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => toggleSection('inhabilitados')}
+            className="w-full px-6 py-4 bg-red-50 hover:bg-red-100 flex items-center justify-between transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-semibold text-red-700">Usuarios Inhabilitados</h3>
+              <span className="bg-red-100 text-red-800 text-sm px-2 py-1 rounded-full">
+                {inhabilitados.length} usuarios
+              </span>
+            </div>
+            {sectionsOpen.inhabilitados ? (
+              <ChevronUp className="w-5 h-5 text-gray-500" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            )}
+          </button>
+          {sectionsOpen.inhabilitados && (
+            <div className="p-6">
+              <div className="flex flex-wrap">
+                {inhabilitados.map((u, i) => <RegistradoCard key={`inh-${i}`} user={u} />)}
+                {inhabilitados.length === 0 && (
+                  <p className="text-gray-500 italic">No hay usuarios inhabilitados</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {/* Modal de crear usuario */}
@@ -231,8 +320,3 @@ const Users = () => {
 };
 
 export default Users;
-
-
-
-
-

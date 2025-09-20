@@ -4,7 +4,8 @@ import SummarySecurity from '../components/SummarySecurity';
 import Users from '../components/Users';
 import Roles from '../components/Roles';
 import Modules from '../components/Modules';
-import { User, Shield, Layout, FileText } from 'lucide-react';
+import General from '../components/general';
+import { User, Shield, Layout, FileText, BookOpen } from 'lucide-react';
 import { getUsers } from '../Api/Services/User';
 import { getRoles } from '../Api/Services/Rol';
 import { getModules } from '../Api/Services/Module';
@@ -18,7 +19,21 @@ export const Admin = () => {
   const [formCount, setFormCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'resumen' | 'usuarios' | 'roles' | 'modulos'>('resumen');
+  const [activeTab, setActiveTab] = useState<'resumen' | 'usuarios' | 'roles' | 'modulos' | 'general'>('resumen');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Función para cambiar tab con transición suave
+  const handleTabChange = (newTab: typeof activeTab) => {
+    if (newTab === activeTab) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveTab(newTab);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50); // Pequeño delay para que se monte el componente
+    }, 200); // Tiempo de fade out más largo
+  };
 
   useEffect(() => {
     async function fetchCounts() {
@@ -87,15 +102,16 @@ export const Admin = () => {
             </div>
           </div>
         </div>
+        
       </div>
       {loading && <div className="text-gray-500 text-center mt-6">Cargando...</div>}
       {error && <div className="text-red-500 text-center mt-6">{error}</div>}
 
       {/* Barra de navegación */}
-      <div className="mt-10 bg-[#E9EBF5] rounded-xl flex items-center justify-between px-2 py-2 gap-20 w-full max-w-4xl mx-auto">
+      <div className="mt-10 bg-[#E9EBF5] rounded-xl flex items-center justify-between px-2 py-2 gap-10 w-full max-w-5xl mx-auto">
         <button
-          className={`flex flex-col items-center justify-center w-1/4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'resumen' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('resumen')}
+          className={`flex flex-col items-center justify-center w-1/5 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'resumen' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
+          onClick={() => handleTabChange('resumen')}
         >
           <span className="flex items-center justify-center gap-2">
             <FileText className="w-5 h-5" />
@@ -103,8 +119,8 @@ export const Admin = () => {
           </span>
         </button>
         <button
-          className={`flex flex-col items-center justify-center w-1/4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'usuarios' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('usuarios')}
+          className={`flex flex-col items-center justify-center w-1/5 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'usuarios' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
+          onClick={() => handleTabChange('usuarios')}
         >
           <span className="flex items-center justify-center gap-2">
             <User className="w-5 h-5" />
@@ -112,8 +128,8 @@ export const Admin = () => {
           </span>
         </button>
         <button
-          className={`flex flex-col items-center justify-center w-1/4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'roles' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('roles')}
+          className={`flex flex-col items-center justify-center w-1/5 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'roles' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
+          onClick={() => handleTabChange('roles')}
         >
           <span className="flex items-center justify-center gap-2">
             <Shield className="w-5 h-5" />
@@ -121,22 +137,41 @@ export const Admin = () => {
           </span>
         </button>
         <button
-          className={`flex flex-col items-center justify-center w-1/4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'modulos' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('modulos')}
+          className={`flex flex-col items-center justify-center w-1/5 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'modulos' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
+          onClick={() => handleTabChange('modulos')}
         >
           <span className="flex items-center justify-center gap-2">
             <Layout className="w-5 h-5" />
             <span>Módulos</span>
           </span>
         </button>
+        <button
+          className={`flex flex-col items-center justify-center w-1/5 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'general' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
+          onClick={() => handleTabChange('general')}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <BookOpen className="w-5 h-5" />
+            <span>General</span>
+          </span>
+        </button>
       </div>
 
       {/* Contenido dinámico debajo de la barra de navegación */}
       <div className="mt-6">
-        {activeTab === 'resumen' && <SummarySecurity />}
-        {activeTab === 'usuarios' && <Users />}
-        {activeTab === 'roles' && <Roles />}
-        {activeTab === 'modulos' && <Modules />}
+        <div 
+          className={`transition-all duration-500 ease-in-out transform ${
+            isTransitioning ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
+          }`}
+          style={{
+            transitionDelay: isTransitioning ? '0ms' : '100ms'
+          }}
+        >
+          {activeTab === 'resumen' && !isTransitioning && <SummarySecurity />}
+          {activeTab === 'usuarios' && !isTransitioning && <Users />}
+          {activeTab === 'roles' && !isTransitioning && <Roles />}
+          {activeTab === 'modulos' && !isTransitioning && <Modules />}
+          {activeTab === 'general' && !isTransitioning && <General />}
+        </div>
       </div>
     </div>
   );
