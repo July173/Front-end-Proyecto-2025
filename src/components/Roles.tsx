@@ -7,7 +7,7 @@ import type {  RolUsuario } from '../Api/types/entities/role.types';
 import ModalFormGeneric from './ModalFormGeneric';
 import { getForms } from '../Api/Services/Form';
 import { getPermissions } from '../Api/Services/Permission';
-
+import NotificationModal from './NotificationModal';
 
 const Roles = () => {
   const [roles, setRoles] = useState<RolUsuario[]>([]);
@@ -30,6 +30,10 @@ const Roles = () => {
   const [editLoading, setEditLoading] = useState(false);
   const [showEditConfirm, setShowEditConfirm] = useState(false);
   const [pendingEditData, setPendingEditData] = useState(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState<'success' | 'warning' | 'info' | 'completed'>('success');
+  const [notificationTitle, setNotificationTitle] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState('');
 
 
   const handleActionClick = (rol: RolUsuario) => {
@@ -68,15 +72,17 @@ const Roles = () => {
     setShowConfirm(false);
     try {
       await toggleRoleActive(pendingRole.id, pendingRole.active);
-      // Refrescar lista
       const updated = await getRolesUser();
       setRoles(updated);
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        alert(e.message || 'No se pudo cambiar el estado del rol');
-      } else {
-        alert('No se pudo cambiar el estado del rol');
-      }
+      showNotif(
+        'success',
+        pendingRole.active ? 'Rol inhabilitado' : 'Rol habilitado',
+        pendingRole.active
+          ? `El rol "${pendingRole.nombre}" ha sido inhabilitado exitosamente.`
+          : `El rol "${pendingRole.nombre}" ha sido habilitado exitosamente.`
+      );
+    } catch (e) {
+      showNotif('warning', 'Error al cambiar estado', e.message || 'No se pudo cambiar el estado del rol');
     }
     setPendingRole(null);
   };
@@ -155,11 +161,11 @@ const Roles = () => {
       setShowCreate(false);
       setShowCreateConfirm(false);
       setPendingRoleData(null);
-      // Refrescar lista de roles
       const updated = await getRolesUser();
       setRoles(updated);
+      showNotif('success', 'Rol creado', 'El rol se ha creado exitosamente.');
     } catch (e) {
-      alert(e.message || 'Error al crear el rol');
+      showNotif('warning', 'Error al crear rol', e.message || 'Error al crear el rol');
     }
   };
 
@@ -172,11 +178,11 @@ const Roles = () => {
       setShowEditConfirm(false);
       setPendingEditData(null);
       setEditRole(null);
-      // Refrescar lista de roles
       const updated = await getRolesUser();
       setRoles(updated);
+      showNotif('success', 'Rol actualizado', 'El rol se ha actualizado exitosamente.');
     } catch (e) {
-      alert(e.message || 'Error al actualizar el rol');
+      showNotif('warning', 'Error al actualizar rol', e.message || 'Error al actualizar el rol');
     }
   };
 
@@ -284,6 +290,13 @@ const Roles = () => {
   );
   };
 
+  const showNotif = (type, title, message) => {
+    setNotificationType(type);
+    setNotificationTitle(title);
+    setNotificationMessage(message);
+    setShowNotification(true);
+  };
+
   return (
     <div className="bg-white p-8 rounded-lg shadow animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <div className="flex items-center gap-4 mb-6 justify-between">
@@ -378,6 +391,14 @@ const Roles = () => {
         cancelText="Cancelar"
         onConfirm={handleConfirmCreateRole}
         onCancel={() => { setShowCreateConfirm(false); setPendingRoleData(null); }}
+      />
+
+      <NotificationModal
+        isOpen={showNotification}
+        onClose={() => setShowNotification(false)}
+        type={notificationType}
+        title={notificationTitle}
+        message={notificationMessage}
       />
     </div>
   );
