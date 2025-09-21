@@ -27,6 +27,7 @@ const Users = () => {
   const [pendingUser, setPendingUser] = useState<UsuarioRegistrado | null>(null);
   const [editUser, setEditUser] = useState<UsuarioRegistrado | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [modalEditUserProps, setModalEditUserProps] = useState<{ userId?: number, userRole?: string }>({});
   
   // Estados para secciones desplegables
   const [sectionsOpen, setSectionsOpen] = useState({
@@ -34,6 +35,10 @@ const Users = () => {
     registrados: true,
     inhabilitados: true
   });
+
+  // Estados para aprendices e instructores
+  const [aprendices, setAprendices] = useState([]);
+  const [instructores, setInstructores] = useState([]);
 
   // Obtener todos los roles para mostrar el nombre
   const fetchRoles = async () => {
@@ -49,6 +54,9 @@ const Users = () => {
   useEffect(() => {
     fetchAll();
     fetchRoles();
+    // Carga aprendices e instructores aquí
+    import('../Api/Services/Aprendiz').then(api => api.getAprendices().then(setAprendices));
+    import('../Api/Services/Instructor').then(api => api.getInstructores().then(setInstructores));
   }, []);
 
   const fetchAll = async () => {
@@ -120,7 +128,6 @@ const Users = () => {
     const estado = getUserStatus(user);
     const color = estadoColor[estado];
     const label = estadoLabel[estado];
-    // Validar que user.person existe y tiene los campos necesarios
     let nombre = '';
     if (user.person && typeof user.person === 'object') {
       nombre = [
@@ -133,12 +140,27 @@ const Users = () => {
     if (!nombre) {
       nombre = 'Sin nombre';
     }
-    // Obtener nombre de rol correctamente
     let rol = 'Sin rol';
     if (user.role && roles.length > 0) {
       const foundRol = roles.find(r => r.id === user.role);
       if (foundRol && foundRol.type_role) rol = foundRol.type_role;
     }
+
+    const getEditUserProps = (user: UsuarioRegistrado) => {
+      const personId = user.person?.id;
+      if (user.role && roles.length > 0) {
+        const foundRol = roles.find(r => r.id === user.role);
+        if (foundRol && foundRol.type_role && foundRol.type_role.toLowerCase() === 'aprendiz') {
+          const aprendiz = aprendices.find(a => a.person === personId);
+          return { userId: aprendiz?.id || null, userRole: 'aprendiz' };
+        } else {
+          const instructor = instructores.find(i => i.person === personId);
+          return { userId: instructor?.id || null, userRole: foundRol.type_role?.toLowerCase() || 'instructor' };
+        }
+      }
+      return { userId: null, userRole: '' };
+    };
+
     return (
       <div className={`border ${color} rounded-lg p-6 m-3 w-[390px] min-h-[120px] flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-200`}>
         <div className="flex items-center justify-between mb-2">
@@ -154,7 +176,6 @@ const Users = () => {
           <div>Rol : <span className="font-bold text-indigo-700">{rol}</span></div>
         </div>
         <div className="flex gap-2 mt-2">
-          {/* Solo mostrar el botón si NO es el usuario actual */}
           {Number(user.id) !== Number(currentUserId) && (
             <button
               className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-3xl text-base font-semibold`}
@@ -166,7 +187,15 @@ const Users = () => {
           )}
           <button
             className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 rounded-3xl text-base font-semibold border border-gray-400"
-            onClick={() => { setEditUser(user); setShowEditModal(true); }}
+            onClick={() => {
+              const props = getEditUserProps(user);
+              if (!props.userId) {
+                alert('No se encontró el id de aprendiz/instructor para este usuario.');
+                return;
+              }
+              setModalEditUserProps(props);
+              setShowEditModal(true);
+            }}
           >
             <span className="material-icons text-base"></span>
             Editar
@@ -295,11 +324,11 @@ const Users = () => {
         />
       )}
       {/* Modal de edición de usuario */}
-      {showEditModal && editUser && (
+      {showEditModal && (
         <ModalEditUser
-          isOpen={showEditModal}
-          user={editUser}
-          onClose={() => { setShowEditModal(false); setEditUser(null); }}
+          userId={modalEditUserProps.userId}
+          userRole={modalEditUserProps.userRole}
+          onClose={() => setShowEditModal(false)}
           onSuccess={fetchAll}
         />
       )}
