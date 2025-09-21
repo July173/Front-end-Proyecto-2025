@@ -5,6 +5,7 @@ import { User, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import ModalCreateUser from './ModalCreateUser';
 import ConfirmModal from './ConfirmModal';
 import ModalEditUser from './ModalEditUser';
+import NotificationModal from './NotificationModal';
 import type { UsuarioRegistrado } from '../Api/types/entities/misc.types';
 
 const estadoColor = {
@@ -20,6 +21,11 @@ const estadoLabel = {
 const Users = () => {
   const [registrados, setRegistrados] = useState<UsuarioRegistrado[]>([]);
   const [roles, setRoles] = useState<any[]>([]); // Cambia el tipo a any[] para aceptar cualquier estructura
+  // Estados para el modal de notificación
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationType, setNotificationType] = useState<'success' | 'warning'>('success');
+  const [notificationTitle, setNotificationTitle] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -62,7 +68,6 @@ const Users = () => {
   const fetchAll = async () => {
     try {
       const reg = await getUsers();
-      // Si el campo person es un id, obtener los datos completos de la persona
       const usuariosConPersona = await Promise.all(
         reg.map(async (u: UsuarioRegistrado) => {
           let personaObj = null;
@@ -87,6 +92,10 @@ const Users = () => {
       setRegistrados(usuariosConPersona);
     } catch (err) {
       setError('Error al cargar los usuarios');
+      setNotificationType('warning');
+      setNotificationTitle('Error');
+      setNotificationMessage('Error al cargar los usuarios');
+      setNotificationOpen(true);
     } finally {
       setLoading(false);
     }
@@ -102,10 +111,20 @@ const Users = () => {
     setShowConfirm(false);
     try {
       await deleteUser(pendingUser.id);
-      // Refrescar la lista de usuarios después del cambio
       await fetchAll();
+      setNotificationType('success');
+      setNotificationTitle(
+        getUserStatus(pendingUser) === 'activo'
+          ? 'Usuario inhabilitado con éxito'
+          : 'Usuario habilitado con éxito'
+      );
+      setNotificationMessage('La acción se realizó correctamente.');
+      setNotificationOpen(true);
     } catch (e) {
-      alert('No se pudo cambiar el estado del usuario');
+      setNotificationType('warning');
+      setNotificationTitle('Error');
+      setNotificationMessage('No se pudo cambiar el estado del usuario.');
+      setNotificationOpen(true);
     }
     setPendingUser(null);
   };
@@ -117,7 +136,6 @@ const Users = () => {
       [section]: !prev[section]
     }));
   };
-
 
   // Obtén el ID del usuario actual desde localStorage, contexto, props, etc.
   // Aquí se asume que el ID está guardado en localStorage bajo la clave 'currentUserId'
@@ -154,7 +172,7 @@ const Users = () => {
           const aprendiz = aprendices.find(a => a.person === personId);
           return { userId: aprendiz?.id || null, userRole: 'aprendiz' };
         } else {
-          const instructor = instructores.find(i => i.person === personId);
+          const instructor = instructores.find(i => String(i.person) === String(personId));
           return { userId: instructor?.id || null, userRole: foundRol.type_role?.toLowerCase() || 'instructor' };
         }
       }
@@ -320,7 +338,13 @@ const Users = () => {
       {showModal && (
         <ModalCreateUser
           onClose={() => setShowModal(false)}
-          onSuccess={fetchAll}
+          onSuccess={() => {
+            fetchAll();
+            setNotificationType('success');
+            setNotificationTitle('Usuario creado con éxito');
+            setNotificationMessage('El usuario ha sido registrado correctamente.');
+            setNotificationOpen(true);
+          }}
         />
       )}
       {/* Modal de edición de usuario */}
@@ -329,9 +353,23 @@ const Users = () => {
           userId={modalEditUserProps.userId}
           userRole={modalEditUserProps.userRole}
           onClose={() => setShowEditModal(false)}
-          onSuccess={fetchAll}
+          onSuccess={() => {
+            fetchAll();
+            setNotificationType('success');
+            setNotificationTitle('Usuario editado con éxito');
+            setNotificationMessage('Los datos del usuario han sido actualizados correctamente.');
+            setNotificationOpen(true);
+          }}
         />
       )}
+      {/* Modal de notificación */}
+      <NotificationModal
+        isOpen={notificationOpen}
+        onClose={() => setNotificationOpen(false)}
+        type={notificationType}
+        title={notificationTitle}
+        message={notificationMessage}
+      />
       {/* Modal de confirmación */}
       <ConfirmModal
         isOpen={showConfirm}
