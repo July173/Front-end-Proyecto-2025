@@ -1,3 +1,17 @@
+
+/**
+ * Componente Admin
+ * Pantalla principal de administración de permisos, usuarios, roles, módulos y formularios.
+ *
+ * Características:
+ * - Muestra conteos de usuarios, roles, módulos y formularios.
+ * - Barra de navegación para cambiar entre diferentes vistas administrativas.
+ * - Carga y muestra componentes dinámicos según la pestaña activa.
+ * - Maneja transiciones suaves entre pestañas y estados de carga/error.
+ *
+ * @returns {JSX.Element} Vista de administración renderizada.
+ */
+
 import React from 'react'
 import { useEffect, useState } from 'react';
 import SummarySecurity from '../components/SummarySecurity';
@@ -10,6 +24,8 @@ import { getUsers } from '../Api/Services/User';
 import { getRoles } from '../Api/Services/Rol';
 import { getModules } from '../Api/Services/Module';
 import { getForms } from '../Api/Services/Form';
+
+
 
 export const Admin = () => {
   // Estados para los conteos

@@ -2,11 +2,28 @@ import React from 'react';
 import ReactDOM from 'react-dom'; // <-- Importa ReactDOM
 import { X } from 'lucide-react';
 
+/**
+ * Props para el componente PrivacyModal.
+ * @property {boolean} isOpen - Indica si el modal está visible.
+ * @property {() => void} onClose - Función para cerrar el modal.
+ */
 interface PrivacyModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+/**
+ * Componente PrivacyModal
+ * Muestra un modal con la política de privacidad del SENA.
+ *
+ * Características:
+ * - Utiliza React Portal para renderizar el modal fuera del árbol principal.
+ * - Permite cerrar el modal haciendo clic en el fondo o en el botón de cierre.
+ * - Presenta la política de privacidad en secciones claras y estructuradas.
+ *
+ * @param {PrivacyModalProps} props - Propiedades del modal.
+ * @returns {JSX.Element | null} Modal de política de privacidad renderizado.
+ */
 const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 

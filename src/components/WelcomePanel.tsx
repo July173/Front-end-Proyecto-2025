@@ -1,6 +1,16 @@
 
 import React from 'react';
 
+/**
+ * Componente WelcomePanel
+ * Muestra un panel de bienvenida con el título y descripción de la plataforma.
+ *
+ * Características:
+ * - Presenta el nombre 'AutoGestión CIES' y una breve descripción.
+ * - Usado en la pantalla principal o de inicio.
+ *
+ * @returns {JSX.Element} Panel de bienvenida renderizado.
+ */
 const WelcomePanel = () => {
   return (
     <div className="sena-welcome-panel">

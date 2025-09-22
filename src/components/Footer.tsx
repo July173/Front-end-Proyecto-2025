@@ -1,4 +1,13 @@
 import React from 'react';
+/**
+ * Componente Footer
+ * -----------------
+ * Pie de página simple y reutilizable para la aplicación.
+ * Muestra el año actual y el texto institucional.
+ *
+ * Uso:
+ * <Footer />
+ */
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

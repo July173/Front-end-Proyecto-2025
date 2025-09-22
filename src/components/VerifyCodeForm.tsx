@@ -7,10 +7,27 @@ import { verifyResetCode } from '../Api/Services/User';
 import NotificationModal from './NotificationModal';
 import useNotification from '../hook/useNotification';
 
+/**
+ * Props para el componente VerifyCodeForm.
+ * @property {(view: string) => void} onNavigate - Función para navegar entre vistas (reset-password, forgot-password, etc.).
+ */
 interface VerifyCodeFormProps {
   onNavigate: (view: string) => void;
 }
 
+/**
+ * Componente VerifyCodeForm
+ * Renderiza el formulario para verificar el código de recuperación enviado al correo del usuario.
+ *
+ * Características:
+ * - Validación en tiempo real del código de recuperación.
+ * - Llama al servicio de backend para verificar el código.
+ * - Muestra notificaciones de éxito o error.
+ * - Permite navegación entre vistas relacionadas con recuperación de contraseña.
+ *
+ * @param {VerifyCodeFormProps} props - Propiedades del formulario.
+ * @returns {JSX.Element} Formulario de verificación de código renderizado.
+ */
 const VerifyCodeForm: React.FC<VerifyCodeFormProps> = ({ onNavigate }) => {
   const {
     notification,

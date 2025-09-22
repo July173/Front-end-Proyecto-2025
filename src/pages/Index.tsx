@@ -1,3 +1,15 @@
+/**
+ * Componente Index
+ * Pantalla principal de autenticación y bienvenida.
+ *
+ * Características:
+ * - Muestra los formularios de login, registro y recuperación de contraseña según la vista actual.
+ * - Cambia la vista usando el estado y la URL.
+ * - Incluye el panel de bienvenida.
+ *
+ * @returns {JSX.Element} Vista principal de autenticación renderizada.
+ */
+
 import React, { useState, useEffect } from 'react';
 import WelcomePanel from '../components/WelcomePanel';
 import LoginForm from '../components/LoginForm';
@@ -5,7 +17,6 @@ import RegisterForm from '../components/RegisterForm';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import VerifyCodeForm from '../components/VerifyCodeForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-// ✅ Home ya no se importa aquí
 
 const getViewFromUrl = () => {
   const params = new URLSearchParams(window.location.search);

@@ -17,10 +17,28 @@ import {
   capitalizeWords
 } from '../hook/validationlogin';
 import { useDocumentTypes } from '../hook/useDocumentTypes';
+/**
+ * Props para el componente RegisterForm.
+ * @property {(view: string) => void} onNavigate - Función para navegar entre vistas (login, etc.).
+ */
 interface RegisterFormProps {
   onNavigate: (view: string) => void;
 }
 
+/**
+ * Componente RegisterForm
+ * Renderiza el formulario de registro de aprendices con validaciones y manejo de notificaciones.
+ *
+ * Características:
+ * - Validación en tiempo real de los campos del formulario.
+ * - Modal de términos y condiciones.
+ * - Notificaciones de éxito, pendiente y error.
+ * - Navegación entre registro e inicio de sesión.
+ * - Uso de hooks personalizados para tipos de documento y notificaciones.
+ *
+ * @param {RegisterFormProps} props - Propiedades del formulario.
+ * @returns {JSX.Element} Formulario de registro renderizado.
+ */
 const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
   const {
     notification,

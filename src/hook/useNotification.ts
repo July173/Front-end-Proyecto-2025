@@ -1,3 +1,13 @@
+
+/**
+ * Hook personalizado para gestionar notificaciones modales en la aplicación.
+ * Permite mostrar, ocultar y personalizar mensajes de éxito, advertencia, información, etc.
+ *
+ * Uso:
+ * - Llama a las funciones específicas (showPasswordChanged, showEmailSent, etc.) para mostrar notificaciones predefinidas.
+ * - Usa showNotification para mostrar mensajes personalizados.
+ * - El estado notification contiene la información actual de la notificación.
+ */
 import { useState } from 'react';
 
 export type NotificationType = 'success' | 'info' | 'warning' | 'password-changed' | 'email-sent' | 'pending' | 'completed';
@@ -9,6 +19,12 @@ interface NotificationState {
   message: string;
 }
 
+/**
+ * Hook useNotification
+ * Proporciona funciones para mostrar y ocultar notificaciones modales en la UI.
+ *
+ * @returns {Object} Estado y funciones para gestionar notificaciones.
+ */
 const useNotification = () => {
   const [notification, setNotification] = useState<NotificationState>({
     isOpen: false,

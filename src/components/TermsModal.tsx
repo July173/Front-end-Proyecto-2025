@@ -1,6 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+/**
+ * Componente TermsModal
+ * Muestra un modal con los términos y condiciones de uso de los servicios del SENA.
+ *
+ * Props:
+ * @param {boolean} isOpen - Indica si el modal está visible.
+ * @param {() => void} onClose - Función para cerrar el modal.
+ *
+ * Características:
+ * - Utiliza React Portal para renderizar el modal fuera del árbol principal.
+ * - Permite cerrar el modal haciendo clic en el fondo o en el botón de cierre.
+ * - Presenta los términos y condiciones en secciones claras y estructuradas.
+ *
+ * @returns {JSX.Element | null} Modal de términos y condiciones renderizado.
+ */
 const TermsModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 

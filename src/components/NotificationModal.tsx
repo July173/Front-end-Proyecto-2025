@@ -2,6 +2,14 @@ import React from 'react';
 import { CheckCircle2, Mail, AlertCircle, Lock, X } from 'lucide-react';
 import { Button } from './ui/button';
 
+/**
+ * Props para el componente NotificationModal.
+ * @property {boolean} isOpen - Indica si el modal está visible.
+ * @property {() => void} onClose - Función para cerrar el modal.
+ * @property {'success' | 'info' | 'warning' | 'password-changed' | 'email-sent' | 'pending' | 'completed'} type - Tipo de notificación.
+ * @property {string} title - Título de la notificación.
+ * @property {string} message - Mensaje a mostrar en el modal.
+ */
 interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +18,18 @@ interface NotificationModalProps {
   message: string;
 }
 
+/**
+ * Componente NotificationModal
+ * Muestra un modal de notificación con icono, título y mensaje según el tipo de notificación.
+ *
+ * Características:
+ * - Icono y colores dinámicos según el tipo de notificación.
+ * - Botón para cerrar el modal y aceptar la notificación.
+ * - Modal centrado y con fondo semitransparente.
+ *
+ * @param {NotificationModalProps} props - Propiedades del modal.
+ * @returns {JSX.Element | null} Modal de notificación renderizado.
+ */
 const NotificationModal: React.FC<NotificationModalProps> = ({
   isOpen,
   onClose,

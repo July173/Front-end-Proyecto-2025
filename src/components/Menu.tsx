@@ -1,3 +1,29 @@
+
+/**
+ * Props para el componente Menu.
+ * @typedef SidebarMenuProps
+ * @property {string} userId - ID del usuario autenticado.
+ * @property {string} userName - Nombre del usuario autenticado.
+ * @property {(form: MenuItem) => void} [onMenuItemClick] - Callback al seleccionar un formulario.
+ * @property {string} [className] - Clases CSS adicionales para el menú.
+ * @property {(path: string) => void} [onNavigate] - Callback para navegación personalizada.
+ */
+/**
+ * Componente Menu
+ * Renderiza el menú lateral principal de la aplicación, mostrando módulos y formularios disponibles para el usuario.
+ *
+ * Características:
+ * - Agrupa formularios por módulo y permite expandir/cerrar módulos.
+ * - Resalta el módulo y formulario activo.
+ * - Muestra información del usuario y permite ver perfil/cerrar sesión.
+ * - Modal popover para acciones de usuario.
+ * - Utiliza iconos personalizados según el módulo.
+ *
+ * @param {SidebarMenuProps} props - Propiedades del menú.
+ * @returns {JSX.Element} Menú lateral renderizado.
+ */
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, LogOut } from 'lucide-react';
 import { 
@@ -31,6 +57,7 @@ const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>
   'settings': Gear,
   'configuración': Gear,
 };
+
 
 const Menu: React.FC<SidebarMenuProps> = ({ 
   userId, 

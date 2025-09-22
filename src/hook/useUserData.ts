@@ -1,3 +1,13 @@
+
+/**
+ * Hook personalizado para obtener y gestionar los datos del usuario autenticado desde localStorage.
+ * Permite acceder al usuario, saber si está autenticado, controlar el estado de carga y cerrar sesión.
+ *
+ * Uso:
+ * - Llama a `useUserData()` en tus componentes para acceder a los datos del usuario y funciones de logout.
+ * - El estado `isLoading` indica si los datos están siendo cargados.
+ * - La función `logout` elimina los datos de sesión y tokens.
+ */
 import { useState, useEffect } from 'react';
 
 interface UserData {
@@ -8,6 +18,12 @@ interface UserData {
   access_token: string;
 }
 
+/**
+ * Hook useUserData
+ * Proporciona acceso y gestión de los datos del usuario autenticado.
+ *
+ * @returns {Object} Estado y funciones para el usuario autenticado.
+ */
 export const useUserData = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);

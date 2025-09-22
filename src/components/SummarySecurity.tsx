@@ -13,6 +13,15 @@ const roleColors: Record<string, string> = {
 const iconCheck = <span className="text-green-600 text-lg">✓</span>;
 const iconCross = <span className="text-red-600 text-lg">✗</span>;
 
+/**
+ * Componente SummarySecurity
+ * Muestra un resumen del modelo de seguridad de la plataforma:
+ * - Tabla de permisos por rol y formulario (visualizar, editar, registrar, eliminar, activar).
+ * - Distribución de usuarios por rol con colores y etiquetas personalizadas.
+ * - Manejo de carga y errores en las consultas.
+ *
+ * @returns {JSX.Element} Panel de resumen de seguridad.
+ */
 const SummarySecurity = () => {
   const [permisos, setPermisos] = useState<Permiso[]>([]);
   const [loading, setLoading] = useState(true);

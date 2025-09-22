@@ -1,3 +1,13 @@
+
+/**
+ * Hook y utilidades para mostrar notificaciones tipo "toast" en la aplicación React.
+ * Permite crear, actualizar, cerrar y eliminar mensajes flotantes de manera centralizada.
+ *
+ * Uso:
+ * - Llama a `toast({ title, description })` para mostrar una notificación.
+ * - Usa el hook `useToast()` en tus componentes para acceder al estado y funciones de los toasts.
+ * - Controla la cantidad máxima y el tiempo de visibilidad de los toasts.
+ */
 import * as React from "react"
 
 import type {
@@ -139,6 +149,11 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">
 
+/**
+ * Crea y muestra un nuevo toast (notificación flotante).
+ * @param {Toast} props - Propiedades del toast (título, descripción, acción, etc.).
+ * @returns {Object} Métodos para actualizar y cerrar el toast.
+ */
 function toast({ ...props }: Toast) {
   const id = genId()
 
@@ -168,6 +183,10 @@ function toast({ ...props }: Toast) {
   }
 }
 
+/**
+ * Hook para acceder al estado y funciones de los toasts.
+ * @returns {Object} Estado actual de los toasts y funciones para crear/cerrar toasts.
+ */
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 

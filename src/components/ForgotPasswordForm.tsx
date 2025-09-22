@@ -1,3 +1,24 @@
+
+/**
+ * Componente ForgotPasswordForm
+ * -----------------------------
+ * Formulario para recuperación de contraseña por correo institucional.
+ * Permite al usuario solicitar un código de recuperación, valida el correo y muestra notificaciones de éxito o error.
+ *
+ * Props:
+ * - onNavigate: (view: string) => void // Función para navegar entre vistas (login, verify-code, etc)
+ *
+ * Uso:
+ * <ForgotPasswordForm onNavigate={handleNavigate} />
+ *
+ * Flujo:
+ * 1. El usuario ingresa su correo institucional.
+ * 2. Se valida el formato del correo.
+ * 3. Al enviar, se solicita el código de recuperación al backend.
+ * 4. Se muestra una notificación según el resultado.
+ * 5. Si el correo se envió correctamente, navega a la pantalla de verificación de código.
+ */
+
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
 import SenaLogo from './SenaLogo';
@@ -6,6 +27,7 @@ import NotificationModal from './NotificationModal';
 import useNotification from '../hook/useNotification';
 import { isSenaEmail } from '../hook/validationlogin';
 import { requestPasswordResetCode } from '../Api/Services/User';
+
 
 interface ForgotPasswordFormProps {
   onNavigate: (view: string) => void;

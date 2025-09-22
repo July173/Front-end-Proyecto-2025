@@ -8,10 +8,28 @@ import useNotification from '../hook/useNotification';
 import { isValidPassword } from '../hook/validationlogin';
 import { resetPassword } from '../Api/Services/User';
 
+/**
+ * Props para el componente ResetPasswordForm.
+ * @property {(view: string) => void} onNavigate - Función para navegar entre vistas (login, verificación, etc.).
+ */
 interface ResetPasswordFormProps {
   onNavigate: (view: string) => void;
 }
 
+/**
+ * Componente ResetPasswordForm
+ * Renderiza el formulario para actualizar la contraseña del usuario con validaciones y notificaciones.
+ *
+ * Características:
+ * - Validación en tiempo real de la nueva contraseña y confirmación.
+ * - Recupera email y código de recuperación desde localStorage.
+ * - Llama al servicio de backend para actualizar la contraseña.
+ * - Muestra notificaciones de éxito o error.
+ * - Limpia datos temporales y permite navegación entre vistas.
+ *
+ * @param {ResetPasswordFormProps} props - Propiedades del formulario.
+ * @returns {JSX.Element} Formulario de actualización de contraseña renderizado.
+ */
 const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onNavigate }) => {
   const {
     notification,

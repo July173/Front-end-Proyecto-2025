@@ -1,3 +1,16 @@
+
+/**
+ * Componente FooterLinks
+ * ----------------------
+ * Renderiza los enlaces del pie de página para Soporte, Términos y Condiciones, y Política de Privacidad.
+ * Al hacer clic en cada enlace, se abre el modal correspondiente.
+ *
+ * Uso:
+ * <FooterLinks />
+ *
+ * Los modales se gestionan mediante estados locales y se cierran con sus callbacks.
+ */
+
 import React, { useState } from 'react';
 import SupportModal from './SupportModal';
 import TermsModal from './TermsModal';

@@ -47,8 +47,9 @@ export async function deleteUser(id: string) {
  */
 export async function requestPasswordResetCode(email: string): Promise<{ success: boolean; code?: string; message?: string }> {
 	// Validar correo institucional en frontend
-	if (!email.endsWith('@soy.sena.edu.co')) {
-		return { success: false, message: 'Solo se permiten correos institucionales (@soy.sena.edu.co)' };
+	const allowedDomains = ['@soy.sena.edu.co', '@sena.edu.co'];
+	if (!allowedDomains.some(domain => email.endsWith(domain))) {
+		return { success: false, message: 'Solo se permiten correos institucionales (@soy.sena.edu.co, @sena.edu.co)' };
 	}
 
 	const response = await fetch(ENDPOINTS.user.requestPasswordReset, {

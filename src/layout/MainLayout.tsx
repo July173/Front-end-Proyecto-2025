@@ -1,8 +1,21 @@
+/**
+ * Componente MainLayout
+ * Estructura principal de la aplicación con menú lateral, header, contenido y footer.
+ *
+ * Características:
+ * - Muestra el menú lateral con datos del usuario.
+ * - Incluye header, área principal (Outlet) y footer.
+ * - Muestra pantalla de carga mientras se obtienen los datos del usuario.
+ *
+ * @returns {JSX.Element} Layout principal renderizado.
+ */
+
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Menu from "../components/Menu";
 import Footer from "../components/Footer";
 import { useUserData } from "../hook/useUserData";
+
 
 export default function MainLayout() {
   const { userData, isLoading } = useUserData();

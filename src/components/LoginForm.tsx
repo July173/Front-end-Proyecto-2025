@@ -7,10 +7,27 @@ import { validateInstitutionalLogin } from '../Api/Services/User';
 import { isSenaEmail, isValidPassword } from '../hook/validationlogin';
 import SenaLogo from './SenaLogo';
 
+/**
+ * Props para el componente LoginForm.
+ * @property onNavigate Función para navegar entre vistas (registro, recuperación de contraseña, etc.)
+ */
 interface LoginFormProps {
   onNavigate: (view: string) => void;
 }
 
+/**
+ * Componente LoginForm
+ * Renderiza el formulario de inicio de sesión institucional para usuarios SENA.
+ *
+ * Características:
+ * - Validación de correo institucional y contraseña.
+ * - Manejo de errores y estados de carga.
+ * - Persistencia de sesión en localStorage.
+ * - Navegación a registro y recuperación de contraseña.
+ *
+ * @param {LoginFormProps} props
+ * @returns {JSX.Element} Formulario de login.
+ */
 const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const navigate = useNavigate(); // ✅ AGREGAR ESTO
   const [email, setEmail] = useState('');

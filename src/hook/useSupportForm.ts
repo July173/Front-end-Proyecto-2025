@@ -1,6 +1,21 @@
-// hooks/useSupportForm.js
+/**
+ * Hook personalizado para gestionar el formulario de soporte/contacto en la aplicación.
+ * Permite validar, enviar y manejar el estado del formulario usando Web3Forms.
+ *
+ * Uso:
+ * - Llama a `handleInputChange` para actualizar los campos del formulario.
+ * - Usa `submitForm` para validar y enviar los datos.
+ * - El estado `error`, `success` e `isLoading` permite mostrar mensajes y controlar la UI.
+ */
+
 import { useState } from 'react';
 
+/**
+ * Hook useSupportForm
+ * Proporciona funciones y estado para gestionar el formulario de soporte/contacto.
+ *
+ * @returns {Object} Estado y funciones para el formulario de soporte.
+ */
 const useSupportForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -75,20 +90,20 @@ const useSupportForm = () => {
       formDataToSend.append('email', formData.email);
       formDataToSend.append('subject', `[${formData.category.toUpperCase()}] Consulta SENA AutoGestión - ${formData.name}`);
       formDataToSend.append('message', `
-📋 NUEVA CONSULTA DESDE AUTOGESTION SENA
+NUEVA CONSULTA DESDE AUTOGESTION SENA
 
-👤 Información del Usuario:
+ Información del Usuario:
 • Nombre: ${formData.name}
 • Email: ${formData.email}
 • Categoría: ${formData.category}
 • Fecha: ${new Date().toLocaleString('es-CO')}
 
-💬 Mensaje:
+ Mensaje:
 ${formData.message}
 
 ---
-🌐 Enviado desde: AutoGestión SENA
-⏰ Timestamp: ${new Date().toISOString()}
+ Enviado desde: AutoGestión SENA
+ Timestamp: ${new Date().toISOString()}
       `.trim());
 
       // Campos adicionales opcionales

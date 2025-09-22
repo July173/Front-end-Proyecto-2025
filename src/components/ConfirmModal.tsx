@@ -1,5 +1,32 @@
-import React from 'react';
 
+/**
+ * Componente ConfirmModal
+ * -----------------------
+ * Modal de confirmación reutilizable para acciones importantes (eliminar, habilitar, inhabilitar, etc).
+ * Muestra un mensaje, título y dos botones: confirmar y cancelar.
+ *
+ * Props:
+ * - isOpen: boolean           // Si el modal está abierto o cerrado
+ * - title?: string            // Título del modal (opcional, por defecto "Confirmar acción")
+ * - message: string           // Mensaje principal a mostrar
+ * - confirmText?: string      // Texto del botón de confirmar (opcional, por defecto "Confirmar")
+ * - cancelText?: string       // Texto del botón de cancelar (opcional, por defecto "Cancelar")
+ * - onConfirm: () => void     // Función a ejecutar al confirmar
+ * - onCancel: () => void      // Función a ejecutar al cancelar/cerrar
+ *
+ * Uso:
+ * <ConfirmModal
+ *   isOpen={modalAbierto}
+ *   title="¿Eliminar usuario?"
+ *   message="Esta acción no se puede deshacer."
+ *   confirmText="Sí, eliminar"
+ *   cancelText="Cancelar"
+ *   onConfirm={handleEliminar}
+ *   onCancel={handleCerrar}
+ * />
+ */
+
+// Props del modal de confirmación
 interface ConfirmModalProps {
   isOpen: boolean;
   title?: string;
