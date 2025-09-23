@@ -1,10 +1,20 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
+/**
+ * Componente para mostrar una página de error 404 cuando el usuario accede a una ruta inexistente.
+ *
+ * - Muestra un mensaje de error y un enlace para volver al inicio.
+ * - Registra en consola el intento de acceso a una ruta no existente.
+ *
+ * @component
+ * @returns {JSX.Element} Página de error 404.
+ */
 export const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Registra el intento de acceso a una ruta no existente en la consola
     console.error(
       "404 Error: User attempted to access non-existent route:",
       location.pathname

@@ -1,7 +1,31 @@
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown, Check } from "lucide-react";
 import React from "react";
+/**
+ * Componente CustomSelect
+ * ----------------------
+ * Select personalizado basado en Radix UI, con estilos y opciones flexibles.
+ * Permite seleccionar una opción de una lista y personalizar el diseño.
+ *
+ * Props:
+ * - value: string                  // Valor seleccionado actualmente
+ * - onChange: (value: string) => void // Función que se llama al cambiar la selección
+ * - options: Option[]              // Array de opciones disponibles (value, label)
+ * - label?: string                 // Label del select (opcional)
+ * - placeholder?: string           // Placeholder cuando no hay selección (opcional)
+ * - classNames?: object            // Clases CSS personalizadas para trigger, content, item, label (opcional)
+ *
+ * Uso:
+ * <CustomSelect
+ *   value={valor}
+ *   onChange={setValor}
+ *   options={[{ value: '1', label: 'Uno' }, { value: '2', label: 'Dos' }]}
+ *   label="Selecciona número"
+ *   placeholder="Elige una opción"
+ * />
+ */
 
+// Estructura de cada opción del select
 interface Option {
   value: string;
   label: string;

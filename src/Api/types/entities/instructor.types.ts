@@ -7,7 +7,7 @@
  * Incluye estructura y datos de registro de instructores.
  */
 export interface Instructor {
-  id: string;
+  id: number;
   person: number;
   active: boolean;
   contractType: string;

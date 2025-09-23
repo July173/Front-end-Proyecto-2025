@@ -7,7 +7,6 @@
  *
  * Uso:
  *   import { ENDPOINTS } from "../config/ConfigApi";
- *   fetch(ENDPOINTS.user.getUser)
  *
  * Variables:
  *   - API_BASE_URL: URL base configurable por variable de entorno VITE_API_BASE_URL.
@@ -49,8 +48,6 @@ export const ENDPOINTS = {
   /** Endpoints para gestión de personas (aprendiz, etc) */
   person: {
     registerAprendiz: `${API_BASE_URL}security/persons/register-aprendiz/`,
-    // Otros endpoints de persona
-
     IdPerson: `${API_BASE_URL}security/persons/{id}/`,
   },
   /** Endpoints para usuarios (login, recuperación, CRUD) */
@@ -58,7 +55,6 @@ export const ENDPOINTS = {
     validateLogin: `${API_BASE_URL}security/users/validate-institutional-login/`,
     requestPasswordReset: `${API_BASE_URL}security/users/request-password-reset/`, // Envia el código y lo compara
     resetPassword: `${API_BASE_URL}security/users/reset-password/`, // Actualiza la contraseña
-    // Otros endpoints de usuario
     getUser: `${API_BASE_URL}security/users/`,
     getUserId: `${API_BASE_URL}security/users/{id}/`,
     deleteUser: `${API_BASE_URL}security/users/{id}/soft-delete/`,
@@ -70,7 +66,6 @@ export const ENDPOINTS = {
   /** Endpoints para roles y permisos */
   rol: {
     getRoles: `${API_BASE_URL}security/roles/`,
-    deleteRole: `${API_BASE_URL}security/roles/{id}/soft-delete/`,
     getRolUser: `${API_BASE_URL}security/roles/roles-with-user-count/`,
     postRolPermissions: `${API_BASE_URL}security/rol-form-permissions/create-role-with-permissions/`,
     getRolPermissions: `${API_BASE_URL}security/rol-form-permissions/{id}/get-role-with-permissions/`,
@@ -78,7 +73,6 @@ export const ENDPOINTS = {
     getRolesFormsPerms: `${API_BASE_URL}security/rol-form-permissions/permission-matrix/`,
     deleteRolUsers: `${API_BASE_URL}security/roles/{id}/logical-delete-with-users/`
   },
-  
   /** Endpoints para formularios */
   form: {
     getForm: `${API_BASE_URL}security/forms/`,
@@ -93,7 +87,6 @@ export const ENDPOINTS = {
     getModuleForms: `${API_BASE_URL}security/form-modules/{id}/get-module-with-forms/`,
     putModuleForms: `${API_BASE_URL}security/form-modules/{id}/update-module-with-forms/`,
   },
-  
   /** Endpoints para aprendices */
   aprendiz: {
     allAprendiz: `${API_BASE_URL}general/aprendices/Create-Aprendiz/create/`,
@@ -157,8 +150,6 @@ export const ENDPOINTS = {
     uploadInstructorExcel: `${API_BASE_URL}security/excel-templates/upload-instructor-excel/`,
     uploadAprendizExcel: `${API_BASE_URL}security/excel-templates/upload-aprendiz-excel/`,
   },
-  // Otros grupos de endpoints...
-  // Más entidades...
 };
 
 

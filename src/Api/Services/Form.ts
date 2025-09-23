@@ -1,6 +1,4 @@
 import { ENDPOINTS } from '../config/ConfigApi';
-
-
 /**
  * Crea un nuevo formulario en el sistema.
  * @param data - Datos del formulario a crear

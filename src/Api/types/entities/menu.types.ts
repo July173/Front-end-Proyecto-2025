@@ -36,11 +36,6 @@ export interface ProcessedMenuData {
   userInfo: MenuUserInfo;
 }
 
-export interface AppSidebarProps {
-  user: MenuUserInfo;
-  menuItems: MenuItem[];
-  collapsed?: boolean;
-}
 
 export interface SidebarMenuProps {
   userId: string | number;

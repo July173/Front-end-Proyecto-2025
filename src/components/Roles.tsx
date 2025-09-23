@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getRolesUser, toggleRoleActive, postRolPermissions, getRolPermissions, putRolFormPerms } from '../Api/Services/Rol';
 import ConfirmModal from './ConfirmModal';
-import CardSecurity, { InfoCard } from './CardSecurity';
+import { InfoCard } from './CardSecurity';
 import type { InfoCardProps } from '../Api/types/entities/misc.types';
 import type {  RolUsuario } from '../Api/types/entities/role.types';
 import ModalFormGeneric from './ModalFormGeneric';
@@ -15,7 +15,7 @@ const Roles = () => {
   const [error, setError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingRole, setPendingRole] = useState<RolUsuario | null>(null);
-  const [showCreate, setShowCreate] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);   
   const [forms, setForms] = useState([]);
   const [loadingForms, setLoadingForms] = useState(true);
   const [permissions, setPermissions] = useState([]);

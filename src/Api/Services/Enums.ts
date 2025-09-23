@@ -24,7 +24,6 @@ export async function getDocumentTypes(): Promise<DocumentType[]> {
   
   return response.json();
 }
-
 /**
  * Obtiene los tipos de documento con una opción vacía por defecto para selects
  * @returns Promise<DocumentType[]> - Lista de tipos de documento con opción vacía
@@ -54,8 +53,8 @@ export async function getDocumentTypesWithEmpty(): Promise<DocumentType[]> {
 }
 
 /**
- * Obtiene todos los tipos de documento disponibles desde el backend
- * @returns Promise<DocumentType[]> - Lista de tipos de documento
+ * Obtiene todos los tipos de contrato disponibles desde el backend
+ * @returns Promise<DocumentType[]> - Lista de tipos de contrato
  */
 export async function getContractTypes(): Promise<DocumentType[]> {
   const response = await fetch(ENDPOINTS.enums.getContractTypes, {
@@ -73,8 +72,8 @@ export async function getContractTypes(): Promise<DocumentType[]> {
 }
 
 /**
- * Obtiene los tipos de documento con una opción vacía por defecto para selects
- * @returns Promise<DocumentType[]> - Lista de tipos de documento con opción vacía
+ * Obtiene los tipos de contrato con una opción vacía por defecto para selects
+ * @returns Promise<DocumentType[]> - Lista de tipos de contrato con opción vacía
  */
 export async function getContractTypesWithEmpty(): Promise<DocumentType[]> {
   try {

@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
-import { Admin, NotFound, Home, MassRegistration, Perfil, RequestRegistration } from "./pages/RoutesIndex";
+import { Admin, NotFound, Home, MassRegistration, Perfil, RequestRegistration, Reassign, Following, FollowingHistory, EvaluateFinalVisit, Assign } from "./pages/RoutesIndex";
 import React from "react";
 import MainLayout from "./layout/MainLayout";
 
@@ -38,6 +38,12 @@ const App = () => {
               <Route path="/mass-registration" element={<MassRegistration />} />
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/request-registration" element={<RequestRegistration />} />
+              <Route path="/reassign" element={<Reassign />} />
+              <Route path="/following" element={<Following />} />
+              <Route path="/following-history" element={<FollowingHistory />} />
+              <Route path="/evaluate-final-visit" element={<EvaluateFinalVisit />} />
+              <Route path="/assign" element={<Assign />} />
+
             </Route>
 
             {/* 404 */}

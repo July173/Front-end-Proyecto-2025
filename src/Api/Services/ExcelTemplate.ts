@@ -73,7 +73,6 @@ class ExcelTemplateService {
         throw new Error(`Error al descargar plantilla de instructores: ${response.statusText}`);
       }
 
-      // Crear blob y descargar archivo
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');

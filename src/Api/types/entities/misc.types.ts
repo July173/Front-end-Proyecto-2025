@@ -48,11 +48,4 @@ export interface ConfirmModalProps {
   onCancel: () => void;
 }
 
-export interface FieldDef {
-  name: string;
-  label: string;
-  type: 'text' | 'select' | 'date' | 'email';
-  placeholder?: string;
-  options?: Array<{ value: string | number; label: string }>;
-  colSpan?: number;
-}
+
