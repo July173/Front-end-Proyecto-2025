@@ -150,6 +150,12 @@ export const ENDPOINTS = {
     uploadInstructorExcel: `${API_BASE_URL}security/excel-templates/upload-instructor-excel/`,
     uploadAprendizExcel: `${API_BASE_URL}security/excel-templates/upload-aprendiz-excel/`,
   },
+  requestAsignation :{
+    postRequestAssignation : `${API_BASE_URL}assign/solicitudes-assignation/form-request/`,
+    getFormRequest: `${API_BASE_URL}assign/solicitudes-assignation/form-request-list/`,
+    patchDenialRequest : `${API_BASE_URL}assign/solicitudes-assignation/form-request-reject/`,
+    postPdfRequest : `${API_BASE_URL}assign/form-requests/upload-pdf/`,
+  }
 };
 
 

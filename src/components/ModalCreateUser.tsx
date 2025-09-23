@@ -227,11 +227,21 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
       const nombres = instructor.first_name.trim().split(' ');
       const apellidos = instructor.first_last_name.trim().split(' ');
       const payload = {
-        ...instructor,
         first_name: nombres[0] || '',
         second_name: nombres.slice(1).join(' '),
         first_last_name: apellidos[0] || '',
         second_last_name: apellidos.slice(1).join(' '),
+        phone_number: instructor.phone_number,
+        type_identification: instructor.type_identification,
+        number_identification: instructor.number_identification,
+        email: instructor.email,
+        role_id: instructor.role_id,
+        contractType: instructor.contractType,
+        contractStartDate: instructor.contractStartDate,
+        contractEndDate: instructor.contractEndDate,
+        knowledgeArea: instructor.knowledgeArea,
+        sede_id: instructor.sede_id,
+        // NO enviar regional_id ni center_id
       };
       try {
         await postInstructor(payload);

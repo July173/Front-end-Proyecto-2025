@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getFichas } from '../Api/Services/Ficha';
-import { getPrograms } from '../Api/Services/Program';
-import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
+import { getFichas,deleteFicha, createFicha,updateFicha } from '../Api/Services/Ficha';
+import { getPrograms , deleteProgram, createProgram,updateProgram} from '../Api/Services/Program';
+import { getKnowledgeAreas, deleteKnowledgeArea, createKnowledgeArea,updateKnowledgeArea } from '../Api/Services/KnowledgeArea';
 import type { Ficha, Program, KnowledgeArea } from '../Api/types/Modules/general.types';
 import { ChevronDown, ChevronUp, Plus, Settings, Power } from 'lucide-react';
 import ModalFormGeneric from './ModalFormGeneric';
 import ConfirmModal from './ConfirmModal';
-import { createFicha } from '../Api/Services/Ficha';
-import { createProgram } from '../Api/Services/Program';
-import { createKnowledgeArea } from '../Api/Services/KnowledgeArea';
-import { deleteFicha } from '../Api/Services/Ficha';
-import { deleteProgram } from '../Api/Services/Program';
-import { deleteKnowledgeArea } from '../Api/Services/KnowledgeArea';
-import { updateFicha } from '../Api/Services/Ficha';
-import { updateProgram } from '../Api/Services/Program';
-import { updateKnowledgeArea } from '../Api/Services/KnowledgeArea';
 
 const General = () => {
   // Estados para los datos

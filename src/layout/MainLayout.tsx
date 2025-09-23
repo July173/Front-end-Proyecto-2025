@@ -19,7 +19,6 @@ import { useUserData } from "../hook/useUserData";
 
 export default function MainLayout() {
   const { userData, isLoading } = useUserData();
-  console.log("MainLayout renderizado", { userData, isLoading });
   // Función para obtener el nombre del usuario
   const getUserName = () => {
     if (userData?.email) {

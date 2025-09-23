@@ -30,7 +30,7 @@ export interface CreateInstructor {
   contractStartDate: string;
   contractEndDate: string;
   knowledgeArea: number;
-  center_id: number;
+  center_id?: number;
   sede_id: number;
-  regional_id: number;
+  regional_id?: number;
 }

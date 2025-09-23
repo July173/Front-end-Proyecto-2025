@@ -3,7 +3,6 @@ import { useUserData } from "../hook/useUserData";
 
 export const Home = () => {
   const { userData, isLoading } = useUserData();
-console.log("Página X renderizada");
   const getUserName = () => {
     if (userData?.email) {
       const emailPart = userData.email.split("@")[0];
