@@ -212,13 +212,13 @@ const Modules = () => {
           <h2 className="text-2xl font-bold">Gestión de Módulos - Sena</h2>
           <div className="flex gap-4">
             <button
-              className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-in slide-in-from-right delay-200"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg animate-in slide-in-from-right delay-200"
               onClick={() => setShowFormModal(true)}
             >
               <span className="text-xl font-bold">+</span>  Formulario
             </button>
             <button
-              className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-in slide-in-from-right delay-300"
+              className="flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg animate-in slide-in-from-right delay-300"
               onClick={() => setShowModuleModal(true)}
             >
               <span className="text-xl font-bold">+</span>  Modulo
