@@ -1,4 +1,3 @@
-
 /**
  * Props para el componente Menu.
  * @typedef SidebarMenuProps
@@ -150,128 +149,146 @@ const Menu: React.FC<SidebarMenuProps> = ({
   }, [showModal]);
 
   return (
-    <div className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative $ {className}`}> 
+    <div
+      className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative ${className}`}
+      style={{
+        height: '98vh', // Se adapta al alto de la pantalla
+        minHeight: 400,
+        boxSizing: 'border-box',
+        borderBottom: '6px solid #16A34A', // Borde inferior igual al color del menú
+      }}
+    >
       {/* Header */}
-      <div className="p-6 flex items-center gap-3">
+      <div className="p-6 flex items-center gap-3 flex-shrink-0">
         <div className="w-12 h-12 rounded-lg flex items-center justify-center">
           <img src={logo} alt="Logo" className="w-10 h-10" />
         </div>
         <h1 className="text-white font-semibold">Autogestión CIES</h1>
       </div>
 
-      {/* Menu principal */}
-      <nav className="flex-1 px-4">
-        <ul className="space-y-2">
-          {orderedModules.map(([moduleName, forms]) => {
-            const IconComponent = iconMap[moduleName.toLowerCase()] || House;
-            const isOpen = openModules[moduleName] || false;
-            const isInicio = moduleName.toLowerCase() === 'inicio';
-            const isActiveModule = activeModule === moduleName;
-            
-            // Si es "Inicio", renderizar como botón directo sin submódulos
-            if (isInicio) {
+      {/* Scrollable menu area */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <nav className="flex-1 px-4 overflow-y-auto min-h-0">
+          <ul className="space-y-2">
+            {orderedModules.map(([moduleName, forms]) => {
+              const IconComponent = iconMap[moduleName.toLowerCase()] || House;
+              const isOpen = openModules[moduleName] || false;
+              const isInicio = moduleName.toLowerCase() === 'inicio';
+              const isActiveModule = activeModule === moduleName;
+              
+              // Si es "Inicio", renderizar como botón directo sin submódulos
+              if (isInicio) {
+                return (
+                  <li key={moduleName}>
+                    <button
+                      onClick={() => {
+                        setActiveModule(moduleName);
+                        setActiveItem(null);
+                        if (onMenuItemClick) onMenuItemClick({ moduleName, name: '' }); // <-- Solo módulo, sin formulario
+                        if (onNavigate) {
+                          onNavigate('/home');
+                        } else {
+                          navigate('/home');
+                        }
+                      }}
+                      className={`w-full flex items-start gap-2 px-4 py-3 rounded-lg text-left transition-colors ${
+                        isActiveModule 
+                          ? "bg-white/20 text-white" 
+                          : "hover:bg-white/10"
+                      }`}
+                    >
+                      <IconComponent className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <span className="font-medium leading-tight">{moduleName}</span>
+                    </button>
+                  </li>
+                );
+              }
+              
+              // Para otros módulos, mantener la funcionalidad expandible
               return (
                 <li key={moduleName}>
                   <button
                     onClick={() => {
+                      setOpenModules(prev => ({ ...prev, [moduleName]: !prev[moduleName] }));
                       setActiveModule(moduleName);
-                      setActiveItem(null); // Limpiar item activo de submódulos
-                      if (onNavigate) {
-                        onNavigate('/home'); // Redirige a la vista Home
-                      } else {
-                        navigate('/home');
-                      }
                     }}
-                    className={`w-full flex items-start gap-2 px-4 py-3 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-start justify-between px-4 py-3 rounded-lg text-left transition-colors ${
                       isActiveModule 
                         ? "bg-white/20 text-white" 
                         : "hover:bg-white/10"
                     }`}
                   >
-                    <IconComponent className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span className="font-medium leading-tight">{moduleName}</span>
+                    <span className="flex items-start gap-2 flex-1">
+                      <IconComponent className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <span className="font-medium leading-tight">{moduleName}</span>
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 mt-0.5 flex-shrink-0 transform transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
+                  {isOpen && (
+                    <ul className="ml-8 mt-2 space-y-1">
+                      {forms.map(form => {
+                        const isActive = activeItem === form.id;
+                        return (
+                          <li key={form.id}>
+                            <button
+                              onClick={() => {
+                                setActiveItem(form.id);
+                                setActiveModule(moduleName); // Mantener módulo activo
+                                if (onMenuItemClick) onMenuItemClick({ ...form, moduleName }); // <-- ENVÍA EL MÓDULO Y FORMULARIO
+                                if (onNavigate) {
+                                  onNavigate(form.path);
+                                } else {
+                                  navigate(form.path);
+                                }
+                              }}
+                              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm ${
+                                isActive
+                                  ? "bg-white/20 text-white"
+                                  : "text-white/80 hover:bg-white/10"
+                              }`}
+                            >
+                              <span className="w-4 h-4 flex items-center justify-center text-white/80">•</span>
+                              {form.name}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </li>
               );
-            }
-            
-            // Para otros módulos, mantener la funcionalidad expandible
-            return (
-              <li key={moduleName}>
-                <button
-                  onClick={() => {
-                    setOpenModules(prev => ({ ...prev, [moduleName]: !prev[moduleName] }));
-                    setActiveModule(moduleName);
-                  }}
-                  className={`w-full flex items-start justify-between px-4 py-3 rounded-lg text-left transition-colors ${
-                    isActiveModule 
-                      ? "bg-white/20 text-white" 
-                      : "hover:bg-white/10"
-                  }`}
-                >
-                  <span className="flex items-start gap-2 flex-1">
-                    <IconComponent className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span className="font-medium leading-tight">{moduleName}</span>
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 mt-0.5 flex-shrink-0 transform transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {isOpen && (
-                  <ul className="ml-8 mt-2 space-y-1">
-                    {forms.map(form => {
-                      const isActive = activeItem === form.id;
-                      return (
-                        <li key={form.id}>
-                          <button
-                            onClick={() => {
-                              setActiveItem(form.id);
-                              setActiveModule(moduleName); // Mantener módulo activo
-                              if (onMenuItemClick) onMenuItemClick(form);
-                              if (onNavigate) {
-                                onNavigate(form.path);
-                              } else {
-                                navigate(form.path);
-                              }
-                            }}
-                            className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm ${
-                              isActive
-                                ? "bg-white/20 text-white"
-                                : "text-white/80 hover:bg-white/10"
-                            }`}
-                          >
-                            <span className="w-4 h-4 flex items-center justify-center text-white/80">•</span>
-                            {form.name}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+            })}
+          </ul>
+        </nav>
 
-      {/* User Info -> abre modal */}
-      <div
-        ref={userBtnRef}
-        onClick={handleOpenModal}
-        className="p-4 border-t border-white/20 cursor-pointer hover:bg-white/10"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#D9D9D9] rounded-full flex items-center justify-center">
-            <span className="text-gray-600 text-sm font-medium">
-              {userInfo.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-white font-medium truncate">{userInfo.name}</p>
-            <div className="inline-block bg-[#0F172A] text-[#61F659] text-xs px-2 py-1 rounded-full mt-1">
-              {userInfo.role}
+        {/* User Info fijo abajo con borde superior */}
+        <div
+          ref={userBtnRef}
+          onClick={handleOpenModal}
+          className="p-4 border-t border-white/20 cursor-pointer hover:bg-white/10 flex-shrink-0"
+          style={{
+            background: '#16A34A',
+            zIndex: 10,
+            borderBottomLeftRadius: '12px',
+            borderBottomRightRadius: '12px',
+            borderBottom: '6px solid #16A34A', // Borde inferior
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#D9D9D9] rounded-full flex items-center justify-center">
+              <span className="text-gray-600 text-sm font-medium">
+                {userInfo.name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-medium truncate">{userInfo.name}</p>
+              <div className="inline-block bg-[#0F172A] text-[#61F659] text-xs px-2 py-1 rounded-full mt-1">
+                {userInfo.role}
+              </div>
             </div>
           </div>
         </div>
