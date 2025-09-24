@@ -183,7 +183,7 @@ const Users = () => {
       <div className={`border ${color} rounded-lg p-6 m-3 w-[390px] min-h-[120px] flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-200`}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <User className="text-blue-600" />
+            <User className="text-600" />
             <span className="font-semibold">{nombre}</span>
           </div>
           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>{label}</span>
@@ -191,7 +191,7 @@ const Users = () => {
         <div className="text-sm text-gray-700 mb-1">
           <div>{user.email}</div>
           <div>Documento: <span className="font-bold text-gray-800">{user.person?.number_identification || 'Sin documento'}</span></div>
-          <div>Rol : <span className="font-bold text-indigo-700">{rol}</span></div>
+          <div>Rol : <span className="font-bold text-green-700">{rol}</span></div>
         </div>
         <div className="flex gap-2 mt-2">
           {Number(user.id) !== Number(currentUserId) && (
@@ -233,7 +233,7 @@ const Users = () => {
     <div className="bg-white p-8 rounded-lg shadow relative">
       {/* Botón azul en la esquina superior derecha */}
       <button
-        className="absolute right-8 top-8 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow"
+        className="absolute right-8 top-8 flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg  "
         onClick={() => setShowModal(true)}
       >
         <Plus className="w-5 h-5" />

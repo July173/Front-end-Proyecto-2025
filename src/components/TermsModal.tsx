@@ -23,7 +23,7 @@ const TermsModal = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[95vh] overflow-y-auto relative">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 fixed bg-white  max-w-3xl w-full ">
           <div className="flex flex-col items-center w-full">
             <div className="flex items-center gap-3 mb-1 justify-center">
               <div className="w-10 h-10 bg-[#43A047] rounded-full flex items-center justify-center">
@@ -68,7 +68,7 @@ const TermsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 mt-28">
           {/* 1. Aceptación */}
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-3">

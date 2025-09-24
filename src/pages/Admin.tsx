@@ -84,7 +84,7 @@ export const Admin = () => {
       <div className="mt-8 flex gap-8 justify-center items-center">
         <div className="bg-white rounded-xl shadow p-4 flex flex-col  w-60">
           <div className="flex items-center gap-3 mb-2">
-            <User className="w-8 h-8 text-blue-600" />
+            <User className="w-8 h-8 text-green-600" />
             <div className="flex flex-col  mb-2">
               <span className="text-2xl font-bold text-black">{userCount}</span>
               <span className="text-gray-600 mt-1">Usuarios</span>
@@ -102,7 +102,7 @@ export const Admin = () => {
         </div>
         <div className="bg-white rounded-xl shadow p-4 flex flex-col w-60">
           <div className="flex items-center gap-3 mb-2">
-            <Layout className="w-8 h-8 text-purple-600" />
+            <Layout className="w-8 h-8 text-green-600" />
             <div className="flex flex-col  mb-2">
               <span className="text-2xl font-bold text-black">{moduleCount}</span>
               <span className="text-gray-600 mt-1">Módulos</span>
@@ -111,7 +111,7 @@ export const Admin = () => {
         </div>
         <div className="bg-white rounded-xl shadow p-4 flex flex-col  w-60">
           <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-8 h-8 text-orange-600" />
+            <FileText className="w-8 h-8 text-green-600" />
             <div className="flex flex-col  mb-2">
               <span className="text-2xl font-bold text-black">{formCount}</span>
               <span className="text-gray-600 mt-1">Formularios</span>

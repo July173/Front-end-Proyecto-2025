@@ -22,7 +22,7 @@ const SenaLogo = () => {
 
       </div>
       <div>
-        <h1 className="text-2xl font-bold text-[#43A047]">AutoGestión CIES</h1>
+        <h1 className="text-2xl font-bold text-[#01AF01]">AutoGestión CIES</h1>
       </div>
     </div>
   );

@@ -60,10 +60,10 @@ const SupportModal = ({ isOpen, onClose }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[95vh] overflow-y-auto">
                 {/* Header */}
-                <div className="flex flex-col items-center p-6 border-b border-gray-200 relative">
+                <div className="flex flex-col items-center p-6 border-b border-gray-200  fixed bg-white max-w-3xl w-full">
                     <button
                         onClick={onClose}
-                        className="absolute right-6 top-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="absolute right-6 top-6 p-2 hover:bg-gray-100 rounded-full transition-colors "
                     >
                         <X className="w-5 h-5 text-gray-500" />
                     </button>
@@ -76,7 +76,7 @@ const SupportModal = ({ isOpen, onClose }) => {
                     <p className="text-gray-600 text-center mt-2">Estamos aquí para ayudarte. Encuentra respuestas rápidas o contáctanos directamente.</p>
                 </div>
 
-                <h3 className="font-semibold text-gray-900 mb-4 text-center mt-4 text-xl">Formas de contactarnos</h3>
+                <h3 className="font-semibold text-gray-900 mb-4 text-center mt-40 text-2xl ">Formas de contactarnos</h3>
                 {/* Content */}
                 <div className="p-6 space-y-6 pt-1">
 

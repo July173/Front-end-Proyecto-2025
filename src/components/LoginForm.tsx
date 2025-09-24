@@ -101,7 +101,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
       <div className="sena-form">
        <SenaLogo />
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-600 mb-2">
             Iniciar Sesión
           </h2>
           <p className="sena-text-muted">
