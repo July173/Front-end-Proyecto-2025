@@ -152,10 +152,14 @@ export const ENDPOINTS = {
   },
   requestAsignation :{
     postRequestAssignation : `${API_BASE_URL}assign/solicitudes-assignation/form-request/`,
-    getFormRequest: `${API_BASE_URL}assign/solicitudes-assignation/form-request-list/`,
+    getFormRequest: `${API_BASE_URL}assign/solicitudes-asignacion/form-request-list/`,
     patchDenialRequest : `${API_BASE_URL}assign/solicitudes-assignation/form-request-reject/`,
     postPdfRequest : `${API_BASE_URL}assign/form-requests/upload-pdf/`,
+  },
+  modalityProductiveStage :{
+    getModalityProductiveStage : `${API_BASE_URL}assign/modalidades-etapa-productiva/`,
   }
+
 };
 
 

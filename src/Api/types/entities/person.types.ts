@@ -20,7 +20,7 @@ export interface RegisterPayload {
 }
 
 export interface Person {
-  id: string;
+  id: number;
   first_name: string;
   second_name?: string;
   first_last_name: string;
