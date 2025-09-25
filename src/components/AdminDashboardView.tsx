@@ -23,7 +23,13 @@ const AdminDashboardView: React.FC = () => {
   // Solicitudes
   const solicitudes = await getAllRequests();
   // Si la respuesta es un objeto con la propiedad 'data', usa solicitudes.data
-  setRequestsData(Array.isArray(solicitudes) ? solicitudes : solicitudes.data ?? []);
+  setRequestsData(
+    Array.isArray(solicitudes)
+      ? solicitudes
+      : solicitudes && typeof solicitudes === "object" && "data" in solicitudes && Array.isArray((solicitudes as { data: any[] }).data)
+        ? (solicitudes as { data: any[] }).data
+        : []
+  );
   // Filtrar por estado (ajusta el campo según la API, por ejemplo 'estado')
   setSolicitudesSinAsignar(solicitudes.filter(s => s.estado === 'sin_asignar').length);
   setSolicitudesAsignadas(solicitudes.filter(s => s.estado === 'asignada').length);

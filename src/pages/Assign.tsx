@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import AssignTableView, { AssignTableRow } from "@/components/AssignTableView";
 import CustomSelect from "@/components/CustomSelect";
 import BuscarInput from "@/components/BuscarInput";
+import DownloadReportButton from "../components/DownloadReportButton";
 
 
 const rows: AssignTableRow[] = [
@@ -56,7 +57,10 @@ const Assign: React.FC = () => {
     <div className="bg-white relative rounded-[10px] size-full p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold">Asignar seguimiento</h2>
-        <BuscarInput value={busqueda} onChange={setBusqueda} />
+        <div className="flex gap-4 items-center">
+          <BuscarInput value={busqueda} onChange={setBusqueda} />
+          <DownloadReportButton onClick={() => alert('Descargar informe')} />
+        </div>
       </div>
       <div className="flex gap-4 mb-6">
         <CustomSelect
