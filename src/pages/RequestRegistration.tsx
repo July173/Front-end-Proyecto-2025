@@ -55,6 +55,10 @@ export default function RequestRegistration() {
     clearError
   } = useRequestAssignation();
 
+  // Depuración: mostrar userData y person
+  console.log('userData desde localStorage:', userData);
+  console.log('Datos completos de person:', person);
+
   // Calcular rango permitido para fecha de fin (después de declarar formData)
   let minEndDate = '';
   let maxEndDate = '';
