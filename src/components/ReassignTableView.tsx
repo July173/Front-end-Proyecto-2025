@@ -1,23 +1,35 @@
+import React, { useState } from "react";
 
-export interface AssignTableRow {
+export interface ReassignTableRow {
   id: number;
   nombre: string;
   tipoIdentificacion: string;
   numeroIdentificacion: string;
   fechaSolicitud: string;
-  estado?: string;
+  telefono?: string;
+  correo?: string;
+  empresa?: string;
+  nitEmpresa?: string;
+  jefeInmediato?: string;
+  correoJefe?: string;
+  ubicacionEmpresa?: string;
+  instructor?: string;
+  correoInstructor?: string;
+  ficha?: string;
+  programa?: string;
+  regional?: string;
+  centro?: string;
+  telefonoJefe?: string;
+  fechaInicioPractica?: string;
 }
 
-
-import React, { useState } from "react";
-
-interface AssignTableViewProps {
-  rows: AssignTableRow[];
-  onAction?: (row: AssignTableRow) => void;
+interface ReassignTableViewProps {
+  rows: ReassignTableRow[];
+  onAction?: (row: ReassignTableRow) => void;
   actionLabel?: string;
 }
 
-const AssignTableView: React.FC<AssignTableViewProps> = ({ rows, onAction, actionLabel = 'Reasignar' }) => {
+const ReassignTableView: React.FC<ReassignTableViewProps> = ({ rows, onAction, actionLabel = 'Reasignar' }) => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const handleExpand = (id: number) => {
@@ -68,55 +80,63 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ rows, onAction, actio
                 <div className="grid grid-cols-2 gap-y-2 gap-x-8">
                   <div>
                     <span className="text-gray-500">Teléfono:</span>
-                    <span className="ml-2 text-black">3145697897</span>
+                    <span className="ml-2 text-black">{row.telefono}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Correo:</span>
-                    <span className="ml-2 text-black">daniela_polania@soy.sena.edu.co</span>
+                    <span className="ml-2 text-black">{row.correo}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Empresa:</span>
-                    <span className="ml-2 text-black">SAS Colombia</span>
+                    <span className="ml-2 text-black">{row.empresa}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Nit Empresa:</span>
-                    <span className="ml-2 text-black">10004569878</span>
+                    <span className="ml-2 text-black">{row.nitEmpresa}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Jefe Inmediato:</span>
-                    <span className="ml-2 text-black">Lorenzo Suarez</span>
+                    <span className="ml-2 text-black">{row.jefeInmediato}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Correo Jefe:</span>
-                    <span className="ml-2 text-black">lsuarez@gmail.com</span>
+                    <span className="ml-2 text-black">{row.correoJefe}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Ubicación Empresa:</span>
-                    <span className="ml-2 text-black">Neiva, Huila</span>
+                    <span className="ml-2 text-black">{row.ubicacionEmpresa}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Instructor designado:</span>
+                    <span className="ml-2 text-black">{row.instructor}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Correo instructor:</span>
+                    <span className="ml-2 text-black">{row.correoInstructor}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Regional:</span>
-                    <span className="ml-2 text-black">Huila</span>
+                    <span className="ml-2 text-black">{row.regional}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Centro:</span>
-                    <span className="ml-2 text-black">Centro de la industria y los servicios</span>
+                    <span className="ml-2 text-black">{row.centro}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Ficha:</span>
-                    <span className="ml-2 text-black">2078456</span>
+                    <span className="ml-2 text-black">{row.ficha}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Programa:</span>
-                    <span className="ml-2 text-black">Análisis y desarrollo de software</span>
+                    <span className="ml-2 text-black">{row.programa}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Teléfono Jefe:</span>
-                    <span className="ml-2 text-black">3145698965</span>
+                    <span className="ml-2 text-black">{row.telefonoJefe}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Fecha inicio etapa práctica:</span>
-                    <span className="ml-2 text-black">01/05/2025</span>
+                    <span className="ml-2 text-black">{row.fechaInicioPractica}</span>
                   </div>
                 </div>
               </div>
@@ -128,4 +148,4 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ rows, onAction, actio
   );
 };
 
-export default AssignTableView;
+export default ReassignTableView;
