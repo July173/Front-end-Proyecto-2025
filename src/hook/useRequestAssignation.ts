@@ -125,16 +125,19 @@ export const useRequestAssignation = () => {
     
     // Usar los datos pasados como parámetro o los del estado
     const finalData = dataToSubmit || formData;
-    
     try {
       console.log('=== ENVIANDO AL BACKEND ===');
       console.log('Datos finales a enviar:', finalData);
-      
-      // Validar datos requeridos básicos
-      if (!finalData.aprendizId || !finalData.fichaId || !finalData.sede) {
-        throw new Error(`Faltan datos requeridos: aprendizId(${finalData.aprendizId}), fichaId(${finalData.fichaId}), sede(${finalData.sede})`);
+
+
+      // Validar datos requeridos básicos en ambos formatos
+      const aprendizId = (finalData as any).aprendiz_id ?? finalData.aprendizId;
+      const fichaId = (finalData as any).ficha_id ?? finalData.fichaId;
+      const sede = (finalData as any).sede ?? finalData.sede;
+      if (!aprendizId || !fichaId || !sede) {
+        throw new Error(`Faltan datos requeridos: aprendiz_id(${(finalData as any).aprendiz_id ?? finalData.aprendizId}), ficha_id(${(finalData as any).ficha_id ?? finalData.fichaId}), sede(${(finalData as any).sede ?? finalData.sede})`);
       }
-      
+
       const response = await postRequestAssignation(finalData as requestAsignation);
       console.log('✅ Respuesta exitosa:', response);
       return response.id || null;

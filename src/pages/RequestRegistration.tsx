@@ -9,6 +9,7 @@ import {
 } from 'react-bootstrap-icons';
 import { useAprendizData } from '../hook/useAprendizData';
 import { useRequestAssignation } from '../hook/useRequestAssignation';
+import { useFormValidations } from '../hook/useFormValidations';
 import { FormSelects } from '../components/RequestForm/FormSelects';
 import { typesDocument } from '../constants/selectOptions';
 import { requestAsignation } from '../Api/types/Modules/assign.types';
@@ -26,6 +27,10 @@ const COLORS = {
 };
 
 export default function RequestRegistration() {
+  const { validatePhone, validateEndDate } = useFormValidations();
+  const [phoneError, setPhoneError] = useState('');
+  const [humanTalentPhoneError, setHumanTalentPhoneError] = useState('');
+  const [dateError, setDateError] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { person, userData, loading: userLoading, error: userError } = useAprendizData();
   const {
@@ -49,6 +54,19 @@ export default function RequestRegistration() {
     uploadPdf,
     clearError
   } = useRequestAssignation();
+
+  // Calcular rango permitido para fecha de fin (después de declarar formData)
+  let minEndDate = '';
+  let maxEndDate = '';
+  if (formData.dateStartContract) {
+    const startDate = new Date(formData.dateStartContract);
+    const endMonthDate = new Date(startDate);
+    endMonthDate.setMonth(endMonthDate.getMonth() + 6);
+    // Primer día del mes
+    minEndDate = new Date(endMonthDate.getFullYear(), endMonthDate.getMonth(), 1).toISOString().split('T')[0];
+    // Último día del mes
+    maxEndDate = new Date(endMonthDate.getFullYear(), endMonthDate.getMonth() + 1, 0).toISOString().split('T')[0];
+  }
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -81,6 +99,45 @@ export default function RequestRegistration() {
     return documentType ? documentType.label : 'No especificado';
   };
 
+  // Validación en tiempo real para teléfono
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    updateFormData('bossPhone', value);
+    setPhoneError(validatePhone(value));
+  };
+
+  const handleHumanTalentPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    updateFormData('humanTalentPhone', value);
+    setHumanTalentPhoneError(validatePhone(value));
+  };
+
+  // Validación en tiempo real para fechas
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const startValue = new Date(e.target.value).getTime();
+    updateFormData('dateStartContract', startValue);
+    
+    // Limpiar error anterior
+    setDateError('');
+    
+    // Si ya hay fecha de fin, validar
+    if (formData.dateEndContract) {
+      setDateError(validateEndDate(startValue, formData.dateEndContract));
+    }
+  };
+
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const endValue = new Date(e.target.value).getTime();
+    updateFormData('dateEndContract', endValue);
+    
+    // Validar inmediatamente con la fecha de inicio
+    if (formData.dateStartContract) {
+      setDateError(validateEndDate(formData.dateStartContract, endValue));
+    } else {
+      setDateError('Debe seleccionar primero la fecha de inicio');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
@@ -102,6 +159,27 @@ export default function RequestRegistration() {
       aprendizId: Number(person.id) || 0, // Convertir explícitamente a número
     };
 
+    // Transformar a snake_case y fechas a string
+    const snakeCaseData = {
+      aprendiz_id: updatedFormData.aprendizId,
+      ficha_id: updatedFormData.fichaId,
+      fecha_inicio_contrato: updatedFormData.dateStartContract ? new Date(updatedFormData.dateStartContract).toISOString().slice(0, 10) : '',
+      fecha_fin_contrato: updatedFormData.dateEndContract ? new Date(updatedFormData.dateEndContract).toISOString().slice(0, 10) : '',
+      enterprise_name: updatedFormData.enterpriseName,
+      enterprise_nit: String(updatedFormData.enterpriseNit ?? ''),
+      enterprise_location: updatedFormData.enterpriseLocation,
+      enterprise_email: updatedFormData.enterpriseEmail,
+      boss_name: updatedFormData.bossName,
+      boss_phone: updatedFormData.bossPhone,
+      boss_email: updatedFormData.bossEmail,
+      boss_position: updatedFormData.bossPosition,
+      human_talent_name: updatedFormData.humanTalentName,
+      human_talent_email: updatedFormData.humanTalentEmail,
+      human_talent_phone: updatedFormData.humanTalentPhone,
+      sede: updatedFormData.sede,
+      modality_productive_stage: updatedFormData.modalityProductiveStage,
+    };
+
     // CONSOLE LOGS PARA DEBUG
     console.log('=== DATOS DEL FORMULARIO ===');
     console.log('Person ID:', person.id, 'Tipo:', typeof person.id);
@@ -111,24 +189,38 @@ export default function RequestRegistration() {
     
     // Verificar campos requeridos
     const requiredFields = {
-      aprendizId: updatedFormData.aprendizId!,
-      fichaId: updatedFormData.fichaId!,
-      dateEndContract: updatedFormData.dateEndContract!,
-      dateStartContract: updatedFormData.dateStartContract!,
-      enterpriseName: updatedFormData.enterpriseName!,
-      enterpriseNit: updatedFormData.enterpriseNit!,
-      enterpriseLocation: updatedFormData.enterpriseLocation!,
-      enterpriseEmail: updatedFormData.enterpriseEmail!,
-      bossName: updatedFormData.bossName!,
-      bossPhone: updatedFormData.bossPhone!,
-      bossEmail: updatedFormData.bossEmail!,
-      bossPosition: updatedFormData.bossPosition!,
-      humanTalentName: updatedFormData.humanTalentName!,
-      humanTalentEmail: updatedFormData.humanTalentEmail!,
-      humanTalentPhone: updatedFormData.humanTalentPhone!,
-      sede: updatedFormData.sede!,
-      modalityProductiveStage: updatedFormData.modalityProductiveStage!,
+        aprendizId: updatedFormData.aprendizId!,
+        fichaId: updatedFormData.fichaId!,
+        dateEndContract: updatedFormData.dateEndContract!,
+        dateStartContract: updatedFormData.dateStartContract!,
+        enterpriseName: updatedFormData.enterpriseName!,
+        enterpriseNit: updatedFormData.enterpriseNit!,
+        enterpriseLocation: updatedFormData.enterpriseLocation!,
+        enterpriseEmail: updatedFormData.enterpriseEmail!,
+        bossName: updatedFormData.bossName!,
+        bossPhone: updatedFormData.bossPhone!,
+        bossEmail: updatedFormData.bossEmail!,
+        bossPosition: updatedFormData.bossPosition!,
+        humanTalentName: updatedFormData.humanTalentName!,
+        humanTalentEmail: updatedFormData.humanTalentEmail!,
+        humanTalentPhone: updatedFormData.humanTalentPhone!,
+        sede: updatedFormData.sede!,
+        modalityProductiveStage: updatedFormData.modalityProductiveStage!,
     };
+
+    // Validaciones extra
+    const bossPhoneValidation = validatePhone(updatedFormData.bossPhone ?? '');
+    const humanTalentPhoneValidation = validatePhone(updatedFormData.humanTalentPhone ?? '');
+    const dateValidation = validateEndDate(updatedFormData.dateStartContract ?? null, updatedFormData.dateEndContract ?? null);
+    
+    // Filtrar solo errores no vacíos
+    const validationErrors = [bossPhoneValidation, humanTalentPhoneValidation, dateValidation]
+      .filter(error => error !== '');
+    
+    if (validationErrors.length > 0) {
+      alert(`Errores de validación:\n${validationErrors.join('\n')}`);
+      return;
+    }
 
     console.log('=== CAMPOS REQUERIDOS ===');
     Object.entries(requiredFields).forEach(([key, value]) => {
@@ -152,8 +244,8 @@ export default function RequestRegistration() {
 
     console.log('✅ ENVIANDO SOLICITUD...');
 
-    // PASAR LOS DATOS ACTUALIZADOS DIRECTAMENTE AL SUBMIT
-    const requestId = await submitRequest(updatedFormData);
+  // PASAR LOS DATOS TRANSFORMADOS AL SUBMIT
+  const requestId = await submitRequest(snakeCaseData);
     
     console.log('Respuesta del servidor - ID de solicitud:', requestId);
     
@@ -437,7 +529,7 @@ export default function RequestRegistration() {
                     className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
                     style={{ borderColor: COLORS.green3 }} 
                     required 
-                    onChange={(e) => updateFormData('dateStartContract', new Date(e.target.value).getTime())}
+                    onChange={handleStartDateChange}
                   />
                 </div>
 
@@ -450,8 +542,12 @@ export default function RequestRegistration() {
                     className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
                     style={{ borderColor: COLORS.green3 }} 
                     required 
-                    onChange={(e) => updateFormData('dateEndContract', new Date(e.target.value).getTime())}
+                    min={minEndDate}
+                    max={maxEndDate}
+                    disabled={!formData.dateStartContract}
+                    onChange={handleEndDateChange}
                   />
+                  {dateError && <div className="mt-1"><span className="text-red-600 text-xs">{dateError}</span></div>}
                 </div>
 
               <div>
@@ -581,8 +677,10 @@ export default function RequestRegistration() {
                     style={{ borderColor: COLORS.green3 }} 
                     required 
                     placeholder="Ingrese el número de teléfono"
-                    onChange={(e) => updateFormData('bossPhone', Number(e.target.value))}
+                      value={formData.bossPhone || ''}
+                      onChange={handlePhoneChange}
                   />
+                    {phoneError && <span className="text-red-600 text-xs">{phoneError}</span>}
                 </div>
 
                 <div>
@@ -650,8 +748,10 @@ export default function RequestRegistration() {
                     style={{ borderColor: COLORS.green3 }} 
                     required 
                     placeholder="Ingrese el número de teléfono"
-                    onChange={(e) => updateFormData('humanTalentPhone', e.target.value)}
+                      value={formData.humanTalentPhone || ''}
+                      onChange={handleHumanTalentPhoneChange}
                   />
+                    {humanTalentPhoneError && <span className="text-red-600 text-xs">{humanTalentPhoneError}</span>}
                 </div>
 
                 <div>
