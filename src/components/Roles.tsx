@@ -302,7 +302,7 @@ const Roles = () => {
       <div className="flex items-center gap-4 mb-6 justify-between">
         <h2 className="text-2xl font-bold">Gestión de Roles - Sena</h2>
         <button
-          className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-in slide-in-from-right delay-200"
+          className="flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg"
           onClick={() => setShowCreate(true)}
         >
           <span className="text-xl font-bold">+</span> Registro Rol

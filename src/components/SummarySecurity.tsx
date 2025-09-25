@@ -68,7 +68,7 @@ const SummarySecurity = () => {
               .map((perm, i) => (
                 <tr key={i} className="text-center">
                   <td className="px-3 py-2 border">
-                    <span className="inline-block bg-gray-100 border border-gray-300 rounded-full px-2 py-1 text-xs font-semibold">
+                    <span className="inline-block   rounded-full px-2 py-1 text-xs font-semibold">
                       {perm.rol}
                     </span>
                   </td>
@@ -94,7 +94,7 @@ const SummarySecurity = () => {
           <div className="flex flex-col gap-3">
             {rolesUser.map((rol, index) => {
               // Elige color según el nombre del rol, por defecto azul
-              const color = roleColors[rol.nombre] || 'bg-blue-50 border-blue-400 text-blue-700';
+              const color = roleColors[rol.nombre] || 'bg-green-50 border-green-400 text-green-700';
               const label =
                 rol.nombre === 'Administrador' ? 'Administradores' :
                 rol.nombre === 'Usuarios' ? 'usuarios' :

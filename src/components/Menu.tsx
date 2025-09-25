@@ -124,12 +124,12 @@ const Menu: React.FC<SidebarMenuProps> = ({
     return a.localeCompare(b);
   });
 
-  // 👉 abre el modal justo encima del botón, dentro del contenedor del menú
+  // abre el modal justo encima del botón, dentro del contenedor del menú
   const handleOpenModal = () => {
     setShowModal(true);
   };
 
-  // 👉 cerrar al hacer clic fuera
+  //  cerrar al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -149,15 +149,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
   }, [showModal]);
 
   return (
-    <div
-      className={`w-64 rounded-xl bg-[#16A34A] text-white flex flex-col m-2 relative ${className}`}
-      style={{
-        height: '98vh', // Se adapta al alto de la pantalla
-        minHeight: 400,
-        boxSizing: 'border-box',
-        borderBottom: '6px solid #16A34A', // Borde inferior igual al color del menú
-      }}
-    >
+    <div className={`w-64 rounded-xl bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] text-white flex flex-col m-2 relative $ {className}`}> 
       {/* Header */}
       <div className="p-6 flex items-center gap-3 flex-shrink-0">
         <div className="w-12 h-12 rounded-lg flex items-center justify-center">
