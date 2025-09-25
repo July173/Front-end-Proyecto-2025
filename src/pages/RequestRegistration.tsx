@@ -1,3 +1,9 @@
+import AprendizSection from '../components/RequestForm/AprendizSection';
+import CustomSelect from '../components/CustomSelect';
+import EmpresaSection from '../components/RequestForm/EmpresaSection';
+import JefeSection from '../components/RequestForm/JefeSection';
+import TalentoHumanoSection from '../components/RequestForm/TalentoHumanoSection';
+import PdfUploadSection from '../components/RequestForm/PdfUploadSection';
 import React, { useState } from "react";
 import { 
   JournalText,
@@ -13,6 +19,8 @@ import { useFormValidations } from '../hook/useFormValidations';
 import { FormSelects } from '../components/RequestForm/FormSelects';
 import { typesDocument } from '../constants/selectOptions';
 import { requestAsignation } from '../Api/types/Modules/assign.types';
+import NotificationModal from '../components/NotificationModal';
+import ConfirmModal from '../components/ConfirmModal';
 
 // Colores usados
 const COLORS = {
@@ -32,7 +40,7 @@ export default function RequestRegistration() {
   const [humanTalentPhoneError, setHumanTalentPhoneError] = useState('');
   const [dateError, setDateError] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { person, userData, loading: userLoading, error: userError } = useAprendizData();
+  const { person, userData, aprendizId, loading: userLoading, error: userError } = useAprendizData();
   const {
     loading,
     error,
@@ -55,9 +63,21 @@ export default function RequestRegistration() {
     clearError
   } = useRequestAssignation();
 
-  // Depuración: mostrar userData y person
-  console.log('userData desde localStorage:', userData);
-  console.log('Datos completos de person:', person);
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    type: 'info' | 'warning' | 'success' | 'password-changed' | 'email-sent' | 'pending' | 'completed';
+    title: string;
+    message: string;
+    key?: number;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+    key: 0
+  });
+
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // Calcular rango permitido para fecha de fin (después de declarar formData)
   let minEndDate = '';
@@ -74,21 +94,26 @@ export default function RequestRegistration() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    
     if (file) {
-      // Validar tipo de archivo
       if (file.type !== 'application/pdf') {
-        alert('Solo se permiten archivos PDF');
+        setNotification({
+          isOpen: true,
+          type: 'warning',
+          title: 'Archivo inválido',
+          message: 'Solo se permiten archivos PDF.'
+        });
         return;
       }
-      
-      // Validar tamaño (1MB = 1024 * 1024 bytes)
-      const maxSizeInBytes = 1024 * 1024; // 1MB
+      const maxSizeInBytes = 1024 * 1024;
       if (file.size > maxSizeInBytes) {
-        alert('El archivo no puede ser mayor a 1MB');
+        setNotification({
+          isOpen: true,
+          type: 'warning',
+          title: 'Archivo demasiado grande',
+          message: 'El archivo no puede ser mayor a 1MB.'
+        });
         return;
       }
-      
       setSelectedFile(file);
     }
   };
@@ -142,27 +167,43 @@ export default function RequestRegistration() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Nuevo handle para el submit del formulario
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  // Lógica de envío real, solo si el usuario confirma
+  const handleConfirmSend = async () => {
+    setShowConfirm(false);
     clearError();
-
+    // Helper to show notification after confirm closes
+    const showNotification = (notif) => {
+  setTimeout(() => setNotification({ ...notif, key: Date.now() }), 200); // force remount with unique key
+    };
     if (!person) {
-      alert('No se encontraron los datos del aprendiz');
+      showNotification({
+        isOpen: true,
+        type: 'warning',
+        title: 'Datos de aprendiz no encontrados',
+        message: 'No se encontraron los datos del aprendiz. Por favor, verifica tu sesión o comunícate con soporte.'
+      });
       return;
     }
-
-    // VALIDAR ARCHIVO PDF MANUALMENTE
     if (!selectedFile) {
-      alert('Debe seleccionar un archivo PDF');
+      showNotification({
+        isOpen: true,
+        type: 'warning',
+        title: 'Archivo PDF requerido',
+        message: 'Debes seleccionar un archivo PDF para continuar con la solicitud.'
+      });
       return;
     }
-
-    // Actualizar formData con el ID del aprendiz - CONVERTIR A NÚMERO
+    // Actualizar formData con el ID del aprendiz (de la tabla aprendiz)
     const updatedFormData: Partial<requestAsignation> = {
       ...formData,
-      aprendizId: Number(person.id) || 0, // Convertir explícitamente a número
+      aprendizId: Number(aprendizId) || 0,
     };
-
     // Transformar a snake_case y fechas a string
     const snakeCaseData = {
       aprendiz_id: updatedFormData.aprendizId,
@@ -183,57 +224,47 @@ export default function RequestRegistration() {
       sede: updatedFormData.sede,
       modality_productive_stage: updatedFormData.modalityProductiveStage,
     };
-
-    // CONSOLE LOGS PARA DEBUG
-    console.log('=== DATOS DEL FORMULARIO ===');
-    console.log('Person ID:', person.id, 'Tipo:', typeof person.id);
-    console.log('Person ID convertido:', Number(person.id), 'Tipo:', typeof Number(person.id));
-    console.log('FormData actual:', formData);
-    console.log('FormData actualizado:', updatedFormData);
-    
     // Verificar campos requeridos
     const requiredFields = {
-        aprendizId: updatedFormData.aprendizId!,
-        fichaId: updatedFormData.fichaId!,
-        dateEndContract: updatedFormData.dateEndContract!,
-        dateStartContract: updatedFormData.dateStartContract!,
-        enterpriseName: updatedFormData.enterpriseName!,
-        enterpriseNit: updatedFormData.enterpriseNit!,
-        enterpriseLocation: updatedFormData.enterpriseLocation!,
-        enterpriseEmail: updatedFormData.enterpriseEmail!,
-        bossName: updatedFormData.bossName!,
-        bossPhone: updatedFormData.bossPhone!,
-        bossEmail: updatedFormData.bossEmail!,
-        bossPosition: updatedFormData.bossPosition!,
-        humanTalentName: updatedFormData.humanTalentName!,
-        humanTalentEmail: updatedFormData.humanTalentEmail!,
-        humanTalentPhone: updatedFormData.humanTalentPhone!,
-        sede: updatedFormData.sede!,
-        modalityProductiveStage: updatedFormData.modalityProductiveStage!,
+      aprendizId: updatedFormData.aprendizId!,
+      fichaId: updatedFormData.fichaId!,
+      dateEndContract: updatedFormData.dateEndContract!,
+      dateStartContract: updatedFormData.dateStartContract!,
+      enterpriseName: updatedFormData.enterpriseName!,
+      enterpriseNit: updatedFormData.enterpriseNit!,
+      enterpriseLocation: updatedFormData.enterpriseLocation!,
+      enterpriseEmail: updatedFormData.enterpriseEmail!,
+      bossName: updatedFormData.bossName!,
+      bossPhone: updatedFormData.bossPhone!,
+      bossEmail: updatedFormData.bossEmail!,
+      bossPosition: updatedFormData.bossPosition!,
+      humanTalentName: updatedFormData.humanTalentName!,
+      humanTalentEmail: updatedFormData.humanTalentEmail!,
+      humanTalentPhone: updatedFormData.humanTalentPhone!,
+      sede: updatedFormData.sede!,
+      modalityProductiveStage: updatedFormData.modalityProductiveStage!,
     };
-
     // Validaciones extra
     const bossPhoneValidation = validatePhone(updatedFormData.bossPhone ?? '');
     const humanTalentPhoneValidation = validatePhone(updatedFormData.humanTalentPhone ?? '');
     const dateValidation = validateEndDate(updatedFormData.dateStartContract ?? null, updatedFormData.dateEndContract ?? null);
-    
     // Filtrar solo errores no vacíos
     const validationErrors = [bossPhoneValidation, humanTalentPhoneValidation, dateValidation]
       .filter(error => error !== '');
     
     if (validationErrors.length > 0) {
-      alert(`Errores de validación:\n${validationErrors.join('\n')}`);
+      showNotification({
+        isOpen: true,
+        type: 'warning',
+        title: 'Errores de validación',
+        message: `Errores encontrados:\n${validationErrors.join('\n')}`
+      });
       return;
     }
 
-    console.log('=== CAMPOS REQUERIDOS ===');
     Object.entries(requiredFields).forEach(([key, value]) => {
       const isEmpty = value === 0 || value === '' || value === null || value === undefined;
-      console.log(`${key}:`, value, 'Tipo:', typeof value, isEmpty ? '❌ FALTA' : '✅ OK');
     });
-
-    console.log('=== ARCHIVO PDF ===');
-    console.log('Archivo seleccionado:', selectedFile);
 
     // Verificar qué campos están vacíos
     const missingFields = Object.entries(requiredFields)
@@ -241,27 +272,68 @@ export default function RequestRegistration() {
       .map(([key]) => key);
 
     if (missingFields.length > 0) {
-      console.error('❌ CAMPOS FALTANTES:', missingFields);
-      alert(`Faltan los siguientes campos: ${missingFields.join(', ')}`);
+      showNotification({
+        isOpen: true,
+        type: 'warning',
+        title: 'Campos faltantes',
+        message: `Faltan los siguientes campos: ${missingFields.join(', ')}`
+      });
       return;
     }
 
-    console.log('✅ ENVIANDO SOLICITUD...');
-
-  // PASAR LOS DATOS TRANSFORMADOS AL SUBMIT
-  const requestId = await submitRequest(snakeCaseData);
-    
-    console.log('Respuesta del servidor - ID de solicitud:', requestId);
-    
-    if (requestId && selectedFile) {
-      // Subir PDF si hay archivo seleccionado
-      const pdfUploaded = await uploadPdf(selectedFile, requestId);
-      if (pdfUploaded) {
-        alert('Solicitud enviada exitosamente');
-        // Aquí podrías redirigir o limpiar el formulario
+    // PASAR LOS DATOS TRANSFORMADOS AL SUBMIT
+    try {
+      console.log('Enviando datos principales:', snakeCaseData);
+      const requestId = await submitRequest(snakeCaseData);
+      console.log('ID de solicitud recibido:', requestId);
+      if (requestId && selectedFile) {
+        // Subir PDF con request_id como campo obligatorio
+        let pdfUploadResult = null;
+        try {
+          console.log('Enviando PDF:', selectedFile, 'con request_id:', requestId);
+          pdfUploadResult = await uploadPdf(selectedFile, requestId);
+          console.log('Respuesta de uploadPdf:', pdfUploadResult);
+        } catch (pdfErr) {
+          console.error('Error al subir PDF:', pdfErr);
+          showNotification({
+            isOpen: true,
+            type: 'warning',
+            title: 'Error al subir PDF',
+            message: pdfErr?.message || 'La solicitud fue enviada pero hubo un error al subir el archivo PDF.'
+          });
+          return;
+        }
+        if (pdfUploadResult && pdfUploadResult.ok !== false) {
+          showNotification({
+            isOpen: true,
+            type: 'success',
+            title: 'Solicitud enviada',
+            message: 'La solicitud fue enviada exitosamente y el archivo PDF se ha subido correctamente.'
+          });
+        } else {
+          showNotification({
+            isOpen: true,
+            type: 'warning',
+            title: 'Error al subir PDF',
+            message: 'La solicitud fue enviada pero hubo un error al subir el archivo PDF.'
+          });
+        }
+      } else if (requestId) {
+        showNotification({
+          isOpen: true,
+          type: 'success',
+          title: 'Solicitud enviada',
+          message: 'La solicitud fue enviada exitosamente.'
+        });
       }
-    } else if (requestId) {
-      alert('Solicitud enviada exitosamente');
+    } catch (err) {
+      console.error('Error al enviar solicitud principal:', err);
+      showNotification({
+        isOpen: true,
+        type: 'warning',
+        title: 'Error al enviar solicitud',
+        message: err?.message || 'Ocurrió un error inesperado al enviar la solicitud.'
+      });
     }
   };
 
@@ -270,603 +342,198 @@ export default function RequestRegistration() {
   if (!person) return <div className="p-8 text-orange-500">No se encontró la información del aprendiz.</div>;
 
   return (
-    <div className="min-h-screen py-8 rounded-md" style={{ background: '#f8f9fa' }}>
-      <div className="w-full max-w-4xl mx-auto px-4">
-        <form onSubmit={handleSubmit}>
-          <div className="flex items-center gap-3 mb-6 justify-center ">
-            <div 
-              className="flex items-center justify-center rounded-full" 
-              style={{ width: 48, height: 48, backgroundColor: COLORS.green2 }}
-            >
-              <JournalText size={28} color={COLORS.white} />
-            </div>
-            <h1 className="font-bold text-3xl" style={{ color: COLORS.green2 }}>
-              Formulario de Asignación
-            </h1>
-          </div>
-          {/* Encabezado centrado */}
-          <div className="w-full flex flex-col items-center justify-center mb-8 bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            
-            <h2 className="font-semibold text-xl mb-4 text-center" style={{ color: COLORS.green2 }}>
-              Asignación instructor acompañamiento etapa práctica
-            </h2>
-            <p className="text-sm text-gray-700 text-center max-w-2xl leading-relaxed">
-              Únicamente para la alternativa de Contrato de Aprendizaje. Acepto el tratamiento de mis datos personales conforme a lo consagrado en el artículo 15 Constitución Política y en la Resolución No. 0924 del MINTIC.
-            </p>
-          </div>
-
-          {/* Términos y condiciones */}
-          <div className="w-full mb-6 bg-white rounded-lg   shadow-md p-4 border border-gray-200">
-            <div className="flex items-start gap-3 mb-2">
-              <input 
-                type="checkbox" 
-                id="terms" 
-                className="mt-1 accent-green-600" 
-                style={{ accentColor: COLORS.green }}
-                required 
-              />
-              <div>
-                <label htmlFor="terms" className="font-medium text-sm cursor-pointer">
-                  Acepto los términos y condiciones <span style={{ color: COLORS.error }}>*</span>
-                </label>
-                <p className="text-xs text-gray-600 mt-1">
-                  LOS DATOS PROPORCIONADOS SERÁN TRATADOS DE ACUERDO A LA POLÍTICA DE TRATAMIENTO DE DATOS PERSONALES DEL SENA Y A LA LEY 1581 DE 2012
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Selects de Regional, Centro, Sede (solo estos por fuera) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
-              <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                Regional <span style={{ color: COLORS.error }}>*</span>
-              </label>
-              <select
-                value={selectedRegional || ""}
-                onChange={(e) => updateSelectedRegional(Number(e.target.value))}
-                className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                style={{ borderColor: COLORS.green3 }}
-                required
-              >
-                <option value="">Seleccione...</option>
-                {regionales.map(r => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
-              <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                Centro de formación <span style={{ color: COLORS.error }}>*</span>
-              </label>
-              <select
-                value={selectedCenter || ""}
-                onChange={(e) => updateSelectedCenter(Number(e.target.value))}
-                className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                style={{ borderColor: COLORS.green3 }}
-                required
-                disabled={!selectedRegional}
-              >
-                <option value="">Seleccione...</option>
-                {centrosFiltrados.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
-              <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                Sede centro de formación <span style={{ color: COLORS.error }}>*</span>
-              </label>
-              <select
-                value={formData.sede || ""}
-                onChange={(e) => updateFormData('sede', Number(e.target.value))}
-                className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                style={{ borderColor: COLORS.green3 }}
-                required
-                disabled={!selectedCenter}
-              >
-                <option value="">Seleccione...</option>
-                {sedesFiltradas.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Datos del Aprendiz - campos pre-cargados + campos editables */}
-          <div className="mb-6 bg-white rounded-lg shadow-sm border-2" style={{ borderColor: COLORS.green3 }}>
-            <div className="flex items-center gap-3 px-6 py-4 rounded-t-lg border-b" style={{ backgroundColor: COLORS.green4, borderBottomColor: COLORS.green3 }}>
-              <Person size={24} color={COLORS.green} />
-              <span className="font-semibold text-xl" style={{ color: COLORS.green }}>
-                Datos del Aprendiz
-              </span>
-            </div>
-            <div className="p-6 bg-white rounded-b-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Información pre-cargada (no editable) */}
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Tipo de identificación <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={getDocumentTypeName(person.type_identification)}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Número de identificación <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={person.number_identification}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Nombre <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={`${person.first_name}${person.second_name ? ` ${person.second_name}` : ' - Ninguno'}`}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Primer Apellido <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={person.first_last_name}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Segundo Apellido
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={person.second_last_name || 'Ninguno'}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Correo Electrónico <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="email" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={userData?.email || ''}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Número de teléfono móvil <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="tel" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm bg-gray-100 cursor-not-allowed" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    value={person.phone_number}
-                    readOnly
-                    disabled
-                  />
-                </div>
-
-                {/* Campos editables - PROGRAMA Y FICHA DENTRO DE DATOS DEL APRENDIZ */}
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Programa de Formación <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <select
-                    value={selectedProgram || ""}
-                    onChange={(e) => updateSelectedProgram(Number(e.target.value))}
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    style={{ borderColor: COLORS.green3 }}
-                    required
-                  >
-                    <option value="">Seleccione...</option>
-                    {programas.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Número de Ficha <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <select
-                    value={formData.fichaId || ""}
-                    onChange={(e) => updateFormData('fichaId', Number(e.target.value))}
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
-                    style={{ borderColor: COLORS.green3 }}
-                    required
-                    disabled={!selectedProgram}
-                  >
-                    <option value="">Seleccione...</option>
-                    {fichas.map(f => (
-                      <option key={f.id} value={f.id}>
-                        {f.file_number || f.id}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Fecha de inicio de contrato de aprendizaje <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="date" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    onChange={handleStartDateChange}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Fecha de fin de contrato de aprendizaje <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="date" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    min={minEndDate}
-                    max={maxEndDate}
-                    disabled={!formData.dateStartContract}
-                    onChange={handleEndDateChange}
-                  />
-                  {dateError && <div className="mt-1"><span className="text-red-600 text-xs">{dateError}</span></div>}
-                </div>
-
-              <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green2 }}>
-                    Modalidad etapa productiva <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <select 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required
-                    value={formData.modalityProductiveStage || ""}
-                    onChange={(e) => updateFormData('modalityProductiveStage', Number(e.target.value))}
-                  >
-                    <option value="">Seleccione...</option>
-                    {modalidades.map(modalidad => (
-                      <option key={modalidad.id} value={modalidad.id}>
-                        {modalidad.name_modality}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* Datos de la Empresa */}
-          <div className="mb-6 bg-white rounded-lg shadow-md border-2" style={{ borderColor: COLORS.green3 }}>
-            <div className="flex items-center gap-3 px-6 py-4 rounded-t-lg border-b" style={{ backgroundColor: COLORS.green4, borderBottomColor: COLORS.green3 }}>
-              <Buildings size={24} color={COLORS.green} />
-              <span className="font-semibold text-xl" style={{ color: COLORS.green }}>
-                Datos de la Empresa
-              </span>
-            </div>
-            <div className="p-6 bg-white rounded-b-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Nombre de la empresa <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el nombre de la empresa"
-                    onChange={(e) => updateFormData('enterpriseName', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    NIT de la empresa <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="number" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el NIT de la empresa"
-                    onChange={(e) => updateFormData('enterpriseNit', Number(e.target.value))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Ubicación empresa <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese la dirección ciudad"
-                    onChange={(e) => updateFormData('enterpriseLocation', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Correo de la empresa <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="email" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Empresa@gmail.com"
-                    onChange={(e) => updateFormData('enterpriseEmail', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Datos del Jefe Inmediato */}
-          <div className="mb-6 bg-white rounded-lg shadow-md border-2" style={{ borderColor: COLORS.green3 }}>
-            <div className="flex items-center gap-3 px-6 py-4 rounded-t-lg border-b" style={{ backgroundColor: COLORS.green4, borderBottomColor: COLORS.green3 }}>
-              <Person size={24} color={COLORS.green} />
-              <span className="font-semibold text-xl" style={{ color: COLORS.green }}>
-                Datos del Jefe Inmediato
-              </span>
-            </div>
-            <div className="p-6 bg-white rounded-b-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Nombre completo <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el nombre completo"
-                    onChange={(e) => updateFormData('bossName', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Número de teléfono <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="tel" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el número de teléfono"
-                      value={formData.bossPhone || ''}
-                      onChange={handlePhoneChange}
-                  />
-                    {phoneError && <span className="text-red-600 text-xs">{phoneError}</span>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Correo electrónico <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="email" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el correo"
-                    onChange={(e) => updateFormData('bossEmail', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Cargo <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Cargo del jefe"
-                    onChange={(e) => updateFormData('bossPosition', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Datos del Encargado de contratación */}
-          <div className="mb-6 bg-white rounded-lg shadow-md border-2" style={{ borderColor: COLORS.green3 }}>
-            <div className="flex items-center gap-3 px-6 py-4 rounded-t-lg border-b" style={{ backgroundColor: COLORS.green4, borderBottomColor: COLORS.green3 }}>
-              <Person size={24} color={COLORS.green} />
-              <span className="font-semibold text-xl" style={{ color: COLORS.green }}>
-                Datos del Encargado de contratación o área de Talento Humano
-              </span>
-            </div>
-            <div className="p-6 bg-white rounded-b-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Nombre completo <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el nombre completo"
-                    onChange={(e) => updateFormData('humanTalentName', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Número de teléfono <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="tel" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el número de teléfono"
-                      value={formData.humanTalentPhone || ''}
-                      onChange={handleHumanTalentPhoneChange}
-                  />
-                    {humanTalentPhoneError && <span className="text-red-600 text-xs">{humanTalentPhoneError}</span>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.green }}>
-                    Correo electrónico <span style={{ color: COLORS.error }}>*</span>
-                  </label>
-                  <input 
-                    type="email" 
-                    className="w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent" 
-                    style={{ borderColor: COLORS.green3 }} 
-                    required 
-                    placeholder="Ingrese el correo"
-                    onChange={(e) => updateFormData('humanTalentEmail', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Archivo PDF */}
-          <div className="mb-6 bg-white rounded-lg shadow-md border-2" style={{ borderColor: COLORS.green3 }}>
-            <div className="flex items-center gap-3 px-6 py-4 rounded-t-lg border-b" style={{ backgroundColor: COLORS.green4, borderBottomColor: COLORS.green3 }}>
-              <FileEarmarkPdf size={24} color={COLORS.green} />
-              <span className="font-semibold text-xl" style={{ color: COLORS.green }}>
-                Cargue aquí un solo archivo en PDF con el documento que soporte su solicitud (máximo 1MB)
-                <span style={{ color: COLORS.error }}>*</span>
-              </span>
-            </div>
-            <div className="p-6 bg-white rounded-b-lg">
-              <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                Favor tenga en cuenta que, para Contrato de Aprendizaje debe cargar la copia del contrato celebrado con la empresa. Para las modalidades de Desempeño a través de vinculación laboral o contractual, Participación en un proyecto productivo, De apoyo a una unidad productiva familiar o Pasantías, debe cargar la evidencia mediante la cual el Coordinador Académico le Aprobó realizar su etapa práctica bajo algunas de estas modalidades. Si aún no cuenta con dicha autorización puede ingresar al siguiente enlace y solicitar la aprobación.{' '}
-                <a href="#" className="text-green-700 underline hover:text-green-800">
-                  1-2-2 Autorización Modalidad Etapa Práctica Aprendiz, diferente a Contrato de Aprendizaje.
-                </a>
-              </p>
-              
+    <>
+      <NotificationModal
+        key={notification.key}
+        isOpen={notification.isOpen}
+        onClose={() => setNotification({ ...notification, isOpen: false, key: Date.now() })}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+      />
+      <ConfirmModal
+        isOpen={showConfirm}
+        title="¿Confirmar envío de solicitud?"
+        message="¿Estás seguro de que deseas enviar el formulario?"
+        confirmText="Sí, enviar"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmSend}
+        onCancel={() => setShowConfirm(false)}
+      />
+      <div className="min-h-screen py-8 rounded-md" style={{ background: '#f8f9fa' }}>
+        <div className="w-full max-w-4xl mx-auto px-4">
+          <form onSubmit={handleFormSubmit}>
+            <div className="flex items-center gap-3 mb-6 justify-center ">
               <div 
-                className={`w-full flex flex-col items-center border-2 border-dashed rounded-lg py-8 cursor-pointer hover:bg-gray-50 transition-colors duration-200 ${!selectedFile ? 'border-red-300 bg-red-50' : ''}`}
-                style={{ borderColor: !selectedFile ? COLORS.error : COLORS.green3 }}
-                onClick={triggerFileInput}
+                className="flex items-center justify-center rounded-full" 
+                style={{ width: 48, height: 48, backgroundColor: COLORS.green2 }}
               >
-                <BoxArrowUp size={40} color={!selectedFile ? COLORS.error : COLORS.green} className="mb-3" />
-                <span className="font-medium text-lg mb-2" style={{ color: !selectedFile ? COLORS.error : COLORS.green }}>
-                  {selectedFile ? selectedFile.name : 'Seleccionar archivo PDF (Requerido)'}
-                </span>
-                <span className="text-sm text-gray-500 text-center max-w-md">
-                  {selectedFile 
-                    ? 'Haz clic para cambiar el archivo seleccionado'
-                    : 'Arrastra y suelta tu archivo aquí o haz clic para seleccionar'
-                  }
-                </span>
-                
-                <input
-                  id="pdf-upload"
-                  type="file"
-                  accept="application/pdf"
-                  className="hidden"
-                  // REMOVER EL REQUIRED DE AQUÍ
-                  onChange={handleFileSelect}
+                <JournalText size={28} color={COLORS.white} />
+              </div>
+              <h1 className="font-bold text-3xl" style={{ color: COLORS.green2 }}>
+                Formulario de Asignación
+              </h1>
+            </div>
+            {/* Encabezado centrado */}
+            <div className="w-full flex flex-col items-center justify-center mb-8 bg-white rounded-lg shadow-md p-6 border border-gray-200">
+              
+              <h2 className="font-semibold text-xl mb-4 text-center" style={{ color: COLORS.green2 }}>
+                Asignación instructor acompañamiento etapa práctica
+              </h2>
+              <p className="text-sm text-gray-700 text-center max-w-2xl leading-relaxed">
+                Únicamente para la alternativa de Contrato de Aprendizaje. Acepto el tratamiento de mis datos personales conforme a lo consagrado en el artículo 15 Constitución Política y en la Resolución No. 0924 del MINTIC.
+              </p>
+            </div>
+
+            {/* Términos y condiciones */}
+            <div className="w-full mb-6 bg-white rounded-lg   shadow-md p-4 border border-gray-200">
+              <div className="flex items-start gap-3 mb-2">
+                <input 
+                  type="checkbox" 
+                  id="terms" 
+                  className="mt-1 accent-green-600" 
+                  style={{ accentColor: COLORS.green }}
+                  required 
+                />
+                <div>
+                  <label htmlFor="terms" className="font-medium text-sm cursor-pointer">
+                    Acepto los términos y condiciones <span style={{ color: COLORS.error }}>*</span>
+                  </label>
+                  <p className="text-xs text-gray-600 mt-1">
+                    LOS DATOS PROPORCIONADOS SERÁN TRATADOS DE ACUERDO A LA POLÍTICA DE TRATAMIENTO DE DATOS PERSONALES DEL SENA Y A LA LEY 1581 DE 2012
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Selects de Regional, Centro, Sede (solo estos por fuera) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+                <CustomSelect
+                  value={selectedRegional ? String(selectedRegional) : ""}
+                  onChange={val => updateSelectedRegional(Number(val))}
+                  options={regionales.map(r => ({ value: String(r.id), label: r.name }))}
+                  label={`Regional *`}
+                  placeholder="Seleccione..."
+                  classNames={{
+                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent",
+                    label: "block text-sm font-medium mb-2",
+                  }}
                 />
               </div>
+
+              <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+                <CustomSelect
+                  value={selectedCenter ? String(selectedCenter) : ""}
+                  onChange={val => updateSelectedCenter(Number(val))}
+                  options={centrosFiltrados.map(c => ({ value: String(c.id), label: c.name }))}
+                  label={`Centro de formación *`}
+                  placeholder="Seleccione..."
+                  classNames={{
+                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent",
+                    label: "block text-sm font-medium mb-2",
+                  }}
+                  disabled={!selectedRegional}
+                />
+              </div>
+
+              <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+                <CustomSelect
+                  value={formData.sede ? String(formData.sede) : ""}
+                  onChange={val => updateFormData('sede', Number(val))}
+                  options={sedesFiltradas.map(s => ({ value: String(s.id), label: s.name }))}
+                  label={`Sede centro de formación *`}
+                  placeholder="Seleccione..."
+                  classNames={{
+                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent",
+                    label: "block text-sm font-medium mb-2",
+                  }}
+                  disabled={!selectedCenter}
+                />
+              </div>
+            </div>
+
+            {/* Datos del Aprendiz - campos pre-cargados + campos editables */}
+            <AprendizSection
+              person={person}
+              userData={userData}
+              programas={programas}
+              selectedProgram={selectedProgram}
+              updateSelectedProgram={updateSelectedProgram}
+              fichas={fichas}
+              formData={formData}
+              updateFormData={updateFormData}
+              modalidades={modalidades}
+              dateError={dateError}
+              minEndDate={minEndDate}
+              maxEndDate={maxEndDate}
+              handleStartDateChange={handleStartDateChange}
+              handleEndDateChange={handleEndDateChange}
+              getDocumentTypeName={getDocumentTypeName}
+            />
+
+            {/* Datos de la Empresa */}
+            <EmpresaSection
+              formData={formData}
+              updateFormData={updateFormData}
+            />
+
+            {/* Datos del Jefe Inmediato */}
+            <JefeSection
+              formData={formData}
+              updateFormData={updateFormData}
+              phoneError={phoneError}
+              handlePhoneChange={handlePhoneChange}
+            />
+
+            {/* Datos del Encargado de contratación */}
+            <TalentoHumanoSection
+              formData={formData}
+              updateFormData={updateFormData}
+              humanTalentPhoneError={humanTalentPhoneError}
+              handleHumanTalentPhoneChange={handleHumanTalentPhoneChange}
+            />
+
+            {/* Archivo PDF */}
+            <div >
               
-              {selectedFile && (
-                <div className="mt-3 p-3 bg-green-50 rounded-lg border" style={{ borderColor: COLORS.green3 }}>
-                  <p className="text-sm font-medium" style={{ color: COLORS.green }}>
-                    Archivo seleccionado: {selectedFile.name}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    Tamaño: {(selectedFile.size / 1024).toFixed(2)} KB
-                  </p>
-                </div>
-              )}
-
-              {/* Mostrar error si no hay archivo seleccionado */}
-              {!selectedFile && (
-                <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                  <p className="text-sm text-red-700">
-                    ⚠️ Debe seleccionar un archivo PDF para continuar
-                  </p>
-                </div>
-              )}
+              <PdfUploadSection
+                selectedFile={selectedFile}
+                handleFileSelect={handleFileSelect}
+                triggerFileInput={triggerFileInput}
+              />
+              
             </div>
-          </div>
+            
 
-          {/* Error handling */}
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="text-red-700">{error}</div>
+            {/* Error handling */}
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="text-red-700">{error}</div>
+              </div>
+            )}
+
+            {/* Botón enviar */}
+            <div className="flex flex-col items-center">
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={`w-full max-w-md font-bold py-4 rounded-lg text-lg flex items-center justify-center gap-3 transition-all duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg transform hover:-translate-y-1'}`}
+                style={{ 
+                  backgroundColor: loading ? '#999' : COLORS.green,
+                  color: COLORS.white 
+                }}
+              >
+                <Send size={24} /> 
+                {loading ? 'Enviando...' : 'Enviar Formulario'}
+              </button>
+              <p className="text-sm text-gray-600 mt-3 text-center">
+                Asegúrate de completar todos los campos obligatorios (<span style={{ color: COLORS.error }}>*</span>)
+              </p>
             </div>
-          )}
-
-          {/* Botón enviar */}
-          <div className="flex flex-col items-center">
-            <button 
-              type="submit" 
-              disabled={loading}
-              className={`w-full max-w-md font-bold py-4 rounded-lg text-lg flex items-center justify-center gap-3 transition-all duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg transform hover:-translate-y-1'}`}
-              style={{ 
-                backgroundColor: loading ? '#999' : COLORS.green,
-                color: COLORS.white 
-              }}
-            >
-              <Send size={24} /> 
-              {loading ? 'Enviando...' : 'Enviar Formulario'}
-            </button>
-            <p className="text-sm text-gray-600 mt-3 text-center">
-              Asegúrate de completar todos los campos obligatorios (<span style={{ color: COLORS.error }}>*</span>)
-            </p>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

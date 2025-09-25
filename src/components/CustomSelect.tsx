@@ -43,6 +43,7 @@ interface CustomSelectProps {
     item?: string;
     label?: string;
   };
+  disabled?: boolean;
 }
 
 export default function CustomSelect({
@@ -52,14 +53,18 @@ export default function CustomSelect({
   label = "Selecciona una opción",
   placeholder = "Selecciona una opción",
   classNames = {},
+  disabled = false,
 }: CustomSelectProps) {
   return (
     <div className="relative">
-      <label className={classNames.label || "block text-sm font-medium text-gray-700 mb-2"}>
+      <label
+        className={classNames.label || "block text-sm font-medium mb-2"}
+        style={{ color: '#2D7430', ...(classNames.label ? {} : {}) }}
+      >
         {label}
       </label>
-      <Select.Root value={value} onValueChange={onChange}>
-        <Select.Trigger className={classNames.trigger || "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent transition-all font-semibold bg-white flex items-center justify-between h-11"}>
+      <Select.Root value={value} onValueChange={onChange} disabled={disabled}>
+        <Select.Trigger className={classNames.trigger || "w-full px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent font-normal bg-white flex items-center justify-between h-10"} disabled={disabled}>
           <Select.Value placeholder={placeholder} />
           <Select.Icon className="flex-shrink-0">
             <ChevronDown className="h-4 w-4" />

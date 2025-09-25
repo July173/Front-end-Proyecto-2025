@@ -70,7 +70,6 @@ export const useRequestAssignation = () => {
         setProgramas(programasData);
         setModalidades(modalidadesData);
       } catch (err) {
-        console.error('Error cargando datos iniciales:', err);
         setError('Error al cargar los datos iniciales');
       }
     };
@@ -126,8 +125,6 @@ export const useRequestAssignation = () => {
     // Usar los datos pasados como parámetro o los del estado
     const finalData = dataToSubmit || formData;
     try {
-      console.log('=== ENVIANDO AL BACKEND ===');
-      console.log('Datos finales a enviar:', finalData);
 
 
       // Validar datos requeridos básicos en ambos formatos
@@ -139,10 +136,8 @@ export const useRequestAssignation = () => {
       }
 
       const response = await postRequestAssignation(finalData as requestAsignation);
-      console.log('✅ Respuesta exitosa:', response);
       return response.id || null;
     } catch (err: any) {
-      console.error('❌ Error al enviar:', err);
       setError(err.message || 'Error al enviar la solicitud');
       return null;
     } finally {

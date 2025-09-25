@@ -1,4 +1,19 @@
 /**
+ * Obtiene los aprendices filtrados por id de persona.
+ * @param personId - ID de la persona
+ * @returns Promesa con el array de aprendices
+ */
+export async function getAprendicesByPerson(personId: string | number) {
+  const baseUrl = ENDPOINTS.aprendiz.getAllAprendiz;
+  // Si la URL ya tiene parámetros, agregar con &
+  const url = baseUrl.includes('?')
+    ? `${baseUrl}&person=${personId}`
+    : `${baseUrl}?person=${personId}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Error al obtener aprendices por persona');
+  return response.json();
+}
+/**
  * Servicio para operaciones relacionadas con la entidad Aprendiz.
  * Incluye obtención, registro, actualización y consulta por ID.
  */
