@@ -1,4 +1,5 @@
-import React from "react";
+import AdminDashboardView from "../components/AdminDashboardView";
+import AprendizDashboardView from "../components/AprendizDashboardView";
 import { useUserData } from "../hook/useUserData";
 
 export const Home = () => {
@@ -20,61 +21,39 @@ export const Home = () => {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
       </div>
     );
-    
   }
 
+  // Mostrar dashboard de aprendiz si el rol es aprendiz
+  if (
+    userData &&
+    (String(userData.role) === "2" || String(userData.role) === "aprendiz" || String(userData.role) === "4")
+  ) {
+    return <AprendizDashboardView nombre={userData.email || userData.person || "Aprendiz"} />;
+  }
+
+  const roleMap: Record<number, "admin" | "coordinator" | "instructor" | "aprendiz"> = {
+    1: "admin",
+    2: "aprendiz",
+    3: "instructor",
+    4: "coordinator"
+  };
+
+  // Si el rol no existe, muestra admin por defecto
+  const role =
+    userData && userData.role ? roleMap[Number(userData.role)] ?? "admin" : "admin";
+
+  // Vista por defecto para otros roles
   return (
-    <div className="bg-white p-8 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">
-              Bienvenido {getUserName()}
-            </h1>
-            <p className="text-gray-700">
-              Aquí puedes gestionar tus solicitudes y ver el seguimiento.
-            </p>
-          </div>
+    <div className="w-full h-full flex items-center justify-center">
+      {role === "admin" ? (
+        <AdminDashboardView />
+      ) : role === "aprendiz" ? (
+        <AprendizDashboardView nombre={userData?.email || userData?.person || "Aprendiz"} />
+      ) : (
+        <div className="text-center text-gray-500">
+          No hay vista definida para el rol: {role}
         </div>
-
-        {/* Panel informativo */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-semibold mb-2">Información de Sesión</h3>
-            <div className="text-sm space-y-1">
-              <p><strong>ID:</strong> {userData!.id}</p>
-              <p><strong>Email:</strong> {userData!.email}</p>
-              <p><strong>Rol:</strong> {userData!.role || "No asignado"}</p>
-            </div>
-          </div>
-
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h3 className="font-semibold text-green-800 mb-2">¿Cómo usar el menú?</h3>
-            <p className="text-sm text-green-700">
-              Haz clic en cualquier elemento del menú lateral para navegar por las diferentes secciones de la aplicación.
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Panel de Control</h2>
-          <p className="text-gray-600 mb-4">
-            Selecciona una opción del menú para comenzar:
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="border border-gray-200 rounded p-4 text-center">
-              <h3 className="font-medium">Inicio</h3>
-              <p className="text-sm text-gray-600">Página principal</p>
-            </div>
-            <div className="border border-gray-200 rounded p-4 text-center">
-              <h3 className="font-medium">Seguridad</h3>
-              <p className="text-sm text-gray-600">Administración y registro</p>
-            </div>
-            <div className="border border-gray-200 rounded p-4 text-center">
-              <h3 className="font-medium">Más módulos</h3>
-              <p className="text-sm text-gray-600">Según tu API</p>
-            </div>
-          </div>
-        </div>
+      )}
     </div>
   );
 };

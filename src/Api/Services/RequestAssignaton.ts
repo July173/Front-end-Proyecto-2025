@@ -2,6 +2,23 @@ import { ENDPOINTS } from '../config/ConfigApi';
 import { requestAsignation } from '../types/Modules/assign.types';
 
 /**
+ * Obtiene todas las solicitudes de asignación
+ */
+export const getAllRequests = async (): Promise<any[]> => {
+  try {
+    const response = await fetch(ENDPOINTS.requestAsignation.getFormRequest);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al obtener las solicitudes de asignación');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error en getAllRequests:', error);
+    throw error;
+  }
+};
+
+/**
  * Envía una solicitud de asignación
  */
 export const postRequestAssignation = async (data: requestAsignation): Promise<any> => {

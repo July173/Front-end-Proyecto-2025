@@ -92,14 +92,16 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
   useEffect(() => {
     if (tab === 'aprendiz') {
       getAprendizById(userId).then(data => {
+        console.log('Datos de aprendiz:', data); // <-- Depuración
         setAprendiz({
           ...data,
           program_id: data.program_id || 0,
-          ficha_id: data.ficha_id || '',
+          ficha_id: data.ficha_id ? String(data.ficha_id) : '',
         });
       });
     } else {
       getInstructorById(userId).then(data => {
+        console.log('Datos de instructor:', data); // <-- Depuración
         setInstructor({
           ...data,
           role_id: data.role_id || 0,
@@ -107,6 +109,7 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
           center_id: data.center_id || 0,
           sede_id: data.sede_id || 0,
           regional_id: data.regional_id || 0,
+          contractType: data.contractType ? String(data.contractType) : "",
         });
       });
     }
@@ -126,6 +129,23 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
       setAprendiz(prev => prev ? { ...prev, ficha_id: '' } : prev);
     }
   }, [tab, aprendiz?.program_id]);
+
+  // Cuando cargue el instructor, asegúrate de que los selects dependientes se actualicen
+  useEffect(() => {
+    if (tab === 'instructor' && instructor) {
+      // Filtrar centros según la regional seleccionada
+      const filteredCenters = centros.filter(c => c.regional === instructor.regional_id);
+      if (!filteredCenters.some(c => c.id === instructor.center_id)) {
+        setInstructor(prev => prev ? { ...prev, center_id: 0, sede_id: 0 } : prev);
+      }
+
+      // Filtrar sedes según el centro seleccionado
+      const filteredSedes = sedes.filter(s => s.center === instructor.center_id);
+      if (!filteredSedes.some(s => s.id === instructor.sede_id)) {
+        setInstructor(prev => prev ? { ...prev, sede_id: 0 } : prev);
+      }
+    }
+  }, [instructor?.regional_id, instructor?.center_id, centros, sedes]);
 
   const handleChange = (e, tipo) => {
     const { name, value } = e.target;
@@ -340,7 +360,10 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
                 <CustomSelect
                   value={instructor.regional_id ? String(instructor.regional_id) : ""}
                   onChange={value => setInstructor(prev => prev ? { ...prev, regional_id: Number(value), center_id: 0, sede_id: 0 } : prev)}
-                  options={regionales.filter(opt => opt.id != null).map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  options={regionales
+                    .filter(opt => opt.active)
+                    .map(opt => ({ value: String(opt.id), label: String(opt.name) }))
+                  }
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
@@ -353,12 +376,16 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
                 <CustomSelect
                   value={instructor.center_id ? String(instructor.center_id) : ""}
                   onChange={value => setInstructor(prev => prev ? { ...prev, center_id: Number(value), sede_id: 0 } : prev)}
-                  options={centrosFiltrados.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  options={centros
+                    .filter(c => c.active && c.regional === instructor.regional_id)
+                    .map(opt => ({ value: String(opt.id), label: String(opt.name) }))
+                  }
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
                     label: "hidden",
                   }}
+                  disabled={!instructor.regional_id}
                 />
               </div>
               <div>
@@ -366,12 +393,16 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
                 <CustomSelect
                   value={instructor.sede_id ? String(instructor.sede_id) : ""}
                   onChange={value => setInstructor(prev => prev ? { ...prev, sede_id: Number(value) } : prev)}
-                  options={sedesFiltradas.map(opt => ({ value: String(opt.id), label: String(opt.name) }))}
+                  options={sedes
+                    .filter(s => s.active && s.center === instructor.center_id)
+                    .map(opt => ({ value: String(opt.id), label: String(opt.name) }))
+                  }
                   placeholder="Seleccionar ..."
                   classNames={{
                     trigger: "w-full border rounded-lg px-2 py-2 text-xs flex items-center justify-between bg-white",
                     label: "hidden",
                   }}
+                  disabled={!instructor.center_id}
                 />
               </div>
               <div>
@@ -390,7 +421,7 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
               <div>
                 <label className="block text-sm">Tipo de contrato <span className="text-red-600">*</span></label>
                 <CustomSelect
-                  value={instructor.contractType}
+                  value={instructor.contractType ? String(instructor.contractType) : ""}
                   onChange={value => setInstructor(prev => prev ? { ...prev, contractType: value } : prev)}
                   options={contractTypesOptions}
                   placeholder="Seleccionar ..."
