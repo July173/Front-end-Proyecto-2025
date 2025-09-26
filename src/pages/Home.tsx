@@ -1,5 +1,7 @@
 import AdminDashboardView from "../components/Dashboard/AdminDashboardView";
 import AprendizDashboardView from "../components/Dashboard/AprendizDashboardView";
+import InstructorDashboard from "../components/Dashboard/InstructorDashboard";
+import GenericDashboardView from "../components/Dashboard/GenericDashboardView";
 import { useUserData } from "../hook/useUserData";
 
 export const Home = () => {
@@ -23,39 +25,40 @@ export const Home = () => {
     );
   }
 
-  // Mostrar dashboard de aprendiz si el rol es aprendiz
-  if (
-    userData &&
-    (String(userData.role) === "2" || String(userData.role) === "aprendiz" || String(userData.role) === "4")
-  ) {
-    return <AprendizDashboardView nombre={userData.email || userData.person || "Aprendiz"} />;
-  }
-
-  const roleMap: Record<number, "admin" | "coordinator" | "instructor" | "aprendiz"> = {
+  // Mapeo de roles
+  // 1: admin, 2: aprendiz, 3: instructor, 4: coordinator
+  const roleMap: Record<string | number, "admin" | "coordinator" | "instructor" | "aprendiz"> = {
     1: "admin",
     2: "aprendiz",
     3: "instructor",
-    4: "coordinator"
+    4: "coordinator",
+    "admin": "admin",
+    "aprendiz": "aprendiz",
+    "instructor": "instructor",
+    "coordinator": "coordinator"
   };
 
-  // Si el rol no existe, muestra admin por defecto
-  const role =
-    userData && userData.role ? roleMap[Number(userData.role)] ?? "admin" : "admin";
+  const roleRaw = userData?.role;
+  const role = roleMap[roleRaw] || null;
 
-  // Vista por defecto para otros roles
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      {role === "admin" ? (
-        <AdminDashboardView />
-      ) : role === "aprendiz" ? (
-        <AprendizDashboardView nombre={userData?.email || userData?.person || "Aprendiz"} />
-      ) : (
-        <div className="text-center text-gray-500">
-          No hay vista definida para el rol: {role}
-        </div>
-      )}
-    </div>
-  );
+  // Renderizar vista según el rol
+  if (role === "admin") {
+    return <AdminDashboardView />;
+  }
+  if (role === "aprendiz") {
+    return <AprendizDashboardView nombre={getUserName()} />;
+  }
+  if (role === "instructor") {
+    return <InstructorDashboard />;
+  }
+  if (role === "coordinator") {
+    // Si tienes una vista específica para coordinador, ponla aquí
+    // return <CoordinatorDashboardView nombre={getUserName()} />;
+    return <AdminDashboardView/>;
+  }
+
+  // Vista genérica para roles no reconocidos
+  return <GenericDashboardView nombre={getUserName()} />;
 };
 
 export default Home;

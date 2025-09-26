@@ -263,11 +263,10 @@ const Menu: React.FC<SidebarMenuProps> = ({
           onClick={handleOpenModal}
           className="p-4 border-t border-white/20 cursor-pointer hover:bg-white/10 flex-shrink-0"
           style={{
-            background: '#16A34A',
+            background: '',
             zIndex: 10,
             borderBottomLeftRadius: '12px',
-            borderBottomRightRadius: '12px',
-            borderBottom: '6px solid #16A34A', // Borde inferior
+            borderBottomRightRadius: '12px', 
           }}
         >
           <div className="flex items-center gap-3">
