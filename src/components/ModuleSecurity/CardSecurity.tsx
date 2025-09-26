@@ -84,11 +84,11 @@ const InfoCard: React.FC<InfoCardProps> = ({
       {/* Botón principal o secundario según props */}
       {showAction ? (
         <button
-          className={`flex items-center justify-center gap-2 w-full py-2 rounded ${
+          className={`flex items-center justify-center gap-2 w-full py-2 rounded  ${
             actionType === 'enable'
               ? 'bg-green-500 hover:bg-green-600 text-white'
-              : 'bg-[#EE7878] hover:bg-[#FF0000] text-white'
-          } font-semibold mt-2`}
+              : 'bg-[#ffcdc8] hover:bg-[#FF0000] text-white'
+          } font-bold mt-2`}
           onClick={onActionClick}
         >
           <User className="w-4 h-4" />
