@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Paginator from '../Paginator';
 import { getModules, postModule, getModuleForms, putModuleForms } from '../../Api/Services/Module';
 import { getForms } from '../../Api/Services/Form';
 import { postForm } from '../../Api/Services/Form';
@@ -17,6 +18,8 @@ interface Module {
 
 const Modules = () => {
   const [modules, setModules] = useState<Module[]>([]);
+  const [page, setPage] = useState(1);
+  const modulesPerPage = 6;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showFormModal, setShowFormModal] = useState(false);
@@ -67,6 +70,10 @@ const Modules = () => {
 
   if (loading) return <div className="p-8">Cargando...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
+
+  // Calcular paginación
+  const totalPages = Math.ceil(modules.length / modulesPerPage);
+  const paginatedModules = modules.slice((page - 1) * modulesPerPage, page * modulesPerPage);
 
   // Campos para el modal de crear formulario
   const formFields = [
@@ -226,7 +233,7 @@ const Modules = () => {
           </div>
         </div>
         <div className="flex gap-4 flex-wrap">
-          {modules.map((mod, index) => {
+          {paginatedModules.map((mod, index) => {
             const cardProps: InfoCardProps = {
               title: mod.name,
               statusLabel: mod.active ? 'Activo' : 'Inhabilitado',
@@ -264,6 +271,14 @@ const Modules = () => {
               </div>
             );
           })}
+          {totalPages > 1 && (
+            <Paginator
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              className="mt-6"
+            />
+          )}
         {/* Modal de edición de módulo */}
         <ModalFormGeneric
           isOpen={showEdit}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Paginator from '../Paginator';
 import { getRolesUser, toggleRoleActive, postRolPermissions, getRolPermissions, putRolFormPerms } from '../../Api/Services/Rol';
 import ConfirmModal from '../ConfirmModal';
 import { InfoCard } from './CardSecurity';
@@ -11,6 +12,8 @@ import NotificationModal from '../NotificationModal';
 
 const Roles = () => {
   const [roles, setRoles] = useState<RolUsuario[]>([]);
+  const [page, setPage] = useState(1);
+  const rolesPerPage = 6;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
@@ -101,6 +104,10 @@ const Roles = () => {
 
   if (loading) return <div className="p-8">Cargando...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
+
+  // Calcular paginación
+  const totalPages = Math.ceil(roles.length / rolesPerPage);
+  const paginatedRoles = roles.slice((page - 1) * rolesPerPage, page * rolesPerPage);
 
   // Campos para el modal de crear/editar rol (permite asignar permisos por formulario)
   const roleFields = [
@@ -309,7 +316,7 @@ const Roles = () => {
         </button>
       </div>
       <div className="flex gap-4 flex-wrap">
-        {roles.map((rol, index) => {
+        {paginatedRoles.map((rol, index) => {
           const isAdministrador = rol.nombre?.toLowerCase() === 'administrador';
           const cardProps: InfoCardProps = {
             title: rol.nombre,
@@ -334,8 +341,16 @@ const Roles = () => {
           );
         })}
       </div>
+      {totalPages > 1 && (
+        <Paginator
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          className="mt-6"
+        />
+      )}
 
-      {/* Modal de edición de rol */}
+  {/* Modal de edición de rol */}
       <ModalFormGeneric
         isOpen={showEdit}
         title="Editar Rol-Sena"

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Paginator from '../Paginator';
 import { getFichas,deleteFicha, createFicha,updateFicha } from '../../Api/Services/Ficha';
 import { getPrograms , deleteProgram, createProgram,updateProgram} from '../../Api/Services/Program';
 import { getKnowledgeAreas, deleteKnowledgeArea, createKnowledgeArea,updateKnowledgeArea } from '../../Api/Services/KnowledgeArea';
@@ -12,6 +13,11 @@ const General = () => {
   const [fichas, setFichas] = useState<Ficha[]>([]);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [knowledgeAreas, setKnowledgeAreas] = useState<KnowledgeArea[]>([]);
+  // Estados de paginación por sección
+  const [fichasPage, setFichasPage] = useState(1);
+  const [programsPage, setProgramsPage] = useState(1);
+  const [areasPage, setAreasPage] = useState(1);
+  const cardsPerPage = 9;
   
   // Estados de carga
   const [loading, setLoading] = useState(true);
@@ -102,7 +108,7 @@ const General = () => {
           {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
         </div>
         <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-          isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          isActive ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'
         }`}>
           {isActive ? 'Activo' : 'Inactivo'}
         </div>
@@ -110,16 +116,16 @@ const General = () => {
       <div className="flex gap-2">
         <button
           onClick={onEdit}
-          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+          className="px-5 py-1 text-base rounded-3xl border border-gray-400 bg-gray-100 text-gray-800 font-semibold transition-colors hover:bg-gray-200"
         >
-          Ajustar
+          Editar
         </button>
         <button
           onClick={onToggle}
-          className={`px-3 py-1 text-sm rounded transition-colors ${
-            isActive 
-              ? 'bg-red-600 text-white hover:bg-red-700' 
-              : 'bg-green-600 text-white hover:bg-green-700'
+          className={`px-5 py-1 text-base rounded-3xl border font-semibold transition-colors ${
+            isActive
+              ? 'bg-red-100 text-red-900 border-red-700 hover:bg-red-200'
+              : 'bg-green-100 text-green-900 border-green-700 hover:bg-green-200'
           }`}
         >
           {isActive ? 'Deshabilitar' : 'Habilitar'}
@@ -357,23 +363,32 @@ const General = () => {
             )}
           </button>
           {sectionsOpen.fichas && (
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {fichas.map((ficha) => {
-                // Buscar el programa por id
-                const programObj = programs.find(p => p.id === ficha.program);
-                const programName = programObj ? programObj.name : ficha.program;
-                return (
-                  <InfoCard
-                    key={ficha.id}
-                    title={`Ficha #${ficha.file_number || ficha.id}`}
-                    subtitle={`Programa: ${programName}`}
-                    isActive={ficha.active}
-                    onToggle={() => handleToggle('ficha', ficha.id)}
-                    onEdit={() => handleEdit('ficha', ficha.id)}
-                  />
-                );
-              })}
-            </div>
+            <>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {fichas.slice((fichasPage - 1) * cardsPerPage, fichasPage * cardsPerPage).map((ficha) => {
+                  const programObj = programs.find(p => p.id === ficha.program);
+                  const programName = programObj ? programObj.name : ficha.program;
+                  return (
+                    <InfoCard
+                      key={ficha.id}
+                      title={`Ficha #${ficha.file_number || ficha.id}`}
+                      subtitle={`Programa: ${programName}`}
+                      isActive={ficha.active}
+                      onToggle={() => handleToggle('ficha', ficha.id)}
+                      onEdit={() => handleEdit('ficha', ficha.id)}
+                    />
+                  );
+                })}
+              </div>
+              {Math.ceil(fichas.length / cardsPerPage) > 1 && (
+                <Paginator
+                  page={fichasPage}
+                  totalPages={Math.ceil(fichas.length / cardsPerPage)}
+                  onPageChange={setFichasPage}
+                  className="mt-4"
+                />
+              )}
+            </>
           )}
         </div>
 
@@ -396,18 +411,28 @@ const General = () => {
             )}
           </button>
           {sectionsOpen.programs && (
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {programs.map((program) => (
-                <InfoCard
-                  key={program.id}
-                  title={program.name || `Programa ${program.codeProgram}`}
-                  subtitle={program.description || program.typeProgram}
-                  isActive={program.active}
-                  onToggle={() => handleToggle('program', program.id)}
-                  onEdit={() => handleEdit('program', program.id)}
+            <>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {programs.slice((programsPage - 1) * cardsPerPage, programsPage * cardsPerPage).map((program) => (
+                  <InfoCard
+                    key={program.id}
+                    title={program.name || `Programa ${program.codeProgram}`}
+                    subtitle={program.description || program.typeProgram}
+                    isActive={program.active}
+                    onToggle={() => handleToggle('program', program.id)}
+                    onEdit={() => handleEdit('program', program.id)}
+                  />
+                ))}
+              </div>
+              {Math.ceil(programs.length / cardsPerPage) > 1 && (
+                <Paginator
+                  page={programsPage}
+                  totalPages={Math.ceil(programs.length / cardsPerPage)}
+                  onPageChange={setProgramsPage}
+                  className="mt-4"
                 />
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 
@@ -430,18 +455,28 @@ const General = () => {
             )}
           </button>
           {sectionsOpen.knowledgeAreas && (
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {knowledgeAreas.map((area) => (
-                <InfoCard
-                  key={area.id}
-                  title={area.name || `Área ${area.id}`}
-                  subtitle={area.description}
-                  isActive={area.active}
-                  onToggle={() => handleToggle('knowledgeArea', area.id)}
-                  onEdit={() => handleEdit('knowledgeArea', area.id)}
+            <>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {knowledgeAreas.slice((areasPage - 1) * cardsPerPage, areasPage * cardsPerPage).map((area) => (
+                  <InfoCard
+                    key={area.id}
+                    title={area.name || `Área ${area.id}`}
+                    subtitle={area.description}
+                    isActive={area.active}
+                    onToggle={() => handleToggle('knowledgeArea', area.id)}
+                    onEdit={() => handleEdit('knowledgeArea', area.id)}
+                  />
+                ))}
+              </div>
+              {Math.ceil(knowledgeAreas.length / cardsPerPage) > 1 && (
+                <Paginator
+                  page={areasPage}
+                  totalPages={Math.ceil(knowledgeAreas.length / cardsPerPage)}
+                  onPageChange={setAreasPage}
+                  className="mt-4"
                 />
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
