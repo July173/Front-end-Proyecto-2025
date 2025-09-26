@@ -12,9 +12,9 @@
 
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
-import Menu from "../components/Menu";
-import Footer from "../components/Footer";
+import Header from "../components/MainLayout/Header";
+import Menu from "../components/MainLayout/Menu";
+import Footer from "../components/MainLayout/Footer";
 import { useUserData } from "../hook/useUserData";
 
 export default function MainLayout() {

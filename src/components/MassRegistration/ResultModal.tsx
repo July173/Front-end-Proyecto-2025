@@ -1,5 +1,5 @@
 import React from 'react';
-import { UploadResult } from '../Api/Services/ExcelTemplate';
+import { UploadResult } from '../../Api/Services/ExcelTemplate';
 
 export interface ResultModalProps {
   isOpen: boolean;
@@ -75,7 +75,7 @@ export function ResultModal({ isOpen, onClose, results, type }: ResultModalProps
                   <button
                     onClick={async () => {
                       try {
-                        await import('../Api/Services/ExcelTemplate').then(m => m.excelTemplateService.downloadErrorReport(results.error_report_url!));
+                        await import('../../Api/Services/ExcelTemplate').then(m => m.excelTemplateService.downloadErrorReport(results.error_report_url!));
                       } catch (error) {
                         console.error('Error descargando reporte:', error);
                         alert('Error al descargar el reporte de errores');

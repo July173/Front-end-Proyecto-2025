@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
 import { Lock, ArrowLeft } from 'lucide-react';
-import SenaLogo from './SenaLogo';
+import SenaLogo from '../SenaLogo';
 import FooterLinks from './FooterLinks';
-import NotificationModal from './NotificationModal';
-import useNotification from '../hook/useNotification';
-import { isValidPassword } from '../hook/validationlogin';
-import { resetPassword } from '../Api/Services/User';
+import NotificationModal from '../NotificationModal';
+import useNotification from '../../hook/useNotification';
+import { isValidPassword } from '../../hook/validationlogin';
+import { resetPassword } from '../../Api/Services/User';
 
 /**
  * Props para el componente ResetPasswordForm.

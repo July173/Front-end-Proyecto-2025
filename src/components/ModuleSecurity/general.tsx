@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getFichas,deleteFicha, createFicha,updateFicha } from '../Api/Services/Ficha';
-import { getPrograms , deleteProgram, createProgram,updateProgram} from '../Api/Services/Program';
-import { getKnowledgeAreas, deleteKnowledgeArea, createKnowledgeArea,updateKnowledgeArea } from '../Api/Services/KnowledgeArea';
-import type { Ficha, Program, KnowledgeArea } from '../Api/types/Modules/general.types';
+import { getFichas,deleteFicha, createFicha,updateFicha } from '../../Api/Services/Ficha';
+import { getPrograms , deleteProgram, createProgram,updateProgram} from '../../Api/Services/Program';
+import { getKnowledgeAreas, deleteKnowledgeArea, createKnowledgeArea,updateKnowledgeArea } from '../../Api/Services/KnowledgeArea';
+import type { Ficha, Program, KnowledgeArea } from '../../Api/types/Modules/general.types';
 import { ChevronDown, ChevronUp, Plus, Settings, Power } from 'lucide-react';
 import ModalFormGeneric from './ModalFormGeneric';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from '../ConfirmModal';
 
 const General = () => {
   // Estados para los datos

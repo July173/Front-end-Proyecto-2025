@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getModules, postModule, getModuleForms, putModuleForms } from '../Api/Services/Module';
-import { getForms } from '../Api/Services/Form';
-import { postForm } from '../Api/Services/Form';
+import { getModules, postModule, getModuleForms, putModuleForms } from '../../Api/Services/Module';
+import { getForms } from '../../Api/Services/Form';
+import { postForm } from '../../Api/Services/Form';
 import { InfoCard } from './CardSecurity';
 import ModalFormGeneric from './ModalFormGeneric';
-import ConfirmModal from './ConfirmModal';
-import NotificationModal from './NotificationModal';
-import type { InfoCardProps } from '../Api/types/entities/misc.types';
+import ConfirmModal from '../ConfirmModal';
+import NotificationModal from '../NotificationModal';
+import type { InfoCardProps } from '../../Api/types/entities/misc.types';
 
 interface Module {
   id: number;

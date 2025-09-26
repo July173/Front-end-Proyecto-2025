@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { getRolesUser, toggleRoleActive, postRolPermissions, getRolPermissions, putRolFormPerms } from '../Api/Services/Rol';
-import ConfirmModal from './ConfirmModal';
+import { getRolesUser, toggleRoleActive, postRolPermissions, getRolPermissions, putRolFormPerms } from '../../Api/Services/Rol';
+import ConfirmModal from '../ConfirmModal';
 import { InfoCard } from './CardSecurity';
-import type { InfoCardProps } from '../Api/types/entities/misc.types';
-import type {  RolUsuario } from '../Api/types/entities/role.types';
+import type { InfoCardProps } from '../../Api/types/entities/misc.types';
+import type {  RolUsuario } from '../../Api/types/entities/role.types';
 import ModalFormGeneric from './ModalFormGeneric';
-import { getForms } from '../Api/Services/Form';
-import { getPermissions } from '../Api/Services/Permission';
-import NotificationModal from './NotificationModal';
+import { getForms } from '../../Api/Services/Form';
+import { getPermissions } from '../../Api/Services/Permission';
+import NotificationModal from '../NotificationModal';
 
 const Roles = () => {
   const [roles, setRoles] = useState<RolUsuario[]>([]);

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Person } from '../Api/types/entities/person.types';
+import { Person } from '../../Api/types/entities/person.types';
 import { Camera } from 'lucide-react';
 
 /**
@@ -93,7 +93,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
                 onClick={async () => {
                   if (!pendingImgFile) return;
                   try {
-                    const updated = await patchPersonImage(person.id, pendingImgFile);
+                    const updated = await patchPersonImage(String(person.id), pendingImgFile);
                     setPerson(updated);
                   } catch (err) {
                     // handle error in parent

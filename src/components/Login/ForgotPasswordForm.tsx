@@ -21,12 +21,12 @@
 
 import React, { useState } from 'react';
 import { Mail, ArrowLeft } from 'lucide-react';
-import SenaLogo from './SenaLogo';
+import SenaLogo from '../SenaLogo';
 import FooterLinks from './FooterLinks';
-import NotificationModal from './NotificationModal';
-import useNotification from '../hook/useNotification';
-import { isSenaEmail } from '../hook/validationlogin';
-import { requestPasswordResetCode } from '../Api/Services/User';
+import NotificationModal from '../NotificationModal';
+import useNotification from '../../hook/useNotification';
+import { isSenaEmail } from '../../hook/validationlogin';
+import { requestPasswordResetCode } from '../../Api/Services/User';
 
 
 interface ForgotPasswordFormProps {

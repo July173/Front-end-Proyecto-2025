@@ -6,9 +6,9 @@ import { Camera } from 'lucide-react';
 import { requestPasswordResetCode, verifyResetCode } from '../Api/Services/User';
 import { getPersonById, patchPersonImage } from '../Api/Services/Person';
 import { useUserData } from '../hook/useUserData';
-import ProfileImageUploader from '../components/ProfileImageUploader';
-import PersonalInfoDisplay from '../components/PersonalInfoDisplay';
-import PasswordResetModal from '../components/PasswordResetModal';
+import ProfileImageUploader from '../components/Perfil/ProfileImageUploader';
+import PersonalInfoDisplay from '../components/Perfil/PersonalInfoDisplay';
+import PasswordResetModal from '../components/Perfil/PasswordResetModal';
 
 /**
  * Página de perfil de usuario.

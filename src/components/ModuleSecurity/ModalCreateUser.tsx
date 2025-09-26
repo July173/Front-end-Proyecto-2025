@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { postAprendiz } from '../Api/Services/Aprendiz';
-import { postInstructor } from '../Api/Services/Instructor';
-import { getRegionales } from '../Api/Services/Regional';
-import { getSedes } from '../Api/Services/Sede';
-import { getCenters } from '../Api/Services/Center';
-import { getPrograms, getProgramFichas } from '../Api/Services/Program';
-import { getRoles } from '../Api/Services/Rol';
-import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
-import ConfirmModal from './ConfirmModal';
-import { useDocumentTypes } from '../hook/useDocumentTypes';
-import { useContractTypes } from '../hook/useContractTypes';
+import { postAprendiz } from '../../Api/Services/Aprendiz';
+import { postInstructor } from '../../Api/Services/Instructor';
+import { getRegionales } from '../../Api/Services/Regional';
+import { getSedes } from '../../Api/Services/Sede';
+import { getCenters } from '../../Api/Services/Center';
+import { getPrograms, getProgramFichas } from '../../Api/Services/Program';
+import { getRoles } from '../../Api/Services/Rol';
+import { getKnowledgeAreas } from '../../Api/Services/KnowledgeArea';
+import ConfirmModal from '../ConfirmModal';
+import { useDocumentTypes } from '../../hook/useDocumentTypes';
+import { useContractTypes } from '../../hook/useContractTypes';
 import type {
   Regional,
   Sede,
@@ -17,11 +17,11 @@ import type {
   Program,
   KnowledgeArea,
   Ficha,
-} from '../Api/types/Modules/general.types';
-import type {Role} from '../Api/types/entities/role.types';
-import type {CreateAprendiz} from '../Api/types/entities/aprendiz.types';
-import type {CreateInstructor} from '../Api/types/entities/instructor.types';
-import CustomSelect from './CustomSelect';
+} from '../../Api/types/Modules/general.types';
+import type {Role} from '../../Api/types/entities/role.types';
+import type {CreateAprendiz} from '../../Api/types/entities/aprendiz.types';
+import type {CreateInstructor} from '../../Api/types/entities/instructor.types';
+import CustomSelect from '../CustomSelect';
  
  // Validaciones para aprendiz
   const validateAprendiz = (data) => {

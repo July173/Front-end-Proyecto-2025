@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Lock, ArrowLeft } from 'lucide-react';
-import SenaLogo from './SenaLogo';
+import SenaLogo from '../SenaLogo';
 import FooterLinks from './FooterLinks';
-import { isValidResetCode } from '../hook/validationlogin';
-import { verifyResetCode } from '../Api/Services/User';
-import NotificationModal from './NotificationModal';
-import useNotification from '../hook/useNotification';
+import { isValidResetCode } from '../../hook/validationlogin';
+import { verifyResetCode } from '../../Api/Services/User';
+import NotificationModal from '../NotificationModal';
+import useNotification from '../../hook/useNotification';
 
 /**
  * Props para el componente VerifyCodeForm.

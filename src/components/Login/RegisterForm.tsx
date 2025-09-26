@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import TermsModal from './TermsModal';
-import NotificationModal from './NotificationModal';
-import useNotification from '../hook/useNotification';
+import NotificationModal from '../NotificationModal';
+import useNotification from '../../hook/useNotification';
 import { Mail, User, Phone, FileText, Lock, ArrowLeft } from 'lucide-react';
-import SenaLogo from './SenaLogo';
+import SenaLogo from '../SenaLogo';
 import FooterLinks from './FooterLinks';
-import CustomSelect from './CustomSelect';
-import { registerAprendiz } from '../Api/Services/Person';
-import { RegisterPayload } from '../Api/types/entities/person.types';
+import CustomSelect from '../CustomSelect';
+import { registerAprendiz } from '../../Api/Services/Person';
+import { RegisterPayload } from '../../Api/types/entities/person.types';
 import {
   isSenaEmail,
   isValidNames,
@@ -15,8 +15,8 @@ import {
   isValidDocumentNumber,
   isValidPhone,
   capitalizeWords
-} from '../hook/validationlogin';
-import { useDocumentTypes } from '../hook/useDocumentTypes';
+} from '../../hook/validationlogin';
+import { useDocumentTypes } from '../../hook/useDocumentTypes';
 /**
  * Props para el componente RegisterForm.
  * @property {(view: string) => void} onNavigate - Función para navegar entre vistas (login, etc.).

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getUsers, deleteUser, getUserStatus } from '../Api/Services/User';
-import { getPersonById } from '../Api/Services/Person';
+import { getUsers, deleteUser, getUserStatus } from '../../Api/Services/User';
+import { getPersonById } from '../../Api/Services/Person';
 import { User, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import ModalCreateUser from './ModalCreateUser';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from '../ConfirmModal';
 import ModalEditUser from './ModalEditUser';
-import NotificationModal from './NotificationModal';
-import type { UsuarioRegistrado } from '../Api/types/entities/misc.types';
+import NotificationModal from '../NotificationModal';
+import type { UsuarioRegistrado } from '../../Api/types/entities/misc.types';
 
 const estadoColor = {
   activo: 'bg-green-100 border-green-400',
@@ -49,7 +49,7 @@ const Users = () => {
   // Obtener todos los roles para mostrar el nombre
   const fetchRoles = async () => {
     try {
-      const rolesApi = await import('../Api/Services/Rol');
+      const rolesApi = await import('../../Api/Services/Rol');
       const rolesData = await rolesApi.getRoles();
       setRoles(rolesData);
     } catch (err) {
@@ -61,8 +61,8 @@ const Users = () => {
     fetchAll();
     fetchRoles();
     // Carga aprendices e instructores aquí
-    import('../Api/Services/Aprendiz').then(api => api.getAprendices().then(setAprendices));
-    import('../Api/Services/Instructor').then(api => api.getInstructores().then(setInstructores));
+    import('../../Api/Services/Aprendiz').then(api => api.getAprendices().then(setAprendices));
+    import('../../Api/Services/Instructor').then(api => api.getInstructores().then(setInstructores));
   }, []);
 
   const fetchAll = async () => {

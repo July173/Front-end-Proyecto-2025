@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useValidationEmail } from '../hook/ValidationEmail';
+import { useValidationEmail } from '../../hook/ValidationEmail';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; // ✅ AGREGAR ESTO
 import FooterLinks from './FooterLinks';
-import { validateInstitutionalLogin } from '../Api/Services/User';
-import { isSenaEmail, isValidPassword } from '../hook/validationlogin';
-import SenaLogo from './SenaLogo';
+import { validateInstitutionalLogin } from '../../Api/Services/User';
+import { isSenaEmail, isValidPassword } from '../../hook/validationlogin';
+import SenaLogo from '../SenaLogo';
 
 /**
  * Props para el componente LoginForm.
