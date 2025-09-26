@@ -76,13 +76,13 @@ export const Admin = () => {
   }, []);
 
   return (
-    <div className="p-8">
-      <div className='text-center justify-center '>
+    <div className="p-8 max-w-6xl mx-auto w-full">
+  <div className='text-center justify-center'>
         <h1 className='text-3xl font-semibold '>Administración de Permisos </h1>
         <p className='text-gray-600'>Gestiona usuarios, roles, módulos y permisos desde una sola pantalla</p>
       </div>
-      <div className="mt-8 flex gap-8 justify-center items-center">
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col  w-60">
+      <div className="mt-8 flex flex-wrap gap-6 justify-center items-center">
+        <div className="bg-white rounded-xl shadow p-4 flex flex-col w-full sm:w-44 md:w-48 lg:w-52 xl:w-56">
           <div className="flex items-center gap-3 mb-2">
             <User className="w-8 h-8 text-green-600" />
             <div className="flex flex-col  mb-2">
@@ -91,7 +91,7 @@ export const Admin = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col w-60">
+  <div className="bg-white rounded-xl shadow p-4 flex flex-col w-full sm:w-44 md:w-48 lg:w-52 xl:w-56">
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-green-600" />
             <div className="flex flex-col items-start mb-2">
@@ -100,7 +100,7 @@ export const Admin = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col w-60">
+  <div className="bg-white rounded-xl shadow p-4 flex flex-col w-full sm:w-44 md:w-48 lg:w-52 xl:w-56">
           <div className="flex items-center gap-3 mb-2">
             <Layout className="w-8 h-8 text-green-600" />
             <div className="flex flex-col  mb-2">
@@ -109,7 +109,7 @@ export const Admin = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col  w-60">
+  <div className="bg-white rounded-xl shadow p-4 flex flex-col w-full sm:w-44 md:w-48 lg:w-52 xl:w-56">
           <div className="flex items-center gap-3 mb-2">
             <FileText className="w-8 h-8 text-green-600" />
             <div className="flex flex-col  mb-2">
@@ -124,7 +124,7 @@ export const Admin = () => {
       {error && <div className="text-red-500 text-center mt-6">{error}</div>}
 
       {/* Barra de navegación */}
-      <div className="mt-10 bg-[#E9EBF5] rounded-xl flex items-center justify-between px-2 py-2 gap-10 w-full max-w-5xl mx-auto">
+  <div className="mt-10 bg-[#E9EBF5] rounded-xl flex items-center justify-between px-2 py-2 gap-10 w-full max-w-5xl mx-auto">
         <button
           className={`flex flex-col items-center justify-center w-1/5 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'resumen' ? 'bg-white shadow text-black' : 'text-gray-500'}`}
           onClick={() => handleTabChange('resumen')}
@@ -173,7 +173,7 @@ export const Admin = () => {
       </div>
 
       {/* Contenido dinámico debajo de la barra de navegación */}
-      <div className="mt-6">
+  <div className="mt-6">
         <div 
           className={`transition-all duration-500 ease-in-out transform ${
             isTransitioning ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
