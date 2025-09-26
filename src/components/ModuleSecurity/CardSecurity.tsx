@@ -38,10 +38,10 @@ import React from 'react';
 import { User } from 'lucide-react';
 import type { InfoCardProps } from '../../Api/types/entities/misc.types';
 
-// Colores de fondo para el estado
+// Colores de fondo y borde para el estado
 const statusBg: Record<string, string> = {
-  green: 'bg-green-500',
-  red: 'bg-red-500',
+  green: 'bg-green-100 text-green-900 ',
+  red: 'bg-red-100 text-red-900 ',
 };
 
 const InfoCard: React.FC<InfoCardProps> = ({
@@ -58,25 +58,32 @@ const InfoCard: React.FC<InfoCardProps> = ({
 }) => {
   // Determina si se debe mostrar el botón de acción secundaria
   const showAction = actionLabel && actionType && onActionClick;
+  // Colores para botones
+  const buttonStyles = {
+    edit: 'bg-gray-100 text-gray-900 border border-gray-400 hover:bg-gray-200 rounded-2xl',
+    enable: 'bg-green-50 text-green-900 border border-green-700 hover:bg-green-200 rounded-2xl',
+    disable: 'bg-red-50 text-red-900 border border-red-700 hover:bg-red-200 rounded-2xl',
+  };
   return (
     <div className="bg-white p-4 rounded-lg shadow w-[350px] min-h-[180px] flex flex-col justify-between border-2 border-gray-300">
       <div>
         <div className="flex items-center justify-between mb-1">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <span className={`rounded-full px-4 py-1 text-xs font-bold text-white ${statusBg[statusColor]}`}>{statusLabel}</span>
+          <span className={`rounded-full px-4 py-1 text-xs font-bold ${statusBg[statusColor]}`}>{statusColor === 'green' ? 'Activo' : 'Inhabilitado'}</span>
         </div>
         <p className="text-gray-700 text-sm mb-2">{description}</p>
         <div className="flex items-center mb-2">
-          {typeof count === 'number' && (
-            <span className="text-sm text-gray-600">{count} usuarios asignados</span>
-          )}
+                  {typeof count === 'number' && (
+          <div className="text-sm text-gray-600 mt-2">{count} usuarios asignados</div>
+        )}
+
           <div className="flex-1" />
           {showAction && (
             <button
-              className="flex items-center justify-center gap-2 px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 ml-auto"
+              className={`flex items-center justify-center gap-2 px-4 py-2 font-semibold border transition-all duration-300 ml-auto ${buttonStyles.edit}`}
               onClick={onButtonClick}
             >
-              {buttonText}
+              Editar
             </button>
           )}
         </div>
@@ -84,11 +91,11 @@ const InfoCard: React.FC<InfoCardProps> = ({
       {/* Botón principal o secundario según props */}
       {showAction ? (
         <button
-          className={`flex items-center justify-center gap-2 w-full py-2 rounded  ${
+          className={`flex items-center justify-center gap-2 w-full py-2 font-bold mt-2 border transition-all duration-300 ${
             actionType === 'enable'
-              ? 'bg-green-500 hover:bg-green-600 text-white'
-              : 'bg-[#ffcdc8] hover:bg-[#FF0000] text-white'
-          } font-bold mt-2`}
+              ? buttonStyles.enable
+              : buttonStyles.disable
+          }`}
           onClick={onActionClick}
         >
           <User className="w-4 h-4" />
@@ -96,10 +103,10 @@ const InfoCard: React.FC<InfoCardProps> = ({
         </button>
       ) : (
         <button
-          className="flex items-center justify-center gap-2 w-full py-2 rounded font-semibold shadow transition-all duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 mt-2"
+          className={`flex items-center justify-center gap-2 w-full py-2 font-semibold border transition-all duration-300 mt-2 ${buttonStyles.edit}`}
           onClick={onButtonClick}
         >
-          {buttonText}
+          Editar
         </button>
       )}
     </div>

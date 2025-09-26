@@ -10,8 +10,8 @@ import type { UsuarioRegistrado } from '../../Api/types/entities/misc.types';
 import Paginator from '../Paginator';
 
 const estadoColor = {
-  activo: 'bg-green-100 border-green-400',
-  inhabilitado: 'bg-red-100 border-red-400',
+  activo: ' border-green-400',
+  inhabilitado: ' border-red-400',
 };
 
 const estadoLabel = {
@@ -192,7 +192,7 @@ const Users = () => {
             <User className="text-600" />
             <span className="font-semibold">{nombre}</span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${estado === 'activo' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>{label}</span>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${estado === 'activo' ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'}`}>{label}</span>
         </div>
         <div className="text-sm text-gray-700 mb-1">
           <div>{user.email}</div>
@@ -202,7 +202,11 @@ const Users = () => {
         <div className="flex gap-2 mt-2">
           {Number(user.id) !== Number(currentUserId) && (
             <button
-              className={`flex-1 flex items-center justify-center gap-2 ${estado === 'activo' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-1 rounded-3xl text-base font-semibold`}
+              className={`flex-1 flex items-center justify-center gap-2 py-1 rounded-3xl text-base font-semibold border transition-all duration-300
+                ${estado === 'activo'
+                  ? 'bg-red-100 text-red-900 border-red-700 hover:bg-red-200'
+                  : 'bg-green-100 text-green-900 border-green-700 hover:bg-green-200'}
+              `}
               onClick={() => handleToggleEstado(user)}
             >
               <User className="w-5 h-5" />
