@@ -14,11 +14,11 @@
 
 import React from 'react'
 import { useEffect, useState } from 'react';
-import SummarySecurity from '../components/SummarySecurity';
-import Users from '../components/Users';
-import Roles from '../components/Roles';
-import Modules from '../components/Modules';
-import General from '../components/general';
+import SummarySecurity from '../components/ModuleSecurity/SummarySecurity';
+import Users from '../components/ModuleSecurity/Users';
+import Roles from '../components/ModuleSecurity/Roles';
+import Modules from '../components/ModuleSecurity/Modules';
+import General from '../components/ModuleSecurity/general';
 import { User, Shield, Layout, FileText, BookOpen } from 'lucide-react';
 import { getUsers } from '../Api/Services/User';
 import { getRoles } from '../Api/Services/Rol';

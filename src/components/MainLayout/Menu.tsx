@@ -35,9 +35,9 @@ import {
   Fingerprint,
   PersonWorkspace
 } from 'react-bootstrap-icons';
-import { menu } from '../Api/Services/Menu';
-import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../Api/types/entities/menu.types';
-import { useUserData } from '../hook/useUserData';
+import { menu } from '../../Api/Services/Menu';
+import { MenuItem, MenuUserInfo, SidebarMenuProps } from '../../Api/types/entities/menu.types';
+import { useUserData } from '../../hook/useUserData';
 import { useNavigate } from "react-router-dom";
 import logo from '/public/logo.png';
 

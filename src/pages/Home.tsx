@@ -1,5 +1,5 @@
-import AdminDashboardView from "../components/AdminDashboardView";
-import AprendizDashboardView from "../components/AprendizDashboardView";
+import AdminDashboardView from "../components/Dashboard/AdminDashboardView";
+import AprendizDashboardView from "../components/Dashboard/AprendizDashboardView";
 import { useUserData } from "../hook/useUserData";
 
 export const Home = () => {

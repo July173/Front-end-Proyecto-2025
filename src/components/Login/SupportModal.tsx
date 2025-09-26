@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom'; // <-- Importa ReactDOM
 import { X, Mail, Phone, Clock, Send, ExternalLink, CheckCircle, AlertCircle, Loader } from 'lucide-react';
-import useSupportForm from '../hook/useSupportForm'; // Ajusta la ruta según tu estructura
-import CustomSelect from './CustomSelect'; // importa el componente
+import useSupportForm from '../../hook/useSupportForm'; // Ajusta la ruta según tu estructura
+import CustomSelect from '../CustomSelect'; // importa el componente
 
 const SupportModal = ({ isOpen, onClose }) => {
     const {

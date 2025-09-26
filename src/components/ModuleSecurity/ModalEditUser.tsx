@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { putAprendiz, getAprendizById } from '../Api/Services/Aprendiz';
-import { putInstructor, getInstructorById } from '../Api/Services/Instructor';
-import { getRegionales } from '../Api/Services/Regional';
-import { getSedes } from '../Api/Services/Sede';
-import { getCenters } from '../Api/Services/Center';
-import { getPrograms, getProgramFichas } from '../Api/Services/Program';
-import { getRoles } from '../Api/Services/Rol';
-import { getKnowledgeAreas } from '../Api/Services/KnowledgeArea';
-import ConfirmModal from './ConfirmModal';
-import CustomSelect from './CustomSelect';
-import { useDocumentTypes } from '../hook/useDocumentTypes';
-import { useContractTypes } from '../hook/useContractTypes';
-import type { Regional, Sede, Center, Program, KnowledgeArea, Ficha } from '../Api/types/Modules/general.types';
-import type { Role } from '../Api/types/entities/role.types';
-import type { CreateAprendiz } from '../Api/types/entities/aprendiz.types';
-import type { CreateInstructor } from '../Api/types/entities/instructor.types';
+import { putAprendiz, getAprendizById } from '../../Api/Services/Aprendiz';
+import { putInstructor, getInstructorById } from '../../Api/Services/Instructor';
+import { getRegionales } from '../../Api/Services/Regional';
+import { getSedes } from '../../Api/Services/Sede';
+import { getCenters } from '../../Api/Services/Center';
+import { getPrograms, getProgramFichas } from '../../Api/Services/Program';
+import { getRoles } from '../../Api/Services/Rol';
+import { getKnowledgeAreas } from '../../Api/Services/KnowledgeArea';
+import ConfirmModal from '../ConfirmModal';
+import CustomSelect from '../CustomSelect';
+import { useDocumentTypes } from '../../hook/useDocumentTypes';
+import { useContractTypes } from '../../hook/useContractTypes';
+import type { Regional, Sede, Center, Program, KnowledgeArea, Ficha } from '../../Api/types/Modules/general.types';
+import type { Role } from '../../Api/types/entities/role.types';
+import type { CreateAprendiz } from '../../Api/types/entities/aprendiz.types';
+import type { CreateInstructor } from '../../Api/types/entities/instructor.types';
 
 const validateAprendiz = (data) => {
   if (!data.type_identification || !data.number_identification || !data.first_name || !data.first_last_name || !data.phone_number || !data.email || !data.program_id || !data.ficha_id) {

@@ -11,12 +11,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import WelcomePanel from '../components/WelcomePanel';
-import LoginForm from '../components/LoginForm';
-import RegisterForm from '../components/RegisterForm';
-import ForgotPasswordForm from '../components/ForgotPasswordForm';
-import VerifyCodeForm from '../components/VerifyCodeForm';
-import ResetPasswordForm from '../components/ResetPasswordForm';
+import WelcomePanel from '../components/Login/WelcomePanel';
+import LoginForm from '../components/Login/LoginForm';
+import RegisterForm from '../components/Login/RegisterForm';
+import ForgotPasswordForm from '../components/Login/ForgotPasswordForm';
+import VerifyCodeForm from '../components/Login/VerifyCodeForm';
+import ResetPasswordForm from '../components/Login/ResetPasswordForm';
 
 const getViewFromUrl = () => {
   const params = new URLSearchParams(window.location.search);

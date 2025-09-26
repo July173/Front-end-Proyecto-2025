@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getRolesFormsPerms, getRolesUser } from '../Api/Services/Rol';
-import type { Permiso, RolUserCount } from '../Api/types/entities/role.types';
+import { getRolesFormsPerms, getRolesUser } from '../../Api/Services/Rol';
+import type { Permiso, RolUserCount } from '../../Api/types/entities/role.types';
 const roleColors: Record<string, string> = {
   Administrador: 'bg-green-50 border-green-400 text-green-700',
   Usuarios: 'bg-red-50 border-red-400 text-red-700',

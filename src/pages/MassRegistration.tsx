@@ -1,8 +1,8 @@
 // imagenes de figma exportadas a public/reportmass
 import { excelTemplateService, UploadResult } from '../Api/Services/ExcelTemplate';
 import { useState } from 'react';
-import { TarjetaExcel } from '../components/TarjetaExcel';
-import { ResultModal } from '../components/ResultModal';
+import { TarjetaExcel } from '../components/MassRegistration/TarjetaExcel';
+import { ResultModal } from '../components/MassRegistration/ResultModal';
 
 const img = "../../public/massRegistartions/tarjeta_excel.svg";
 const img1 = "../../public/massRegistartions/upload.svg";

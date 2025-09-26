@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardCharts from "./DashboardCharts";
-import { getAprendices } from "../Api/Services/Aprendiz";
-import { getAllRequests } from "../Api/Services/RequestAssignaton";
+import { getAprendices } from "../../Api/Services/Aprendiz";
+import { getAllRequests } from "../../Api/Services/RequestAssignaton";
 
 // Vista de inicio para administrador (extraída de Figma)
 const AdminDashboardView: React.FC = () => {

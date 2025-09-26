@@ -36,7 +36,7 @@
 
 import React from 'react';
 import { User } from 'lucide-react';
-import type { InfoCardProps } from '../Api/types/entities/misc.types';
+import type { InfoCardProps } from '../../Api/types/entities/misc.types';
 
 // Colores de fondo para el estado
 const statusBg: Record<string, string> = {

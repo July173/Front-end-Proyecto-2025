@@ -1,5 +1,5 @@
 import React from 'react';
-import ResetPasswordForm from './ResetPasswordForm';
+import ResetPasswordForm from '../Login/ResetPasswordForm';
 
 /**
  * Props para el componente PasswordResetModal.
