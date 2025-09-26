@@ -23,6 +23,11 @@ const iconCross = <span className="text-red-600 text-lg">✗</span>;
  * @returns {JSX.Element} Panel de resumen de seguridad.
  */
 const SummarySecurity = () => {
+  // Paginación para la tabla de permisos
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
+
+  // Declarar permisos antes de usarlo
   const [permisos, setPermisos] = useState<Permiso[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,6 +35,16 @@ const SummarySecurity = () => {
   const [rolesUser, setRolesUser] = useState<RolUserCount[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(true);
   const [errorRoles, setErrorRoles] = useState('');
+
+  // Calcular paginación después de permisos/useState/useEffect
+  let permisosFiltrados: Permiso[] = [];
+  let totalPages = 1;
+  let paginatedPerms: Permiso[] = [];
+  if (Array.isArray(permisos)) {
+    permisosFiltrados = permisos.filter(perm => perm.Ver || perm.Editar || perm.Registrar || perm.Eliminar || perm.Activar);
+    totalPages = Math.max(1, Math.ceil(permisosFiltrados.length / rowsPerPage));
+    paginatedPerms = permisosFiltrados.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  }
 
   useEffect(() => {
     getRolesFormsPerms()
@@ -63,25 +78,40 @@ const SummarySecurity = () => {
             </tr>
           </thead>
           <tbody>
-            {permisos
-              .filter(perm => perm.Ver || perm.Editar || perm.Registrar || perm.Eliminar || perm.Activar)
-              .map((perm, i) => (
-                <tr key={i} className="text-center">
-                  <td className="px-3 py-2 border">
-                    <span className="inline-block   rounded-full px-2 py-1 text-xs font-semibold">
-                      {perm.rol}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 border">{perm.formulario}</td>
-                  <td className="px-3 py-2 border">{perm.Ver ? iconCheck : iconCross}</td>
-                  <td className="px-3 py-2 border">{perm.Editar ? iconCheck : iconCross}</td>
-                  <td className="px-3 py-2 border">{perm.Registrar ? iconCheck : iconCross}</td>
-                  <td className="px-3 py-2 border">{perm.Eliminar ? iconCheck : iconCross}</td>
-                  <td className="px-3 py-2 border">{perm.Activar ? iconCheck : iconCross}</td>
-                </tr>
-              ))}
+            {paginatedPerms.map((perm, i) => (
+              <tr key={i + (page - 1) * rowsPerPage} className="text-center">
+                <td className="px-3 py-2 border">
+                  <span className="inline-block rounded-full px-2 py-1 text-xs font-semibold">
+                    {perm.rol}
+                  </span>
+                </td>
+                <td className="px-3 py-2 border">{perm.formulario}</td>
+                <td className="px-3 py-2 border">{perm.Ver ? iconCheck : iconCross}</td>
+                <td className="px-3 py-2 border">{perm.Editar ? iconCheck : iconCross}</td>
+                <td className="px-3 py-2 border">{perm.Registrar ? iconCheck : iconCross}</td>
+                <td className="px-3 py-2 border">{perm.Eliminar ? iconCheck : iconCross}</td>
+                <td className="px-3 py-2 border">{perm.Activar ? iconCheck : iconCross}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
+        {/* Paginación */}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            className={`px-4 py-2 border rounded bg-white text-gray-700 flex items-center gap-1 ${page === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+          >
+            &lt; Anterior
+          </button>
+          <button
+            className={`px-4 py-2 border rounded bg-white text-gray-700 flex items-center gap-1 ${page === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+            onClick={() => setPage(page + 1)}
+            disabled={page === totalPages}
+          >
+            Siguiente &gt;
+          </button>
+        </div>
       </div>
       <div className="bg-white p-8 rounded-lg shadow transform transition-all duration-500 hover:shadow-lg delay-100">
         <h3 className="text-xl font-bold mb-1">Distribución por Roles</h3>

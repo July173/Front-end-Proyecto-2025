@@ -7,6 +7,7 @@ import ConfirmModal from '../ConfirmModal';
 import ModalEditUser from './ModalEditUser';
 import NotificationModal from '../NotificationModal';
 import type { UsuarioRegistrado } from '../../Api/types/entities/misc.types';
+import Paginator from '../Paginator';
 
 const estadoColor = {
   activo: 'bg-green-100 border-green-400',
@@ -19,6 +20,11 @@ const estadoLabel = {
 };
 
 const Users = () => {
+  // Estados de paginación para cada sección
+  const [pageHabilitados, setPageHabilitados] = useState(1);
+  const [pageRegistrados, setPageRegistrados] = useState(1);
+  const [pageInhabilitados, setPageInhabilitados] = useState(1);
+  const cardsPerPage = 6;
   const [registrados, setRegistrados] = useState<UsuarioRegistrado[]>([]);
   const [roles, setRoles] = useState<any[]>([]); // Cambia el tipo a any[] para aceptar cualquier estructura
   // Estados para el modal de notificación
@@ -230,7 +236,7 @@ const Users = () => {
 
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow relative">
+  <div className="bg-white p-8 rounded-lg shadow relative">
       {/* Botón azul en la esquina superior derecha */}
       <button
         className="absolute right-8 top-8 flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg  "
@@ -265,11 +271,23 @@ const Users = () => {
           {sectionsOpen.habilitados && (
             <div className="p-6">
               <div className="flex flex-wrap">
-                {habilitados.map((u, i) => <RegistradoCard key={`hab-${i}`} user={u} />)}
+                {habilitados
+                  .slice((pageHabilitados - 1) * cardsPerPage, pageHabilitados * cardsPerPage)
+                  .map((u, i) => <RegistradoCard key={`hab-${i + (pageHabilitados - 1) * cardsPerPage}`} user={u} />)}
                 {habilitados.length === 0 && (
                   <p className="text-gray-500 italic">No hay usuarios habilitados</p>
                 )}
               </div>
+              {/* Paginador para habilitados */}
+              {habilitados.length > cardsPerPage && (
+                <div className="mt-4">
+                  <Paginator
+                    page={pageHabilitados}
+                    totalPages={Math.ceil(habilitados.length / cardsPerPage)}
+                    onPageChange={setPageHabilitados}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -295,11 +313,23 @@ const Users = () => {
           {sectionsOpen.registrados && (
             <div className="p-6">
               <div className="flex flex-wrap">
-                {registradosUsers.map((u, i) => <RegistradoCard key={`reg-${i}`} user={u} />)}
+                {registradosUsers
+                  .slice((pageRegistrados - 1) * cardsPerPage, pageRegistrados * cardsPerPage)
+                  .map((u, i) => <RegistradoCard key={`reg-${i + (pageRegistrados - 1) * cardsPerPage}`} user={u} />)}
                 {registradosUsers.length === 0 && (
                   <p className="text-gray-500 italic">No hay usuarios registrados</p>
                 )}
               </div>
+              {/* Paginador para registrados */}
+              {registradosUsers.length > cardsPerPage && (
+                <div className="mt-4">
+                  <Paginator
+                    page={pageRegistrados}
+                    totalPages={Math.ceil(registradosUsers.length / cardsPerPage)}
+                    onPageChange={setPageRegistrados}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -325,11 +355,23 @@ const Users = () => {
           {sectionsOpen.inhabilitados && (
             <div className="p-6">
               <div className="flex flex-wrap">
-                {inhabilitados.map((u, i) => <RegistradoCard key={`inh-${i}`} user={u} />)}
+                {inhabilitados
+                  .slice((pageInhabilitados - 1) * cardsPerPage, pageInhabilitados * cardsPerPage)
+                  .map((u, i) => <RegistradoCard key={`inh-${i + (pageInhabilitados - 1) * cardsPerPage}`} user={u} />)}
                 {inhabilitados.length === 0 && (
                   <p className="text-gray-500 italic">No hay usuarios inhabilitados</p>
                 )}
               </div>
+              {/* Paginador para inhabilitados */}
+              {inhabilitados.length > cardsPerPage && (
+                <div className="mt-4">
+                  <Paginator
+                    page={pageInhabilitados}
+                    totalPages={Math.ceil(inhabilitados.length / cardsPerPage)}
+                    onPageChange={setPageInhabilitados}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
