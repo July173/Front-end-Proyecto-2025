@@ -108,7 +108,7 @@ const General = () => {
           {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
         </div>
         <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-          isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          isActive ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'
         }`}>
           {isActive ? 'Activo' : 'Inactivo'}
         </div>
@@ -116,16 +116,16 @@ const General = () => {
       <div className="flex gap-2">
         <button
           onClick={onEdit}
-          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+          className="px-5 py-1 text-base rounded-3xl border border-gray-400 bg-gray-100 text-gray-800 font-semibold transition-colors hover:bg-gray-200"
         >
-          Ajustar
+          Editar
         </button>
         <button
           onClick={onToggle}
-          className={`px-3 py-1 text-sm rounded transition-colors ${
-            isActive 
-              ? 'bg-red-600 text-white hover:bg-red-700' 
-              : 'bg-green-600 text-white hover:bg-green-700'
+          className={`px-5 py-1 text-base rounded-3xl border font-semibold transition-colors ${
+            isActive
+              ? 'bg-red-100 text-red-900 border-red-700 hover:bg-red-200'
+              : 'bg-green-100 text-green-900 border-green-700 hover:bg-green-200'
           }`}
         >
           {isActive ? 'Deshabilitar' : 'Habilitar'}
