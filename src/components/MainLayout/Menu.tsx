@@ -149,7 +149,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
   }, [showModal]);
 
   return (
-    <div className={`w-64 rounded-xl bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] text-white flex flex-col m-2 relative $ {className}`}> 
+  <div className={`w-64 rounded-xl bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] text-white flex flex-col m-2 relative ${className} md:h-screen h-auto`}> 
       {/* Header */}
       <div className="p-6 flex items-center gap-3 flex-shrink-0">
         <div className="w-12 h-12 rounded-lg flex items-center justify-center">
@@ -160,7 +160,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
 
       {/* Scrollable menu area */}
       <div className="flex-1 flex flex-col min-h-0">
-        <nav className="flex-1 px-4 overflow-y-auto min-h-0">
+        <nav className="flex-1 px-4 overflow-y-auto min-h-0 max-h-[calc(100vh-180px)] md:max-h-none">
           <ul className="space-y-2">
             {orderedModules.map(([moduleName, forms]) => {
               const IconComponent = iconMap[moduleName.toLowerCase()] || House;
@@ -237,7 +237,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
                                   navigate(form.path);
                                 }
                               }}
-                              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm ${
+                              className={`w-full flex items-center gap-2 px-2 py-1 rounded-lg text-xs md:text-sm whitespace-nowrap ${
                                 isActive
                                   ? "bg-white/20 text-white"
                                   : "text-white/80 hover:bg-white/10"
@@ -266,7 +266,9 @@ const Menu: React.FC<SidebarMenuProps> = ({
             background: '',
             zIndex: 10,
             borderBottomLeftRadius: '12px',
-            borderBottomRightRadius: '12px', 
+            borderBottomRightRadius: '12px',
+            position: 'sticky',
+            bottom: 0,
           }}
         >
           <div className="flex items-center gap-3">

@@ -59,7 +59,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
   // Determina si se debe mostrar el botón de acción secundaria
   const showAction = actionLabel && actionType && onActionClick;
   return (
-    <div className="bg-white p-4 rounded-lg shadow w-[350px] min-h-[180px] flex flex-col justify-between border-2 border-gray-300">
+  <div className="bg-white p-4 rounded-lg shadow min-h-[180px] flex flex-col justify-between border-2 border-gray-300 w-full max-w-xs md:max-w-sm lg:max-w-md mx-auto">
       <div>
         <div className="flex items-center justify-between mb-1">
           <h3 className="text-lg font-semibold">{title}</h3>
