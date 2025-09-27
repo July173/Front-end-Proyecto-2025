@@ -82,7 +82,7 @@ const AprendizSection: React.FC<AprendizSectionProps> = ({
             label="Programa de Formación *"
             placeholder="Seleccione..."
             classNames={{
-              trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm",
+              trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm flex items-center justify-between bg-white",
               label: "block text-sm font-medium mb-2",
             }}
           />
@@ -95,7 +95,7 @@ const AprendizSection: React.FC<AprendizSectionProps> = ({
             label="Número de Ficha *"
             placeholder="Seleccione..."
             classNames={{
-              trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm",
+              trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm flex items-center justify-between bg-white",
               label: "block text-sm font-medium mb-2",
             }}
             disabled={!selectedProgram}
@@ -118,7 +118,7 @@ const AprendizSection: React.FC<AprendizSectionProps> = ({
             label="Modalidad etapa productiva *"
             placeholder="Seleccione..."
             classNames={{
-              trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm",
+              trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm flex items-center justify-between bg-white",
               label: "block text-sm font-medium mb-2",
             }}
           />

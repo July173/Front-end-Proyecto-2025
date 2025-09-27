@@ -64,9 +64,22 @@ export default function CustomSelect({
         {label}
       </label>
       <Select.Root value={value} onValueChange={onChange} disabled={disabled}>
-        <Select.Trigger className={classNames.trigger || "w-full px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent font-normal bg-white flex items-center justify-between h-10"} disabled={disabled}>
-          <Select.Value placeholder={placeholder} />
-          <Select.Icon className="flex-shrink-0">
+        <Select.Trigger
+          className={
+            classNames.trigger ||
+            // Adjusted: use flex, items-center, and set min-h and px for better alignment
+            "w-full px-3 min-h-[40px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#43A047] focus:border-transparent font-normal bg-white flex items-center justify-between h-10"
+          }
+          disabled={disabled}
+          style={{ paddingTop: 0, paddingBottom: 0 }}
+        >
+          <span className="flex-1 flex items-center min-h-[38px]">
+            <Select.Value
+              placeholder={placeholder}
+              className="text-left w-full flex items-center min-h-[38px]"
+            />
+          </span>
+          <Select.Icon className="flex-shrink-0 flex items-center h-full">
             <ChevronDown className="h-4 w-4" />
           </Select.Icon>
         </Select.Trigger>
