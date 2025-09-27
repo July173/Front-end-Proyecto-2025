@@ -71,7 +71,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [activeModule, setActiveModule] = useState<string | null>(null);
-  const [openModules, setOpenModules] = useState<Record<string, boolean>>({});
+  const [openModule, setOpenModule] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   // Obtener email real del usuario
@@ -164,7 +164,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
           <ul className="space-y-2">
             {orderedModules.map(([moduleName, forms]) => {
               const IconComponent = iconMap[moduleName.toLowerCase()] || House;
-              const isOpen = openModules[moduleName] || false;
+              const isOpen = openModule === moduleName;
               const isInicio = moduleName.toLowerCase() === 'inicio';
               const isActiveModule = activeModule === moduleName;
               
@@ -201,7 +201,7 @@ const Menu: React.FC<SidebarMenuProps> = ({
                 <li key={moduleName}>
                   <button
                     onClick={() => {
-                      setOpenModules(prev => ({ ...prev, [moduleName]: !prev[moduleName] }));
+                      setOpenModule(isOpen ? null : moduleName);
                       setActiveModule(moduleName);
                     }}
                     className={`w-full flex items-start justify-between px-4 py-3 rounded-lg text-left transition-colors ${
@@ -220,37 +220,41 @@ const Menu: React.FC<SidebarMenuProps> = ({
                       }`}
                     />
                   </button>
-                  {isOpen && (
-                    <ul className="ml-8 mt-2 space-y-1">
-                      {forms.map(form => {
-                        const isActive = activeItem === form.id;
-                        return (
-                          <li key={form.id}>
-                            <button
-                              onClick={() => {
-                                setActiveItem(form.id);
-                                setActiveModule(moduleName); // Mantener módulo activo
-                                if (onMenuItemClick) onMenuItemClick({ ...form, moduleName }); // <-- ENVÍA EL MÓDULO Y FORMULARIO
-                                if (onNavigate) {
-                                  onNavigate(form.path);
-                                } else {
-                                  navigate(form.path);
-                                }
-                              }}
-                              className={`w-full flex items-center gap-2 px-2 py-1 rounded-lg text-xs md:text-sm whitespace-nowrap ${
-                                isActive
-                                  ? "bg-white/20 text-white"
-                                  : "text-white/80 hover:bg-white/10"
-                              }`}
-                            >
-                              <span className="w-4 h-4 flex items-center justify-center text-white/80">•</span>
-                              {form.name}
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
+                  <div
+                    className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95'}`}
+                  >
+                    {isOpen && (
+                      <ul className="ml-8 mt-2 space-y-1">
+                        {forms.map(form => {
+                          const isActive = activeItem === form.id;
+                          return (
+                            <li key={form.id}>
+                              <button
+                                onClick={() => {
+                                  setActiveItem(form.id);
+                                  setActiveModule(moduleName); // Mantener módulo activo
+                                  if (onMenuItemClick) onMenuItemClick({ ...form, moduleName }); // <-- ENVÍA EL MÓDULO Y FORMULARIO
+                                  if (onNavigate) {
+                                    onNavigate(form.path);
+                                  } else {
+                                    navigate(form.path);
+                                  }
+                                }}
+                                className={`w-full flex items-center gap-2 px-2 py-1 rounded-lg text-xs md:text-sm whitespace-nowrap ${
+                                  isActive
+                                    ? "bg-white/20 text-white"
+                                    : "text-white/80 hover:bg-white/10"
+                                }`}
+                              >
+                                <span className="w-4 h-4 flex items-center justify-center text-white/80">•</span>
+                                {form.name}
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
                 </li>
               );
             })}

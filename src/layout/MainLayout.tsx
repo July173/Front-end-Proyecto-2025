@@ -47,23 +47,19 @@ export default function MainLayout() {
 
   // 👇 ahora sí el layout siempre devuelve la estructura
   return (
-  <div className="flex h-screen w-full bg-[#D9D9D9]">
+    <div className="flex h-screen  w-full bg-[#D9D9D9]">
       <Menu
         className="h-screen flex-shrink-0 "
         userId={userData!.id}
         userName={getUserName()}
         onMenuItemClick={handleMenuItemClick}
       />
-      <div className="flex-1 flex flex-col min-h-screen mx-4 my-4 items-center">
-        <div className="sticky top-0 z-30 bg-[#D9D9D9] w-full flex justify-center">
-          <div className="w-full max-w-6xl">
-            <Header moduleName={activeModule} formName={activeFormName} />
-          </div>
+      <div className="flex-1 overflow-y-auto ">
+        <div className="sticky top-0 z-30 ">
+          <Header moduleName={activeModule} formName={activeFormName} />
         </div>
-        <main className="flex-1 overflow-y-auto w-full flex justify-center">
-          <div className="w-full max-w-6xl">
-            <Outlet />
-          </div>
+        <main className="flex-1 p-4 ">
+          <Outlet />
         </main>
         <Footer />
       </div>
