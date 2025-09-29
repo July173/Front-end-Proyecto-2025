@@ -416,7 +416,7 @@ export default function RequestRegistration() {
                   label={`Regional *`}
                   placeholder="Seleccione..."
                   classNames={{
-                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent",
+                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm flex items-center justify-between bg-white",
                     label: "block text-sm font-medium mb-2",
                   }}
                 />
@@ -430,7 +430,7 @@ export default function RequestRegistration() {
                   label={`Centro de formación *`}
                   placeholder="Seleccione..."
                   classNames={{
-                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent",
+                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm flex items-center justify-between bg-white",
                     label: "block text-sm font-medium mb-2",
                   }}
                   disabled={!selectedRegional}
@@ -445,7 +445,7 @@ export default function RequestRegistration() {
                   label={`Sede centro de formación *`}
                   placeholder="Seleccione..."
                   classNames={{
-                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent",
+                    trigger: "w-full border-2 rounded-lg px-3 py-2 text-sm flex items-center justify-between bg-white",
                     label: "block text-sm font-medium mb-2",
                   }}
                   disabled={!selectedCenter}
