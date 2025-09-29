@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function useIdleTimer(timeout: number = 1 * 60 * 1000) {
+export default function useIdleTimer(timeout: number = 100 * 60 * 1000) {
   const navigate = useNavigate();
 
   useEffect(() => {
