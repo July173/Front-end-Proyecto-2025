@@ -3,6 +3,7 @@ import { getAllRequests } from "@/Api/Services/RequestAssignaton";
 import AssignButton from "./AssignButton";
 import { AssignTableRow, DetailData } from "@/Api/types/Modules/assign.types";
 import { getFormRequestById } from "@/Api/Services/RequestAssignaton";
+import { Document, Page } from 'react-pdf';
 
 interface AssignTableViewProps {
   onAction: (row: AssignTableRow) => void;
@@ -16,6 +17,7 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
   const [detail, setDetail] = useState<DetailData | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [pdfFullscreen, setPdfFullscreen] = useState(false);
 
   React.useEffect(() => {
     setLoading(true);
@@ -129,11 +131,22 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
                         )}
                       </div>
                       {detail.pdf_url && (
-                        <div className="mt-6 flex flex-col items-center justify-center">
-                          <a href={detail.pdf_url} target="_blank" rel="noopener noreferrer" className="bg-gray-200 rounded-lg px-4 py-2 text-center text-gray-700 flex items-center gap-2">
-                            <span className="material-icons">open_in_full</span>
-                            Click en el PDF para ampliar
-                          </a>
+                        <div className={pdfFullscreen ? "fixed inset-0 z-50 flex items-center justify-center bg-black/80" : "relative w-full h-[800px] flex items-center justify-center bg-[#f6f5f5] rounded-[10px] overflow-hidden mt-4"}>
+                          <button
+                            className={pdfFullscreen
+                              ? "absolute top-6 right-6 bg-[#dbdbdb] border border-green-600 px-6 py-2 rounded-[10px] flex items-center gap-2 z-50 cursor-pointer"
+                              : "absolute top-0 left-1/2 -translate-x-1/2 bg-[#dbdbdb] border border-green-600 px-10 py-3 rounded-[10px] flex items-center gap-2 z-10 w-[728px] cursor-pointer"}
+                            onClick={() => setPdfFullscreen(!pdfFullscreen)}
+                            title={pdfFullscreen ? "Cerrar pantalla completa" : "Abrir PDF en pantalla completa"}
+                          >
+                            <svg width="25" height="25" fill="none" viewBox="0 0 25 25">
+                              <path d="M5 5h7M5 5v7M20 20h-7M20 20v-7" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                            <span className="text-black text-[14px] font-normal">{pdfFullscreen ? "Cerrar PDF" : "Click en el PDF para ampliar"}</span>
+                          </button>
+                          <Document file={detail.pdf_url.startsWith("/") ? "http://127.0.0.1:8000" + detail.pdf_url : detail.pdf_url}>
+                            <Page pageNumber={1} width={pdfFullscreen ? 1100 : 800} />
+                          </Document>
                         </div>
                       )}
                     </>

@@ -16,17 +16,25 @@
 
 -- Volcando datos para la tabla bdautogestion.assign_asignationinstructor: ~0 rows (aproximadamente)
 
--- Volcando datos para la tabla bdautogestion.assign_boss: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.assign_boss: ~1 rows (aproximadamente)
+INSERT INTO `assign_boss` (`id`, `name_boss`, `phone_number`, `email_boss`, `position`, `active`, `delete_at`, `enterprise_id`) VALUES
+	(1, 'zxfvdsav', 3102944906, 'vdvfds@empresa.com', 'master', 1, NULL, 1);
 
--- Volcando datos para la tabla bdautogestion.assign_enterprise: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.assign_enterprise: ~1 rows (aproximadamente)
+INSERT INTO `assign_enterprise` (`id`, `name_enterprise`, `locate`, `nit_enterprise`, `active`, `email_enterprise`, `delete_at`) VALUES
+	(1, 'ewferf', 'sdvdsv sdv', 122112121, 1, 'asdfas@sele.ecd', NULL);
 
--- Volcando datos para la tabla bdautogestion.assign_humantalent: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.assign_humantalent: ~1 rows (aproximadamente)
+INSERT INTO `assign_humantalent` (`id`, `name`, `email`, `phone_number`, `active`, `delete_at`, `enterprise_id`) VALUES
+	(1, 'dsdcsadvc sadf as asdf', 'sadfsv@osos.com', 3102944906, 1, NULL, 1);
 
--- Volcando datos para la tabla bdautogestion.assign_modalityproductivestage: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.assign_modalityproductivestage: ~0 rows (aproximadamente)
 INSERT INTO `assign_modalityproductivestage` (`id`, `name_modality`, `description`, `active`, `delete_at`) VALUES
 	(1, 'Contrato de aprendizaje', 'El aprendiz desarrolla su etapa practica con contrato de aprendizaje', 1, NULL);
 
--- Volcando datos para la tabla bdautogestion.assign_requestasignation: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.assign_requestasignation: ~1 rows (aproximadamente)
+INSERT INTO `assign_requestasignation` (`id`, `request_date`, `date_start_production_stage`, `date_end_production_stage`, `pdf_request`, `request_state`, `rejectionMessage`, `delete_at`, `aprendiz_id`, `enterprise_id`, `modality_productive_stage_id`) VALUES
+	(1, '2025-09-29', '2025-09-29', '2026-03-31', 'requests/articulo.pdf', 'SIN_ASIGNAR', NULL, NULL, 1, 1, 1);
 
 -- Volcando datos para la tabla bdautogestion.assign_visitfollowing: ~0 rows (aproximadamente)
 
@@ -154,36 +162,36 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 
 -- Volcando datos para la tabla bdautogestion.django_migrations: ~23 rows (aproximadamente)
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
-	(1, 'contenttypes', '0001_initial', '2025-09-24 17:48:26.605121'),
-	(2, 'contenttypes', '0002_remove_content_type_name', '2025-09-24 17:48:26.777761'),
-	(3, 'auth', '0001_initial', '2025-09-24 17:48:27.215486'),
-	(4, 'auth', '0002_alter_permission_name_max_length', '2025-09-24 17:48:27.339978'),
-	(5, 'auth', '0003_alter_user_email_max_length', '2025-09-24 17:48:27.351507'),
-	(6, 'auth', '0004_alter_user_username_opts', '2025-09-24 17:48:27.365714'),
-	(7, 'auth', '0005_alter_user_last_login_null', '2025-09-24 17:48:27.377460'),
-	(8, 'auth', '0006_require_contenttypes_0002', '2025-09-24 17:48:27.395194'),
-	(9, 'auth', '0007_alter_validators_add_error_messages', '2025-09-24 17:48:27.433251'),
-	(10, 'auth', '0008_alter_user_username_max_length', '2025-09-24 17:48:27.466122'),
-	(11, 'auth', '0009_alter_user_last_name_max_length', '2025-09-24 17:48:27.493358'),
-	(12, 'auth', '0010_alter_group_name_max_length', '2025-09-24 17:48:27.599122'),
-	(13, 'auth', '0011_update_proxy_permissions', '2025-09-24 17:48:27.620607'),
-	(14, 'auth', '0012_alter_user_first_name_max_length', '2025-09-24 17:48:27.722051'),
-	(15, 'security', '0001_initial', '2025-09-24 17:48:29.097639'),
-	(16, 'admin', '0001_initial', '2025-09-24 17:48:29.358348'),
-	(17, 'admin', '0002_logentry_remove_auto_add', '2025-09-24 17:48:29.383542'),
-	(18, 'admin', '0003_logentry_add_action_flag_choices', '2025-09-24 17:48:29.434268'),
-	(19, 'general', '0001_initial', '2025-09-24 17:48:29.826535'),
-	(20, 'assign', '0001_initial', '2025-09-24 17:48:30.099440'),
-	(21, 'assign', '0002_initial', '2025-09-24 17:48:30.852524'),
-	(22, 'general', '0002_initial', '2025-09-24 17:48:31.876744'),
-	(23, 'sessions', '0001_initial', '2025-09-24 17:48:31.996462');
+	(1, 'contenttypes', '0001_initial', '2025-09-24 23:52:22.741642'),
+	(2, 'contenttypes', '0002_remove_content_type_name', '2025-09-24 23:52:22.799694'),
+	(3, 'auth', '0001_initial', '2025-09-24 23:52:23.010963'),
+	(4, 'auth', '0002_alter_permission_name_max_length', '2025-09-24 23:52:23.049474'),
+	(5, 'auth', '0003_alter_user_email_max_length', '2025-09-24 23:52:23.064584'),
+	(6, 'auth', '0004_alter_user_username_opts', '2025-09-24 23:52:23.102569'),
+	(7, 'auth', '0005_alter_user_last_login_null', '2025-09-24 23:52:23.124493'),
+	(8, 'auth', '0006_require_contenttypes_0002', '2025-09-24 23:52:23.146291'),
+	(9, 'auth', '0007_alter_validators_add_error_messages', '2025-09-24 23:52:23.181790'),
+	(10, 'auth', '0008_alter_user_username_max_length', '2025-09-24 23:52:23.210421'),
+	(11, 'auth', '0009_alter_user_last_name_max_length', '2025-09-24 23:52:23.226116'),
+	(12, 'auth', '0010_alter_group_name_max_length', '2025-09-24 23:52:23.315634'),
+	(13, 'auth', '0011_update_proxy_permissions', '2025-09-24 23:52:23.338072'),
+	(14, 'auth', '0012_alter_user_first_name_max_length', '2025-09-24 23:52:23.351201'),
+	(15, 'security', '0001_initial', '2025-09-24 23:52:24.042727'),
+	(16, 'admin', '0001_initial', '2025-09-24 23:52:24.235002'),
+	(17, 'admin', '0002_logentry_remove_auto_add', '2025-09-24 23:52:24.263915'),
+	(18, 'admin', '0003_logentry_add_action_flag_choices', '2025-09-24 23:52:24.361677'),
+	(19, 'general', '0001_initial', '2025-09-24 23:52:24.604616'),
+	(20, 'assign', '0001_initial', '2025-09-24 23:52:24.749958'),
+	(21, 'assign', '0002_initial', '2025-09-24 23:52:25.095555'),
+	(22, 'general', '0002_initial', '2025-09-24 23:52:25.615353'),
+	(23, 'sessions', '0001_initial', '2025-09-24 23:52:25.668534');
 
 -- Volcando datos para la tabla bdautogestion.django_session: ~0 rows (aproximadamente)
 
 -- Volcando datos para la tabla bdautogestion.general_aprendiz: ~2 rows (aproximadamente)
 INSERT INTO `general_aprendiz` (`id`, `active`, `delete_at`, `person_id`, `ficha_id`) VALUES
-	(1, 1, NULL, 1, NULL),
-	(2, 1, NULL, 2, NULL);
+	(1, 1, NULL, 2, 2),
+	(2, 1, NULL, 4, NULL);
 
 -- Volcando datos para la tabla bdautogestion.general_center: ~26 rows (aproximadamente)
 INSERT INTO `general_center` (`id`, `name`, `codeCenter`, `address`, `active`, `delete_at`, `regional_id`) VALUES
@@ -219,15 +227,17 @@ INSERT INTO `general_ficha` (`id`, `file_number`, `active`, `delete_at`, `progra
 	(1, 2901817, 1, NULL, 1),
 	(2, 2901885, 1, NULL, 2);
 
--- Volcando datos para la tabla bdautogestion.general_instructor: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.general_instructor: ~1 rows (aproximadamente)
 INSERT INTO `general_instructor` (`id`, `contractType`, `contractStartDate`, `contractEndDate`, `active`, `delete_at`, `person_id`, `knowledgeArea_id`) VALUES
-	(2, 'Planta', '2024-01-15', '2024-12-31', 1, NULL, 4, 1);
+	(1, 'Planta', '2024-01-15', '2024-12-31', 1, NULL, 3, 1);
 
--- Volcando datos para la tabla bdautogestion.general_knowledgearea: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.general_knowledgearea: ~0 rows (aproximadamente)
 INSERT INTO `general_knowledgearea` (`id`, `name`, `description`, `active`, `delete_at`) VALUES
 	(1, 'Diseño', 'Pertence al area de diseño', 1, NULL);
 
--- Volcando datos para la tabla bdautogestion.general_personsede: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.general_personsede: ~1 rows (aproximadamente)
+INSERT INTO `general_personsede` (`id`, `DeleteAt`, `PersonId_id`, `SedeId_id`) VALUES
+	(1, NULL, 2, 6);
 
 -- Volcando datos para la tabla bdautogestion.general_program: ~2 rows (aproximadamente)
 INSERT INTO `general_program` (`id`, `codeProgram`, `name`, `typeProgram`, `description`, `active`, `delete_at`) VALUES
@@ -313,7 +323,7 @@ INSERT INTO `security_form` (`id`, `name`, `description`, `path`, `active`, `del
 	(8, 'Evaluar visita final', 'El coordinador evalua la visita final que suben los instructores', '/evaluate-final-visit', 1, NULL),
 	(9, 'Asignar', 'El coordinaro asigna instructor a aprendiz', '/assign', 1, NULL);
 
--- Volcando datos para la tabla bdautogestion.security_formmodule: ~9 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.security_formmodule: ~10 rows (aproximadamente)
 INSERT INTO `security_formmodule` (`id`, `form_id`, `module_id`) VALUES
 	(1, 1, 2),
 	(2, 2, 2),
@@ -323,13 +333,15 @@ INSERT INTO `security_formmodule` (`id`, `form_id`, `module_id`) VALUES
 	(12, 5, 3),
 	(13, 7, 3),
 	(14, 8, 3),
-	(15, 9, 3);
+	(15, 9, 3),
+	(21, 3, 4);
 
--- Volcando datos para la tabla bdautogestion.security_module: ~3 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.security_module: ~4 rows (aproximadamente)
 INSERT INTO `security_module` (`id`, `name`, `description`, `active`, `delete_at`) VALUES
 	(1, 'Inicio', 'Parte inicial del sistema', 1, NULL),
 	(2, 'Seguridad', 'Administra el sistema', 1, NULL),
-	(3, 'Asignar seguimientos', 'Todo lo del proceso de asignar un instructor a un aprendiz para el seguimiento de su etapa practica', 1, NULL);
+	(3, 'Asignar seguimientos', 'Todo lo del proceso de asignar un instructor a un aprendiz para el seguimiento de su etapa practica', 1, NULL),
+	(4, 'prubeas', 'pruebas', 1, NULL);
 
 -- Volcando datos para la tabla bdautogestion.security_permission: ~5 rows (aproximadamente)
 INSERT INTO `security_permission` (`id`, `type_permission`, `description`) VALUES
@@ -341,16 +353,17 @@ INSERT INTO `security_permission` (`id`, `type_permission`, `description`) VALUE
 
 -- Volcando datos para la tabla bdautogestion.security_person: ~3 rows (aproximadamente)
 INSERT INTO `security_person` (`id`, `first_name`, `second_name`, `first_last_name`, `second_last_name`, `phone_number`, `type_identification`, `number_identification`, `delete_at`, `active`, `image`) VALUES
-	(1, 'Brayan', 'Stid', 'Cortes', 'Lomban', 3102944906, 'CC', '1129844804', NULL, 1, ''),
-	(2, 'María', 'José', 'García', 'López', 3007654321, 'CC', '87654321', NULL, 1, ''),
-	(4, 'Juan', 'Carlos', 'Pérez', 'Gómez', 3004567890, 'CC', '1023456789', NULL, 1, '');
+	(2, 'Brayan', 'Stid', 'Cortes', 'Lombana', 3102944906, 'CC', '1129844804', NULL, 1, ''),
+	(3, 'Juan', 'Carlos', 'Pérez', 'Gómez', 3004567890, 'CC', '1023456789', NULL, 1, ''),
+	(4, 'María', 'José', 'García', 'López', 3007654321, 'CC', '87654321', NULL, 1, '');
 
--- Volcando datos para la tabla bdautogestion.security_role: ~4 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.security_role: ~5 rows (aproximadamente)
 INSERT INTO `security_role` (`id`, `type_role`, `description`, `active`, `delete_at`) VALUES
 	(1, 'Administrador', 'Administra y tiene acceso absoluto al sistema', 1, NULL),
 	(2, 'Aprendiz', 'Accede a sus secciones permitidas en el sistema', 1, NULL),
 	(3, 'Instructor', 'Accede a sus secciones permitidas en el sistema', 1, NULL),
-	(4, 'Coordinador', 'El coordinador evalua y sigue los procesos', 1, NULL);
+	(4, 'Coordinador', 'El coordinador evalua y sigue los procesos', 1, NULL),
+	(5, 'hola', 'cyfdhgd hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh', 1, NULL);
 
 -- Volcando datos para la tabla bdautogestion.security_rolformpermission: ~105 rows (aproximadamente)
 INSERT INTO `security_rolformpermission` (`id`, `form_id`, `permission_id`, `role_id`) VALUES
@@ -458,13 +471,18 @@ INSERT INTO `security_rolformpermission` (`id`, `form_id`, `permission_id`, `rol
 	(212, 9, 2, 1),
 	(213, 9, 3, 1),
 	(214, 9, 4, 1),
-	(215, 9, 5, 1);
+	(215, 9, 5, 1),
+	(221, 3, 1, 5),
+	(222, 3, 2, 5),
+	(223, 3, 3, 5),
+	(224, 3, 4, 5),
+	(225, 3, 5, 5);
 
--- Volcando datos para la tabla bdautogestion.security_user: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla bdautogestion.security_user: ~3 rows (aproximadamente)
 INSERT INTO `security_user` (`id`, `password`, `last_login`, `is_superuser`, `registered`, `email`, `is_active`, `is_staff`, `deleted_at`, `created_at`, `updated_at`, `reset_code`, `reset_code_expiration`, `person_id`, `role_id`) VALUES
-	(1, 'pbkdf2_sha256$1000000$VXZDBCFoSaew9yO5i1HBbO$5Ig79T0blaKM59hX/jkL5ieACCfdN6aR48Sg2zUqRYw=', NULL, 0, 0, 'bscortes40@soy.sena.edu.co', 1, 0, NULL, '2025-09-24 17:50:53.493626', '2025-09-24 17:51:51.636366', NULL, NULL, 1, 1),
-	(2, 'pbkdf2_sha256$1000000$EA6Z9VmNURY8IQ07TqRO4K$XZg1fwUb6SRfTqEf5ak4bxWFWkrBGjLMplkn8E4xqdc=', NULL, 0, 0, 'maria.garcia@soy.sena.edu.co', 1, 0, NULL, '2025-09-24 17:55:45.293203', '2025-09-24 17:55:45.293244', NULL, NULL, 2, 2),
-	(4, 'pbkdf2_sha256$1000000$hti4sroZbs2tghzQoWnV4r$6NSohU/F09ZuaPkmHKLVA7wHa412jOoegiOiEdMccxU=', NULL, 0, 0, 'juan.perez@sena.edu.co', 1, 0, NULL, '2025-09-24 18:51:38.111472', '2025-09-24 18:51:38.111519', NULL, NULL, 4, 3);
+	(1, 'pbkdf2_sha256$1000000$azI6KB5t6LQF3yA8sJtx41$954WnaqmxDAvCmYcSGUkS7qEbT4q0Wd/VdGwyYGrHo8=', NULL, 0, 0, 'bscortes40@soy.sena.edu.co', 1, 0, NULL, '2025-09-24 23:57:53.136568', '2025-09-29 20:17:26.654222', NULL, NULL, 2, 1),
+	(2, 'pbkdf2_sha256$1000000$inBLrdQUHtdaxIVUZODkX3$Z85F5UXctexz/tcb2/dsSm6DvPSSk9h8OwW7LAV09Q8=', NULL, 0, 1, 'juan.perez@sena.edu.co', 1, 0, NULL, '2025-09-24 23:59:54.317019', '2025-09-24 23:59:54.317059', NULL, NULL, 3, 3),
+	(3, 'pbkdf2_sha256$1000000$ZyK0Dspb25B9z1RO7bSFKN$4pfXuI5+9tPSyqDJyypbioN8tVHEvoVgHvGhFA+dwtY=', NULL, 0, 0, 'maria.garcia@soy.sena.edu.co', 1, 0, NULL, '2025-09-25 00:00:05.660185', '2025-09-25 20:10:30.116149', NULL, NULL, 4, 2);
 
 -- Volcando datos para la tabla bdautogestion.security_user_groups: ~0 rows (aproximadamente)
 
