@@ -1,8 +1,12 @@
 // src/hooks/useIdleTimer.ts
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function useIdleTimer(timeout: number = 1 * 60 * 1000) {
+export default function useIdleTimer(
+  timeout: number = 20 * 60 * 1000,
+  onSessionExpired?: () => void
+) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -10,8 +14,11 @@ export default function useIdleTimer(timeout: number = 1 * 60 * 1000) {
 
     const logout = () => {
       localStorage.removeItem("user_data"); // limpia sesión
-      alert("Tu sesión ha expirado por inactividad");
-      navigate("/"); // redirige al login
+      if (onSessionExpired) {
+        onSessionExpired();
+      } else {
+        navigate("/"); // fallback: redirige al login
+      }
     };
 
     const resetTimer = () => {
@@ -30,5 +37,5 @@ export default function useIdleTimer(timeout: number = 1 * 60 * 1000) {
         window.removeEventListener(event, resetTimer)
       );
     };
-  }, [navigate, timeout]);
+  }, [navigate, timeout, onSessionExpired]);
 }

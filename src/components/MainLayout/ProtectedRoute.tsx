@@ -1,6 +1,9 @@
 // src/components/ProtectedRoute.tsx
-import { Navigate } from "react-router-dom";
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useIdleTimer from "../../hook/userIdleTimer";
+import SessionExpiredModal from "../SessionExpiredModal";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,11 +11,24 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const userData = localStorage.getItem("user_data");
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate();
 
   // Activa el control de inactividad SOLO si hay sesión
   if (userData) {
-    useIdleTimer(); // 👈 aquí se monta el hook
-    return <>{children}</>;
+    useIdleTimer(20 * 60 * 1000, () => setShowSessionExpired(true));
+    return (
+      <>
+        {children}
+        <SessionExpiredModal
+          isOpen={showSessionExpired}
+          onClose={() => {
+            setShowSessionExpired(false);
+            navigate("/");
+          }}
+        />
+      </>
+    );
   }
 
   return (
