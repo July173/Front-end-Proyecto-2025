@@ -30,6 +30,7 @@
 
 import { get } from "http";
 import { permission } from "process";
+import { getFichas } from "../Services/Ficha";
 
 
 /**
@@ -153,6 +154,7 @@ export const ENDPOINTS = {
   requestAsignation :{
     postRequestAssignation : `${API_BASE_URL}assign/request_asignation/form-request/`,
     getFormRequest: `${API_BASE_URL}assign/request_asignation/form-request-list/`,
+    getFormRequestById : `${API_BASE_URL}assign/request_asignation/{id}/form-request-detail/`,
     patchDenialRequest : `${API_BASE_URL}assign/request_asignation/{id}/form-request-reject/`,
     postPdfRequest : `${API_BASE_URL}assign/form-requests/upload-pdf/`,
     getPdfRequest : `${API_BASE_URL}assign/request_asignation/{id}/form-request-pdf-url/`,

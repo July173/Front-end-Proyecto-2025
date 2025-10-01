@@ -44,3 +44,5 @@ data/
 # Overrides locales (no compartidos con el equipo)
 docker-compose.override.yml
 docker-compose.local.yml
+*.sql
+bdautogestion.sql

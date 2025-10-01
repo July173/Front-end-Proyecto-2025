@@ -11,7 +11,8 @@ export const getAllRequests = async (): Promise<any[]> => {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Error al obtener las solicitudes de asignación');
     }
-    return await response.json();
+    const result = await response.json();
+    return result.data || [];
   } catch (error) {
     console.error('Error en getAllRequests:', error);
     throw error;
@@ -67,6 +68,27 @@ export const postPdfRequest = async (file: File, requestId?: number): Promise<an
     return await response.json();
   } catch (error) {
     console.error('Error en postPdfRequest:', error);
+    throw error;
+  }
+};
+
+/**
+ * se solicita la informacion detallada del la solicitud registrada
+ */
+
+export const getFormRequestById = async (requestId: number): Promise<any> => {
+  try {
+    const url = ENDPOINTS.requestAsignation.getFormRequestById.replace('{id}', String(requestId));
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error obtener detalles de la solicitud');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error en getFormRequestById:', error);
     throw error;
   }
 };

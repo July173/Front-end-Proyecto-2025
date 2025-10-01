@@ -1,35 +1,11 @@
 
 
 import React, { useState } from "react";
-import AssignTableView, { AssignTableRow } from "@/components/AssignTableView";
+import AssignTableView from "../components/assing/AssignTableView";
+// import { AssignTableRow } from "../Api/types/Modules/assign.types";
 import CustomSelect from "@/components/CustomSelect";
 import BuscarInput from "@/components/BuscarInput";
 import DownloadReportButton from "../components/DownloadReportButton";
-
-
-const rows: AssignTableRow[] = [
-  {
-    id: 1,
-    nombre: "Daniela Polania Quintero",
-    tipoIdentificacion: "Tarjeta de identidad",
-    numeroIdentificacion: "1016457896",
-    fechaSolicitud: "10/05/2025",
-  },
-  {
-    id: 2,
-    nombre: "Juan Pérez",
-    tipoIdentificacion: "Cédula de ciudadanía",
-    numeroIdentificacion: "1234567890",
-    fechaSolicitud: "12/05/2025",
-  },
-  // ...más filas
-];
-
-const handleAssign = (row: AssignTableRow) => {
-  // Aquí puedes manejar la acción de asignar
-  alert(`Asignar a: ${row.nombre}`);
-};
-
 
 const programaOptions = [
   { value: "todos", label: "Todos los programas" },
@@ -47,11 +23,7 @@ const Assign: React.FC = () => {
   const [programa, setPrograma] = useState("todos");
   const [estado, setEstado] = useState("todos");
   const [busqueda, setBusqueda] = useState("");
-
-  // Filtrado simple por nombre
-  const filteredRows = rows.filter(row =>
-    row.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  // El componente hijo se encarga de obtener los datos y filtrarlos
 
   return (
     <div className="bg-white relative rounded-[10px] size-full p-6">
@@ -76,7 +48,8 @@ const Assign: React.FC = () => {
           onChange={setEstado}
         />
       </div>
-      <AssignTableView rows={filteredRows} onAction={handleAssign} actionLabel="Asignar" />
+  {/* se muestra la tabla de asignar */}
+  <AssignTableView onAction={row => alert(`Asignar a: ${row.nombre}`)} actionLabel="Asignar" />
     </div>
   );
 };
