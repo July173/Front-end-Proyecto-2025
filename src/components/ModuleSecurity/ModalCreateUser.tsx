@@ -68,12 +68,12 @@ const ModalCreateUser = ({ onClose, onSuccess }: { onClose?: () => void; onSucce
   const { documentTypes } = useDocumentTypes();
   const { contractTypes } = useContractTypes();
   const documentTypesOptions = documentTypes
-    .filter(opt => opt.value !== '')
-    .map(opt => ({ value: String(opt.value), label: String(opt.label) }));
+    .filter(opt => opt.id !== '')
+    .map(opt => ({ value: String(opt.id), label: String(opt.name) }));
 
   const contractTypesOptions = contractTypes
-    .filter(opt => opt.value !== '') // <-- filtra la opción vacía
-    .map(opt => ({ value: String(opt.value), label: String(opt.label) }));
+    .filter(opt => opt.id !== '')
+    .map(opt => ({ value: String(opt.id), label: String(opt.name) }));
 
   // Estado para selects dinámicos
   const [regionales, setRegionales] = useState<Regional[]>([]);
