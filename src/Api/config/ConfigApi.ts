@@ -172,7 +172,29 @@ export const ENDPOINTS = {
   },
   modalityProductiveStage :{
     getModalityProductiveStage : `${API_BASE_URL}assign/modality_productive_stage/`,
+  },
+  legalDocument :{
+    allLegalDocument : `${API_BASE_URL}general/legal-documents/`,
+    idLegalDocument : `${API_BASE_URL}general/legal-documents/{id}`,
+  },
+  legalSection :{
+    allLegalSection: `${API_BASE_URL}general/legal-sections/`,
+    idLegalSection : `${API_BASE_URL}general/legal-sections/{id}`,
+  },
+  SupportContact:{
+    allSupportContact : `${API_BASE_URL}general/support-contacts/`,
+    idSupportContact : `${API_BASE_URL}general/support-contacts/{id}`,
+  },
+  SupportSchedule:{
+    allSupportSchedule : `${API_BASE_URL}general/support-schedules/`,
+    idSupportSchedule : `${API_BASE_URL}general/support-schedules/{id}`,
+  },
+  TypeOfQueries :{
+    allTypeOfQueries : `${API_BASE_URL}general/type-of-queries/`,
+    idTypeOfQueries : `${API_BASE_URL}general/type-of-queries/{id}`,
+
   }
+  
 
 };
 
