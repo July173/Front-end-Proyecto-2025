@@ -55,8 +55,8 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
   const [error, setError] = useState('');
   const { documentTypes } = useDocumentTypes();
   const { contractTypes } = useContractTypes();
-  const documentTypesOptions = documentTypes.filter(opt => opt.value !== '').map(opt => ({ value: String(opt.value), label: String(opt.label) }));
-  const contractTypesOptions = contractTypes.filter(opt => opt.value !== '').map(opt => ({ value: String(opt.value), label: String(opt.label) }));
+  const documentTypesOptions = documentTypes.filter(opt => opt.id !== '').map(opt => ({ value: String(opt.id), label: String(opt.name) }));
+  const contractTypesOptions = contractTypes.filter(opt => opt.id !== '').map(opt => ({ value: String(opt.id), label: String(opt.name) }));
 
   // Estado para selects dinámicos
   const [regionales, setRegionales] = useState<Regional[]>([]);

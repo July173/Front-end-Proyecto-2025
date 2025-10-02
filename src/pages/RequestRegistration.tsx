@@ -4,7 +4,6 @@ import EmpresaSection from '../components/RequestForm/EmpresaSection';
 import JefeSection from '../components/RequestForm/JefeSection';
 import TalentoHumanoSection from '../components/RequestForm/TalentoHumanoSection';
 import PdfUploadSection from '../components/RequestForm/PdfUploadSection';
-import React, { useState } from "react";
 import { 
   JournalText,
   Person,
@@ -16,9 +15,8 @@ import {
 import { useAprendizData } from '../hook/useAprendizData';
 import { useRequestAssignation } from '../hook/useRequestAssignation';
 import { useFormValidations } from '../hook/useFormValidations';
-import { useEffect } from 'react';
-import { getDocumentTypes } from '../Api/Services/TypeDocument';
-import type { DocumentType } from '../Api/types/entities/document.type';
+import { useEffect, useState } from "react";
+import { getDocumentTypesWithEmpty } from '../Api/Services/TypeDocument';
 import { requestAsignation } from '../Api/types/Modules/assign.types';
 import NotificationModal from '../components/NotificationModal';
 import ConfirmModal from '../components/ConfirmModal';
@@ -123,17 +121,16 @@ export default function RequestRegistration() {
     document.getElementById('pdf-upload').click();
   };
 
-  // Estado para los tipos de documento
-  const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
-
+  // Estado para los tipos de documento dinámicos
+  const [documentTypes, setDocumentTypes] = useState<{ id: number | ""; name: string }[]>([]);
   useEffect(() => {
-    getDocumentTypes().then(setDocumentTypes);
+    getDocumentTypesWithEmpty().then(setDocumentTypes);
   }, []);
 
-  // Función para obtener el nombre del tipo de documento usando el id
-  const getDocumentTypeName = (typeId: number | string) => {
-    const docType = documentTypes.find(type => String(type.id) === String(typeId));
-    return docType ? docType.name : 'No especificado';
+  // Función para obtener el nombre del tipo de documento usando los datos dinámicos
+  const getDocumentTypeName = (typeValue: string | number) => {
+    const documentType = documentTypes.find(type => String(type.id) === String(typeValue));
+    return documentType ? documentType.name : 'No especificado';
   };
 
   // Validación en tiempo real para teléfono
@@ -478,6 +475,7 @@ export default function RequestRegistration() {
               handleStartDateChange={handleStartDateChange}
               handleEndDateChange={handleEndDateChange}
               getDocumentTypeName={getDocumentTypeName}
+              documentTypes={documentTypes}
             />
 
             {/* Datos de la Empresa */}

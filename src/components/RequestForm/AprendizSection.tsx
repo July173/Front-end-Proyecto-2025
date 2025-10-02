@@ -17,7 +17,8 @@ interface AprendizSectionProps {
   maxEndDate: string;
   handleStartDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleEndDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  getDocumentTypeName: (typeValue: string) => string;
+  getDocumentTypeName: (typeValue: string | number) => string;
+  documentTypes: { id: number | ""; name: string }[];
 }
 
 const AprendizSection: React.FC<AprendizSectionProps> = ({
@@ -35,7 +36,8 @@ const AprendizSection: React.FC<AprendizSectionProps> = ({
   maxEndDate,
   handleStartDateChange,
   handleEndDateChange,
-  getDocumentTypeName
+  getDocumentTypeName,
+  documentTypes
 }) => (
   <div className="mb-6 bg-white rounded-lg shadow-sm border-2" style={{ borderColor: '#7BCC7C' }}>
     <div className="flex items-center gap-3 px-6 py-4 rounded-t-lg border-b" style={{ backgroundColor: '#E7FFE8', borderBottomColor: '#7BCC7C' }}>
