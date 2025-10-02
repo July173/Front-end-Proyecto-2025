@@ -1,16 +1,14 @@
-// Tipos de documento sincronizados con el enum DocumentType del backend
-// Los valores deben coincidir exactamente con: apps/security/entity/enums/document_type_enum.py
-export const typesDocument = [
-  { value: "", label: "Tipo de documento" },
-  { value: "CC", label: "Cédula de Ciudadanía" },
-  { value: "TI", label: "Tarjeta de Identidad" },
-  { value: "CE", label: "Cédula de Extranjería" },
-  { value: "PASSPORT", label: "Pasaporte" },
-  { value: "NUMERO_CIEGO_SENA", label: "Número ciego - SENA" },
-  { value: "DNI", label: "Documento Nacional de Identificación" },
-  { value: "NIT", label: "Número de Identificación Tributaria" },
-  { value: "PERMISO_TEMPORAL", label: "Permiso por Protección Temporal" },
-];
+// Los tipos de documento deben obtenerse dinámicamente desde el backend usando el servicio getDocumentTypesWithEmpty.
+// Ejemplo de uso en un select:
+// import { getDocumentTypesWithEmpty } from '../Api/Services/TypeDocument';
+// const [documentTypes, setDocumentTypes] = useState([]);
+// useEffect(() => { getDocumentTypesWithEmpty().then(setDocumentTypes); }, []);
+//
+// <select value={selectedId} onChange={e => setSelectedId(Number(e.target.value))}>
+//   {documentTypes.map(dt => (
+//     <option key={dt.id} value={dt.id}>{dt.name}</option>
+//   ))}
+// </select>
 
 // Tipos de contrato sincronizados con el enum ContractType del backend
 // Los valores deben coincidir exactamente con: apps/security/entity/enums/contract_type_enum.py

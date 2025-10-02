@@ -46,6 +46,16 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://django:8000/ap
  * Las rutas pueden contener parámetros entre llaves (ej: {id}) que deben ser reemplazados dinámicamente.
  */
 export const ENDPOINTS = {
+  // Endpoints para tipo de contrato
+  contractType: {
+    list: `${API_BASE_URL}general/type-contracts/`,
+    create: `${API_BASE_URL}general/type-contracts/`,
+    read: `${API_BASE_URL}general/type-contracts/{id}/`,
+    update: `${API_BASE_URL}general/type-contracts/{id}/`,
+    partialUpdate: `${API_BASE_URL}general/type-contracts/{id}/`,
+    delete: `${API_BASE_URL}general/type-contracts/{id}/`,
+    softDelete: `${API_BASE_URL}general/type-contracts/{id}/soft-delete/`,
+  },
   /** Endpoints para gestión de personas (aprendiz, etc) */
   person: {
     registerAprendiz: `${API_BASE_URL}security/persons/register-aprendiz/`,
@@ -138,15 +148,10 @@ export const ENDPOINTS = {
   permission: {
     getPermissions: `${API_BASE_URL}security/permissions/`,
   },
-  // Enums del sistema
-  enums: {
-    getDocumentTypes: `${API_BASE_URL}security/enums/document-types/`,
-    getContractTypes : `${API_BASE_URL}security/enums/contract-types/`,
-  },
-
+  
   // Endpoints para tipo de documento
   documentType: {
-    list: `${API_BASE_URL}general/type-documents/`,
+    list: `${API_BASE_URL}security/document-types/`,
     create: `${API_BASE_URL}general/type-documents/`,
     read: `${API_BASE_URL}general/type-documents/{id}/`,
     update: `${API_BASE_URL}general/type-documents/{id}/`,
