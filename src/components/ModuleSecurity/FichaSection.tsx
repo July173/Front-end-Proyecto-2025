@@ -29,6 +29,7 @@ const FichaSection = () => {
   const [showEditFichaConfirm, setShowEditFichaConfirm] = useState(false);
   const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   const [pendingDisable, setPendingDisable] = useState(null);
+  const [open, setOpen] = useState(true);
 
   // Card
   const InfoCard = ({ title, subtitle, isActive, onEdit, onToggle }: any) => (
@@ -111,111 +112,130 @@ const FichaSection = () => {
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (
-    <div className="mb-8">
-      <div className="flex items-center gap-4 mb-6 justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Fichas</h3>
-        <button onClick={handleAddFicha} className="flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg">
-          <Plus className="w-4 h-4" /> Agregar Ficha
-        </button>
-      </div>
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fichas.slice((fichasPage - 1) * cardsPerPage, fichasPage * cardsPerPage).map((ficha) => {
-          const programObj = programs.find((p: any) => p.id === ficha.program);
-          const programName = programObj ? programObj.name : ficha.program;
-          return (
-            <InfoCard
-              key={ficha.id}
-              title={`Ficha #${ficha.file_number || ficha.id}`}
-              subtitle={`Programa: ${programName}`}
-              isActive={ficha.active}
-              onEdit={() => handleEdit(ficha)}
-              onToggle={() => handleToggle(ficha)}
+    <div className="mb-8 border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="w-full px-6 py-4 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-semibold text-gray-900">Fichas</h3>
+          <span className="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full">
+            {fichas.length} registros
+          </span>
+        </div>
+        {open ? (
+          <ChevronUp className="w-5 h-5 text-gray-500" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-gray-500" />
+        )}
+      </button>
+      {open && (
+        <>
+          <div className="flex items-center gap-4 mb-6 justify-between px-6 pt-6">
+            <button onClick={handleAddFicha} className="flex items-center gap-2 text-white px-4 py-2 rounded font-semibold shadow transition-all duration-300 bg-[linear-gradient(to_bottom_right,_#43A047,_#2E7D32)] hover:bg-green-700 hover:shadow-lg">
+              <Plus className="w-4 h-4" /> Agregar Ficha
+            </button>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {fichas.slice((fichasPage - 1) * cardsPerPage, fichasPage * cardsPerPage).map((ficha) => {
+              const programObj = programs.find((p: any) => p.id === ficha.program);
+              const programName = programObj ? programObj.name : ficha.program;
+              return (
+                <InfoCard
+                  key={ficha.id}
+                  title={`Ficha #${ficha.file_number || ficha.id}`}
+                  subtitle={`Programa: ${programName}`}
+                  isActive={ficha.active}
+                  onEdit={() => handleEdit(ficha)}
+                  onToggle={() => handleToggle(ficha)}
+                />
+              );
+            })}
+            <ModalFormGeneric
+              isOpen={showEditFicha}
+              title="Editar Ficha"
+              fields={[
+                { label: "Número de Ficha", name: "file_number", type: "number", placeholder: "Ingrese el número de ficha", required: true },
+                {
+                  label: "Programa",
+                  name: "programa",
+                  type: "select",
+                  options: programs.map((p: any) => ({ value: p.id, label: p.name })),
+                  required: true,
+                  customSelect: true,
+                },
+              ]}
+              onClose={() => { setShowEditFicha(false); setEditFicha(null); setPendingEditFicha(null); }}
+              onSubmit={handleSubmitEditFicha}
+              submitText="Actualizar Ficha"
+              cancelText="Cancelar"
+              initialValues={editFicha || {}}
+              customRender={undefined}
+              onProgramChange={undefined}
             />
-          );
-        })}
-      <ModalFormGeneric
-        isOpen={showEditFicha}
-        title="Editar Ficha"
-        fields={[
-          { label: "Número de Ficha", name: "file_number", type: "number", placeholder: "Ingrese el número de ficha", required: true },
-          {
-            label: "Programa",
-            name: "programa",
-            type: "select",
-            options: programs.map((p: any) => ({ value: p.id, label: p.name })),
-            required: true,
-            customSelect: true,
-          },
-        ]}
-        onClose={() => { setShowEditFicha(false); setEditFicha(null); setPendingEditFicha(null); }}
-        onSubmit={handleSubmitEditFicha}
-        submitText="Actualizar Ficha"
-        cancelText="Cancelar"
-        initialValues={editFicha || {}}
-        customRender={undefined}
-        onProgramChange={undefined}
-      />
-      <ConfirmModal
-        isOpen={showEditFichaConfirm}
-        title="¿Confirmar actualización de ficha?"
-        message="¿Estás seguro de que deseas actualizar esta ficha?"
-        confirmText="Sí, actualizar ficha"
-        cancelText="Cancelar"
-        onConfirm={handleConfirmEditFicha}
-        onCancel={() => { setShowEditFichaConfirm(false); setPendingEditFicha(null); }}
-      />
-      <ConfirmModal
-        isOpen={showDisableConfirm}
-        title="¿Confirmar acción?"
-        message="¿Estás seguro de que deseas deshabilitar esta ficha?"
-        confirmText="Sí, continuar"
-        cancelText="Cancelar"
-        onConfirm={handleConfirmDisable}
-        onCancel={() => { setShowDisableConfirm(false); setPendingDisable(null); }}
-      />
-      </div>
-      {Math.ceil(fichas.length / cardsPerPage) > 1 && (
-        <Paginator
-          page={fichasPage}
-          totalPages={Math.ceil(fichas.length / cardsPerPage)}
-          onPageChange={setFichasPage}
-          className="mt-4"
-        />
-      )}
+            <ConfirmModal
+              isOpen={showEditFichaConfirm}
+              title="¿Confirmar actualización de ficha?"
+              message="¿Estás seguro de que deseas actualizar esta ficha?"
+              confirmText="Sí, actualizar ficha"
+              cancelText="Cancelar"
+              onConfirm={handleConfirmEditFicha}
+              onCancel={() => { setShowEditFichaConfirm(false); setPendingEditFicha(null); }}
+            />
+            <ConfirmModal
+              isOpen={showDisableConfirm}
+              title="¿Confirmar acción?"
+              message="¿Estás seguro de que deseas deshabilitar esta ficha?"
+              confirmText="Sí, continuar"
+              cancelText="Cancelar"
+              onConfirm={handleConfirmDisable}
+              onCancel={() => { setShowDisableConfirm(false); setPendingDisable(null); }}
+            />
+          </div>
+          {Math.ceil(fichas.length / cardsPerPage) > 1 && (
+            <Paginator
+              page={fichasPage}
+              totalPages={Math.ceil(fichas.length / cardsPerPage)}
+              onPageChange={setFichasPage}
+              className="mt-4 px-6"
+            />
+          )}
 
-      <ModalFormGeneric
-        isOpen={showFichaModal}
-        title="Agregar Ficha"
-        fields={[
-          { label: "Número de Ficha", name: "file_number", type: "number", placeholder: "Ingrese el número de ficha", required: true },
-          {
-            label: "Programa",
-            name: "programa",
-            type: "select",
-            options: programs.filter((p: any) => p.active).map((p: any) => ({ value: p.id, label: p.name })),
-            required: true,
-            customSelect: true,
-          },
-        ]}
-        onClose={() => setShowFichaModal(false)}
-        onSubmit={handleSubmitFicha}
-        submitText="Registrar Ficha"
-        cancelText="Cancelar"
-        customRender={undefined}
-        onProgramChange={undefined}
-      />
-      <ConfirmModal
-        isOpen={showFichaConfirm}
-        title="¿Confirmar registro de ficha?"
-        message="¿Estás seguro de que deseas crear esta ficha?"
-        confirmText="Sí, crear ficha"
-        cancelText="Cancelar"
-        onConfirm={handleConfirmFicha}
-        onCancel={() => {
-          setShowFichaConfirm(false);
-          setPendingFichaData(null);
-        }}
-      />
+          <ModalFormGeneric
+            isOpen={showFichaModal}
+            title="Agregar Ficha"
+            fields={[
+              { label: "Número de Ficha", name: "file_number", type: "number", placeholder: "Ingrese el número de ficha", required: true },
+              {
+                label: "Programa",
+                name: "programa",
+                type: "select",
+                options: programs.filter((p: any) => p.active).map((p: any) => ({ value: p.id, label: p.name })),
+                required: true,
+                customSelect: true,
+              },
+            ]}
+            onClose={() => setShowFichaModal(false)}
+            onSubmit={handleSubmitFicha}
+            submitText="Registrar Ficha"
+            cancelText="Cancelar"
+            customRender={undefined}
+            onProgramChange={undefined}
+          />
+          <ConfirmModal
+            isOpen={showFichaConfirm}
+            title="¿Confirmar registro de ficha?"
+            message="¿Estás seguro de que deseas crear esta ficha?"
+            confirmText="Sí, crear ficha"
+            cancelText="Cancelar"
+            onConfirm={handleConfirmFicha}
+            onCancel={() => {
+              setShowFichaConfirm(false);
+              setPendingFichaData(null);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };
