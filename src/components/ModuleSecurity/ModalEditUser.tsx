@@ -237,7 +237,7 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
               <div>
                 <label className="block text-sm">Tipo de documento <span className="text-red-600">*</span></label>
                 <CustomSelect
-                  value={aprendiz.type_identification}
+                  value={aprendiz.type_identification ? String(aprendiz.type_identification) : ""}
                   onChange={value => setAprendiz(prev => prev ? { ...prev, type_identification: value } : prev)}
                   options={documentTypesOptions}
                   placeholder="Seleccionar ..."
@@ -312,7 +312,7 @@ const ModalEditUser = ({ userId, userRole, onClose, onSuccess }) => {
               <div>
                 <label className="block text-sm">Tipo de documento <span className="text-red-600">*</span></label>
                 <CustomSelect
-                  value={instructor.type_identification}
+                  value={instructor.type_identification ? String(instructor.type_identification) : ""}
                   onChange={value => setInstructor(prev => prev ? { ...prev, type_identification: value } : prev)}
                   options={documentTypesOptions}
                   placeholder="Seleccionar ..."

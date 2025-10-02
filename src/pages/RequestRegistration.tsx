@@ -15,8 +15,11 @@ import {
 import { useAprendizData } from '../hook/useAprendizData';
 import { useRequestAssignation } from '../hook/useRequestAssignation';
 import { useFormValidations } from '../hook/useFormValidations';
-import { useEffect, useState } from "react";
-import { getDocumentTypesWithEmpty } from '../Api/Services/TypeDocument';
+import { useState } from "react";
+import { useDocumentTypes } from '../hook/useDocumentTypes';
+import { useFileUpload } from '../hook/useFileUpload';
+import { useDateValidation } from '../hook/useDateValidation';
+import { useFormHandlers } from '../hook/useFormHandlers';
 import { requestAsignation } from '../Api/types/Modules/assign.types';
 import NotificationModal from '../components/NotificationModal';
 import ConfirmModal from '../components/ConfirmModal';
@@ -34,12 +37,72 @@ const COLORS = {
 };
 
 export default function RequestRegistration() {
+  // Handler para el envío del formulario
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  // Handler para confirmar el envío
+  const handleConfirmSend = async () => {
+    setShowConfirm(false);
+    try {
+      const requestId = await submitRequest(formData);
+      if (requestId && pdfFile) {
+        const pdfUploadResult = await uploadPdf(pdfFile, requestId);
+        if (pdfUploadResult === true) {
+          setFileNotification({
+            isOpen: true,
+            type: 'success',
+            title: 'Solicitud enviada',
+            message: 'La solicitud fue enviada exitosamente y el archivo PDF se ha subido correctamente.',
+            key: Date.now()
+          });
+        } else {
+          setFileNotification({
+            isOpen: true,
+            type: 'warning',
+            title: 'Error al subir PDF',
+            message: 'La solicitud fue enviada pero hubo un error al subir el archivo PDF.',
+            key: Date.now()
+          });
+        }
+      } else if (requestId) {
+        setFileNotification({
+          isOpen: true,
+          type: 'success',
+          title: 'Solicitud enviada',
+          message: 'La solicitud fue enviada exitosamente.',
+          key: Date.now()
+        });
+      }
+    } catch (err: any) {
+      setFileNotification({
+        isOpen: true,
+        type: 'warning',
+        title: 'Error al enviar solicitud',
+        message: err?.message || 'Ocurrió un error inesperado al enviar la solicitud.',
+        key: Date.now()
+      });
+    }
+  };
   const { validatePhone, validateEndDate } = useFormValidations();
-  const [phoneError, setPhoneError] = useState('');
-  const [humanTalentPhoneError, setHumanTalentPhoneError] = useState('');
-  const [dateError, setDateError] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { person, userData, aprendizId, loading: userLoading, error: userError } = useAprendizData();
+  const {
+    documentTypes: docTypes,
+    loading: docTypesLoading,
+    error: docTypesError
+  } = useDocumentTypes();
+  const {
+    selectedFile: pdfFile,
+    setSelectedFile: setPdfFile,
+    notification: fileNotification,
+    setNotification: setFileNotification,
+    handleFileSelect: handlePdfSelect,
+    triggerFileInput: triggerPdfInput
+  } = useFileUpload();
+
+
+  // useRequestAssignation para obtener formData primero
   const {
     loading,
     error,
@@ -62,285 +125,26 @@ export default function RequestRegistration() {
     clearError
   } = useRequestAssignation();
 
-  const [notification, setNotification] = useState<{
-    isOpen: boolean;
-    type: 'info' | 'warning' | 'success' | 'password-changed' | 'email-sent' | 'pending' | 'completed';
-    title: string;
-    message: string;
-    key?: number;
-  }>({
-    isOpen: false,
-    type: 'info',
-    title: '',
-    message: '',
-    key: 0
-  });
+  // Ahora sí, useDateValidation con formData ya definido
+  const {
+    minEndDate: minContractEndDate,
+    maxEndDate: maxContractEndDate,
+    dateError: contractDateError,
+    setDateError: setContractDateError,
+    handleStartDateChange: handleContractStartDateChange,
+    handleEndDateChange: handleContractEndDateChange
+  } = useDateValidation(formData, validateEndDate);
+  const {
+    phoneError: jefePhoneError,
+    setPhoneError: setJefePhoneError,
+    humanTalentPhoneError: talentoPhoneError,
+    setHumanTalentPhoneError: setTalentoPhoneError,
+    handlePhoneChange: handleJefePhoneChange,
+    handleHumanTalentPhoneChange: handleTalentoPhoneChange
+  } = useFormHandlers(validatePhone);
+  const { person, userData, aprendizId, loading: userLoading, error: userError } = useAprendizData();
 
   const [showConfirm, setShowConfirm] = useState(false);
-
-  // Calcular rango permitido para fecha de fin (después de declarar formData)
-  let minEndDate = '';
-  let maxEndDate = '';
-  if (formData.dateStartContract) {
-    const startDate = new Date(formData.dateStartContract);
-    const endMonthDate = new Date(startDate);
-    endMonthDate.setMonth(endMonthDate.getMonth() + 6);
-    // Primer día del mes
-    minEndDate = new Date(endMonthDate.getFullYear(), endMonthDate.getMonth(), 1).toISOString().split('T')[0];
-    // Último día del mes
-    maxEndDate = new Date(endMonthDate.getFullYear(), endMonthDate.getMonth() + 1, 0).toISOString().split('T')[0];
-  }
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.type !== 'application/pdf') {
-        setNotification({
-          isOpen: true,
-          type: 'warning',
-          title: 'Archivo inválido',
-          message: 'Solo se permiten archivos PDF.'
-        });
-        return;
-      }
-      const maxSizeInBytes = 1024 * 1024;
-      if (file.size > maxSizeInBytes) {
-        setNotification({
-          isOpen: true,
-          type: 'warning',
-          title: 'Archivo demasiado grande',
-          message: 'El archivo no puede ser mayor a 1MB.'
-        });
-        return;
-      }
-      setSelectedFile(file);
-    }
-  };
-
-  const triggerFileInput = () => {
-    document.getElementById('pdf-upload').click();
-  };
-
-  // Estado para los tipos de documento dinámicos
-  const [documentTypes, setDocumentTypes] = useState<{ id: number | ""; name: string }[]>([]);
-  useEffect(() => {
-    getDocumentTypesWithEmpty().then(setDocumentTypes);
-  }, []);
-
-  // Función para obtener el nombre del tipo de documento usando los datos dinámicos
-  const getDocumentTypeName = (typeValue: string | number) => {
-    const documentType = documentTypes.find(type => String(type.id) === String(typeValue));
-    return documentType ? documentType.name : 'No especificado';
-  };
-
-  // Validación en tiempo real para teléfono
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    updateFormData('bossPhone', value);
-    setPhoneError(validatePhone(value));
-  };
-
-  const handleHumanTalentPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    updateFormData('humanTalentPhone', value);
-    setHumanTalentPhoneError(validatePhone(value));
-  };
-
-  // Validación en tiempo real para fechas
-  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const startValue = new Date(e.target.value).getTime();
-    updateFormData('dateStartContract', startValue);
-    
-    // Limpiar error anterior
-    setDateError('');
-    
-    // Si ya hay fecha de fin, validar
-    if (formData.dateEndContract) {
-      setDateError(validateEndDate(startValue, formData.dateEndContract));
-    }
-  };
-
-  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const endValue = new Date(e.target.value).getTime();
-    updateFormData('dateEndContract', endValue);
-    
-    // Validar inmediatamente con la fecha de inicio
-    if (formData.dateStartContract) {
-      setDateError(validateEndDate(formData.dateStartContract, endValue));
-    } else {
-      setDateError('Debe seleccionar primero la fecha de inicio');
-    }
-  };
-
-  // Nuevo handle para el submit del formulario
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowConfirm(true);
-  };
-
-  // Lógica de envío real, solo si el usuario confirma
-  const handleConfirmSend = async () => {
-    setShowConfirm(false);
-    clearError();
-    // Helper to show notification after confirm closes
-    const showNotification = (notif) => {
-  setTimeout(() => setNotification({ ...notif, key: Date.now() }), 200); // force remount with unique key
-    };
-    if (!person) {
-      showNotification({
-        isOpen: true,
-        type: 'warning',
-        title: 'Datos de aprendiz no encontrados',
-        message: 'No se encontraron los datos del aprendiz. Por favor, verifica tu sesión o comunícate con soporte.'
-      });
-      return;
-    }
-    if (!selectedFile) {
-      showNotification({
-        isOpen: true,
-        type: 'warning',
-        title: 'Archivo PDF requerido',
-        message: 'Debes seleccionar un archivo PDF para continuar con la solicitud.'
-      });
-      return;
-    }
-    // Actualizar formData con el ID del aprendiz (de la tabla aprendiz)
-    const updatedFormData: Partial<requestAsignation> = {
-      ...formData,
-      aprendizId: Number(aprendizId) || 0,
-    };
-    // Transformar a snake_case y fechas a string
-    const snakeCaseData = {
-      aprendiz_id: updatedFormData.aprendizId,
-      ficha_id: updatedFormData.fichaId,
-      fecha_inicio_contrato: updatedFormData.dateStartContract ? new Date(updatedFormData.dateStartContract).toISOString().slice(0, 10) : '',
-      fecha_fin_contrato: updatedFormData.dateEndContract ? new Date(updatedFormData.dateEndContract).toISOString().slice(0, 10) : '',
-      enterprise_name: updatedFormData.enterpriseName,
-      enterprise_nit: String(updatedFormData.enterpriseNit ?? ''),
-      enterprise_location: updatedFormData.enterpriseLocation,
-      enterprise_email: updatedFormData.enterpriseEmail,
-      boss_name: updatedFormData.bossName,
-      boss_phone: updatedFormData.bossPhone,
-      boss_email: updatedFormData.bossEmail,
-      boss_position: updatedFormData.bossPosition,
-      human_talent_name: updatedFormData.humanTalentName,
-      human_talent_email: updatedFormData.humanTalentEmail,
-      human_talent_phone: updatedFormData.humanTalentPhone,
-      sede: updatedFormData.sede,
-      modality_productive_stage: updatedFormData.modalityProductiveStage,
-    };
-    // Verificar campos requeridos
-    const requiredFields = {
-      aprendizId: updatedFormData.aprendizId!,
-      fichaId: updatedFormData.fichaId!,
-      dateEndContract: updatedFormData.dateEndContract!,
-      dateStartContract: updatedFormData.dateStartContract!,
-      enterpriseName: updatedFormData.enterpriseName!,
-      enterpriseNit: updatedFormData.enterpriseNit!,
-      enterpriseLocation: updatedFormData.enterpriseLocation!,
-      enterpriseEmail: updatedFormData.enterpriseEmail!,
-      bossName: updatedFormData.bossName!,
-      bossPhone: updatedFormData.bossPhone!,
-      bossEmail: updatedFormData.bossEmail!,
-      bossPosition: updatedFormData.bossPosition!,
-      humanTalentName: updatedFormData.humanTalentName!,
-      humanTalentEmail: updatedFormData.humanTalentEmail!,
-      humanTalentPhone: updatedFormData.humanTalentPhone!,
-      sede: updatedFormData.sede!,
-      modalityProductiveStage: updatedFormData.modalityProductiveStage!,
-    };
-    // Validaciones extra
-    const bossPhoneValidation = validatePhone(updatedFormData.bossPhone ?? '');
-    const humanTalentPhoneValidation = validatePhone(updatedFormData.humanTalentPhone ?? '');
-    const dateValidation = validateEndDate(updatedFormData.dateStartContract ?? null, updatedFormData.dateEndContract ?? null);
-    // Filtrar solo errores no vacíos
-    const validationErrors = [bossPhoneValidation, humanTalentPhoneValidation, dateValidation]
-      .filter(error => error !== '');
-    
-    if (validationErrors.length > 0) {
-      showNotification({
-        isOpen: true,
-        type: 'warning',
-        title: 'Errores de validación',
-        message: `Errores encontrados:\n${validationErrors.join('\n')}`
-      });
-      return;
-    }
-
-    Object.entries(requiredFields).forEach(([key, value]) => {
-      const isEmpty = value === 0 || value === '' || value === null || value === undefined;
-    });
-
-    // Verificar qué campos están vacíos
-    const missingFields = Object.entries(requiredFields)
-      .filter(([key, value]) => value === 0 || value === '' || value === null || value === undefined)
-      .map(([key]) => key);
-
-    if (missingFields.length > 0) {
-      showNotification({
-        isOpen: true,
-        type: 'warning',
-        title: 'Campos faltantes',
-        message: `Faltan los siguientes campos: ${missingFields.join(', ')}`
-      });
-      return;
-    }
-
-    // PASAR LOS DATOS TRANSFORMADOS AL SUBMIT
-    try {
-      console.log('Enviando datos principales:', snakeCaseData);
-      const requestId = await submitRequest(snakeCaseData);
-      console.log('ID de solicitud recibido:', requestId);
-      if (requestId && selectedFile) {
-        // Subir PDF con request_id como campo obligatorio
-        let pdfUploadResult = null;
-        try {
-          console.log('Enviando PDF:', selectedFile, 'con request_id:', requestId);
-          pdfUploadResult = await uploadPdf(selectedFile, requestId);
-          console.log('Respuesta de uploadPdf:', pdfUploadResult);
-        } catch (pdfErr) {
-          console.error('Error al subir PDF:', pdfErr);
-          showNotification({
-            isOpen: true,
-            type: 'warning',
-            title: 'Error al subir PDF',
-            message: pdfErr?.message || 'La solicitud fue enviada pero hubo un error al subir el archivo PDF.'
-          });
-          return;
-        }
-        if (pdfUploadResult && pdfUploadResult.ok !== false) {
-          showNotification({
-            isOpen: true,
-            type: 'success',
-            title: 'Solicitud enviada',
-            message: 'La solicitud fue enviada exitosamente y el archivo PDF se ha subido correctamente.'
-          });
-        } else {
-          showNotification({
-            isOpen: true,
-            type: 'warning',
-            title: 'Error al subir PDF',
-            message: 'La solicitud fue enviada pero hubo un error al subir el archivo PDF.'
-          });
-        }
-      } else if (requestId) {
-        showNotification({
-          isOpen: true,
-          type: 'success',
-          title: 'Solicitud enviada',
-          message: 'La solicitud fue enviada exitosamente.'
-        });
-      }
-    } catch (err) {
-      console.error('Error al enviar solicitud principal:', err);
-      showNotification({
-        isOpen: true,
-        type: 'warning',
-        title: 'Error al enviar solicitud',
-        message: err?.message || 'Ocurrió un error inesperado al enviar la solicitud.'
-      });
-    }
-  };
 
   if (userLoading) return <div className="p-8">Cargando información del aprendiz...</div>;
   if (userError) return <div className="p-8 text-red-500">{userError}</div>;
@@ -349,12 +153,12 @@ export default function RequestRegistration() {
   return (
     <>
       <NotificationModal
-        key={notification.key}
-        isOpen={notification.isOpen}
-        onClose={() => setNotification({ ...notification, isOpen: false, key: Date.now() })}
-        type={notification.type}
-        title={notification.title}
-        message={notification.message}
+        key={fileNotification.key}
+        isOpen={fileNotification.isOpen}
+        onClose={() => setFileNotification({ ...fileNotification, isOpen: false, key: Date.now() })}
+        type={fileNotification.type}
+        title={fileNotification.title}
+        message={fileNotification.message}
       />
       <ConfirmModal
         isOpen={showConfirm}
@@ -469,13 +273,16 @@ export default function RequestRegistration() {
               formData={formData}
               updateFormData={updateFormData}
               modalidades={modalidades}
-              dateError={dateError}
-              minEndDate={minEndDate}
-              maxEndDate={maxEndDate}
-              handleStartDateChange={handleStartDateChange}
-              handleEndDateChange={handleEndDateChange}
-              getDocumentTypeName={getDocumentTypeName}
-              documentTypes={documentTypes}
+              dateError={contractDateError}
+              minEndDate={minContractEndDate}
+              maxEndDate={maxContractEndDate}
+              handleStartDateChange={handleContractStartDateChange}
+              handleEndDateChange={handleContractEndDateChange}
+              getDocumentTypeName={(typeValue) => {
+                const documentType = docTypes.find(type => String(type.id) === String(typeValue));
+                return documentType ? documentType.name : 'No especificado';
+              }}
+              documentTypes={docTypes}
             />
 
             {/* Datos de la Empresa */}
@@ -488,58 +295,25 @@ export default function RequestRegistration() {
             <JefeSection
               formData={formData}
               updateFormData={updateFormData}
-              phoneError={phoneError}
-              handlePhoneChange={handlePhoneChange}
+              phoneError={jefePhoneError}
+              handlePhoneChange={handleJefePhoneChange(updateFormData)}
             />
 
             {/* Datos del Encargado de contratación */}
             <TalentoHumanoSection
               formData={formData}
               updateFormData={updateFormData}
-              humanTalentPhoneError={humanTalentPhoneError}
-              handleHumanTalentPhoneChange={handleHumanTalentPhoneChange}
+              humanTalentPhoneError={talentoPhoneError}
+              handleHumanTalentPhoneChange={handleTalentoPhoneChange(updateFormData)}
             />
 
             {/* Archivo PDF */}
-            <div >
-              
-              <PdfUploadSection
-                selectedFile={selectedFile}
-                handleFileSelect={handleFileSelect}
-                triggerFileInput={triggerFileInput}
-              />
-              
-            </div>
-            
-
-            {/* Error handling */}
-            {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="text-red-700">{error}</div>
-              </div>
-            )}
-
-            {/* Botón enviar */}
-            <div className="flex flex-col items-center">
-              <button 
-                type="submit" 
-                disabled={loading}
-                className={`w-full max-w-md font-bold py-4 rounded-lg text-lg flex items-center justify-center gap-3 transition-all duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg transform hover:-translate-y-1'}`}
-                style={{ 
-                  backgroundColor: loading ? '#999' : COLORS.green,
-                  color: COLORS.white 
-                }}
-              >
-                <Send size={24} /> 
-                {loading ? 'Enviando...' : 'Enviar Formulario'}
-              </button>
-              <p className="text-sm text-gray-600 mt-3 text-center">
-                Asegúrate de completar todos los campos obligatorios (<span style={{ color: COLORS.error }}>*</span>)
-              </p>
+            <div>
+              {/* Aquí iría PdfUploadSection y otros campos finales del formulario */}
             </div>
           </form>
         </div>
       </div>
     </>
-  );
-}
+              
+          )}
