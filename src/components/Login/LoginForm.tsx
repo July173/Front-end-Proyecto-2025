@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useValidationEmail } from '../../hook/ValidationEmail';
 import { Mail, Lock, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // ✅ AGREGAR ESTO
+import { getDocumentTypesWithEmpty } from '../../Api/Services/TypeDocument';
+import { useNavigate } from 'react-router-dom';
 import FooterLinks from './FooterLinks';
 import { validateInstitutionalLogin } from '../../Api/Services/User';
 import { isSenaEmail, isValidPassword } from '../../hook/validationlogin';
@@ -32,10 +33,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const navigate = useNavigate(); // ✅ AGREGAR ESTO
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [documentType, setDocumentType] = useState('');
+  const [documentTypes, setDocumentTypes] = useState<{ id: number | ""; name: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  useEffect(() => {
+    getDocumentTypesWithEmpty().then(setDocumentTypes);
+  }, []);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -52,16 +59,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (emailError || passwordError) return;
+    if (emailError || passwordError ) return;
     setLoading(true);
-    
     try {
+      // Aquí debes enviar documentType (id) junto con email y password al backend
       const result = await validateInstitutionalLogin(email, password);
-
-      // Adaptar a ambos formatos de backend
+      // ...resto igual
       let userData;
       if (result.user) {
-        // Formato esperado (user anidado)
         userData = {
           id: result.user.id,
           email: result.user.email,
@@ -71,24 +76,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onNavigate }) => {
           refresh_token: result.refresh
         };
       } else {
-        // Formato plano (user_id, email, person)
         userData = {
           id: result.user_id,
           email: result.email,
-          role: result.role, // si existe
+          role: result.role,
           person: result.person ? String(result.person) : undefined,
           access_token: result.access,
           refresh_token: result.refresh
         };
       }
-
-      // Guardar en localStorage para persistir la sesión
       localStorage.setItem('user_data', JSON.stringify(userData));
       localStorage.setItem('access_token', result.access);
       localStorage.setItem('refresh_token', result.refresh);
-
       navigate('/home');
-      
     } catch (err: unknown) {
       setError((err as Error).message || 'Error al iniciar sesión');
     } finally {

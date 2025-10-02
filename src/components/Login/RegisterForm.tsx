@@ -116,18 +116,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
       const second_name = restNames.join(' ');
       const [first_last_name, ...restSurnames] = capitalizeWords(formData.surnames.trim()).split(' ');
       const second_last_name = restSurnames.join(' ');
-      const payload: RegisterPayload = {
-        email: formData.email,
-        first_name,
-        second_name,
-        first_last_name,
-        second_last_name,
-        type_identification: formData.documentType,
-        number_identification: formData.documentNumber,
-        phone_number: formData.phone,
-        password: formData.documentNumber, // Por ahora, usar número de documento como password
-        image: formData.image || undefined,
-      };
+          const payload: RegisterPayload = {
+            email: formData.email,
+            first_name,
+            second_name,
+            first_last_name,
+            second_last_name,
+            type_identification: Number(formData.documentType), // enviar el id como número
+            number_identification: formData.documentNumber,
+            phone_number: formData.phone,
+            password: formData.documentNumber, // Por ahora, usar número de documento como password
+            image: formData.image || undefined,
+          };
       try {
         const response = await registerAprendiz(payload);
         // Mostrar notificación de éxito
@@ -209,16 +209,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onNavigate }) => {
           <div className="sena-input-group">
             <FileText className="sena-input-icon" />
             <div className="relative">
-              <CustomSelect
+              <select
                 value={formData.documentType}
-                onChange={(value) => setFormData({...formData, documentType: value})}
-                options={documentTypesLoading ? [] : documentTypes.filter(type => type.value !== '')}
-                placeholder={documentTypesLoading ? "Cargando tipos de documento..." : "Selecciona tipo de documento"}
-                classNames={{
-                  trigger: "sena-input pl-10 pr-10 flex items-center justify-between",
-                  label: "sr-only"
-                }}
-              />
+                onChange={e => setFormData({ ...formData, documentType: e.target.value })}
+                className="sena-input pl-10 pr-10 flex items-center justify-between"
+                required
+                disabled={documentTypesLoading}
+              >
+                <option value="">Selecciona tipo de documento</option>
+                {documentTypes.map(dt => (
+                  <option key={dt.id} value={dt.id}>{dt.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 
