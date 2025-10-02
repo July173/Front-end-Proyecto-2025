@@ -16,8 +16,9 @@ import {
 import { useAprendizData } from '../hook/useAprendizData';
 import { useRequestAssignation } from '../hook/useRequestAssignation';
 import { useFormValidations } from '../hook/useFormValidations';
-import { FormSelects } from '../components/RequestForm/FormSelects';
-import { typesDocument } from '../constants/selectOptions';
+import { useEffect } from 'react';
+import { getDocumentTypes } from '../Api/Services/TypeDocument';
+import type { DocumentType } from '../Api/types/entities/document.type';
 import { requestAsignation } from '../Api/types/Modules/assign.types';
 import NotificationModal from '../components/NotificationModal';
 import ConfirmModal from '../components/ConfirmModal';
@@ -122,10 +123,17 @@ export default function RequestRegistration() {
     document.getElementById('pdf-upload').click();
   };
 
-  // Función para obtener el nombre del tipo de documento usando selectOptions
-  const getDocumentTypeName = (typeValue: string) => {
-    const documentType = typesDocument.find(type => type.value === typeValue);
-    return documentType ? documentType.label : 'No especificado';
+  // Estado para los tipos de documento
+  const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
+
+  useEffect(() => {
+    getDocumentTypes().then(setDocumentTypes);
+  }, []);
+
+  // Función para obtener el nombre del tipo de documento usando el id
+  const getDocumentTypeName = (typeId: number | string) => {
+    const docType = documentTypes.find(type => String(type.id) === String(typeId));
+    return docType ? docType.name : 'No especificado';
   };
 
   // Validación en tiempo real para teléfono

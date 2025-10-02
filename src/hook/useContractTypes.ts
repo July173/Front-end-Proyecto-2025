@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { DocumentType, getContractTypesWithEmpty } from '../Api/Services/TypeDocument';
+import { getContractTypesWithEmpty } from '../Api/Services/TypeDocument';
 
 /**
  * Hook optimizado para manejar los tipos de contrato
- * Solo usa la función del backend, el fallback se gestiona en Enums.ts
  */
 export const useContractTypes = () => {
-  const [contractTypes, setContractTypes] = useState<DocumentType[]>([]);
+  const [contractTypes, setContractTypes] = useState<Array<{ id: number | ""; name: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
