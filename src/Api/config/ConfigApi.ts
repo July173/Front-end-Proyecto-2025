@@ -143,6 +143,17 @@ export const ENDPOINTS = {
     getDocumentTypes: `${API_BASE_URL}security/enums/document-types/`,
     getContractTypes : `${API_BASE_URL}security/enums/contract-types/`,
   },
+
+  // Endpoints para tipo de documento
+  documentType: {
+    list: `${API_BASE_URL}general/type-documents/`,
+    create: `${API_BASE_URL}general/type-documents/`,
+    read: `${API_BASE_URL}general/type-documents/{id}/`,
+    update: `${API_BASE_URL}general/type-documents/{id}/`,
+    partialUpdate: `${API_BASE_URL}general/type-documents/{id}/`,
+    delete: `${API_BASE_URL}general/type-documents/{id}/`,
+    softDelete: `${API_BASE_URL}general/type-documents/{id}/soft-delete/`,
+  },
   // Plantillas Excel para registro masivo
   excelTemplates: {
     instructorTemplate: `${API_BASE_URL}security/excel-templates/instructor-template/`,
