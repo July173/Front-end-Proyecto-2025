@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { DocumentType, getDocumentTypesWithEmpty } from '../Api/Services/TypeDocument';
+import { getDocumentTypesWithEmpty } from '../Api/Services/TypeDocument';
 
 /**
  * Hook optimizado para manejar los tipos de documento
- * Solo usa la función del backend, el fallback se gestiona en Enums.ts
- */
+
+*/
 export const useDocumentTypes = () => {
-  const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
+  const [documentTypes, setDocumentTypes] = useState<Array<{ id: number | ""; name: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
