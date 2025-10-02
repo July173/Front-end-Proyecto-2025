@@ -21,7 +21,7 @@ export interface requestAsignation{
 
 export interface AssignTableRow {
   nombre: string;
-  tipo_identificacion: string;
+  tipo_identificacion: number; // id del tipo de documento
   numero_identificacion: string;
   fecha_solicitud: string;
   id?: number;
@@ -30,7 +30,7 @@ export interface AssignTableRow {
 export interface DetailData {
   aprendiz_id?: number;
   nombre_aprendiz?: string;
-  tipo_identificacion?: string;
+  tipo_identificacion?: number; // id del tipo de documento
   numero_identificacion?: string | number | null;
   telefono_aprendiz?: string | number;
   correo_aprendiz?: string;

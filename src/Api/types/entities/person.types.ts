@@ -12,7 +12,7 @@ export interface RegisterPayload {
   second_name?: string;
   first_last_name: string;
   second_last_name?: string;
-  type_identification: string;
+  type_identification: number;
   number_identification: string;
   phone_number: string;
   password: string;
@@ -26,7 +26,7 @@ export interface Person {
   first_last_name: string;
   second_last_name?: string;
   phone_number: string;
-  type_identification: string;
+  type_identification: number;
   number_identification: string;
   active: boolean;
   image?: string;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DocumentType, getDocumentTypesWithEmpty } from '../Api/Services/Enums';
+import { DocumentType, getDocumentTypesWithEmpty } from '../Api/Services/TypeDocument';
 
 /**
  * Hook optimizado para manejar los tipos de documento

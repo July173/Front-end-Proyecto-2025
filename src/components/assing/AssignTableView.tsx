@@ -86,6 +86,7 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
                 <div className="w-32 px-2 text-center flex items-center justify-center">
                   <AssignButton
                     state={["Asignar", "Asignado", "Rechazado"].includes(actionLabel ?? "") ? (actionLabel as "Asignar" | "Asignado" | "Rechazado") : "Asignar"}
+                    requestId={row.id}
                     onClick={() => {
                       onAction(row);
                     }}
