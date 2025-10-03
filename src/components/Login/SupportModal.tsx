@@ -4,6 +4,11 @@ import { X, Mail, Phone, Clock, Send, ExternalLink, CheckCircle, AlertCircle, Lo
 import useSupportForm from '../../hook/useSupportForm'; // Ajusta la ruta según tu estructura
 import CustomSelect from '../CustomSelect'; // importa el componente
 
+import { getAllTypeOfQueries } from '../../Api/Services/TypeOfQueries';
+import { getAllSupportContacts } from '../../Api/Services/Support';
+import type { TypeOfQueries } from '../../Api/types/Modules/general.types';
+import type { SupportContact } from '../../Api/types/entities/support.types';
+
 const SupportModal = ({ isOpen, onClose }) => {
     const {
         formData,
@@ -16,6 +21,36 @@ const SupportModal = ({ isOpen, onClose }) => {
     } = useSupportForm();
 
     const [localError, setLocalError] = React.useState('');
+    const [categories, setCategories] = React.useState<TypeOfQueries[]>([]);
+    const [loadingCategories, setLoadingCategories] = React.useState(false);
+    const [contacts, setContacts] = React.useState<SupportContact[]>([]);
+    const [loadingContacts, setLoadingContacts] = React.useState(false);
+    const [schedules, setSchedules] = React.useState([]);
+    const [loadingSchedules, setLoadingSchedules] = React.useState(false);
+
+    React.useEffect(() => {
+        if (!isOpen) return;
+        setLoadingCategories(true);
+        setLoadingContacts(true);
+        setLoadingSchedules(true);
+        getAllTypeOfQueries()
+            .then((data) => {
+                setCategories(Array.isArray(data) ? data.filter(c => c.active) : []);
+            })
+            .finally(() => setLoadingCategories(false));
+        getAllSupportContacts()
+            .then((data) => {
+                setContacts(data);
+            })
+            .finally(() => setLoadingContacts(false));
+        import('../../Api/Services/Support').then(mod => {
+            mod.getAllSupportSchedules()
+                .then((data) => {
+                    setSchedules(Array.isArray(data) ? data : []);
+                })
+                .finally(() => setLoadingSchedules(false));
+        });
+    }, [isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,7 +82,7 @@ const SupportModal = ({ isOpen, onClose }) => {
     };
 
     // Resetear estado cuando se cierra el modal
-    useEffect(() => {
+    React.useEffect(() => {
         if (!isOpen) {
             setSuccess(false);
         }
@@ -81,39 +116,39 @@ const SupportModal = ({ isOpen, onClose }) => {
                 <div className="p-6 space-y-6 pt-1">
 
                     <div className="grid md:grid-cols-2 gap-6">
-                        {/* Email falta editar el correo por uno real */}
-                        <div
-                            className="bg-white shadow rounded-lg p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                            onClick={() => {
-                                const subject = encodeURIComponent('Solicitud de Soporte - Sistema de Gestión');
-                                const body = encodeURIComponent('Hola,\n\nPor favor, describe tu consulta o problema:\n\n');
-                                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=servicio@sena.edu.co&su=${subject}&body=${body}`;
-                                window.open(gmailUrl, '_blank');
-                            }}
-                        >
-                            <Mail className="w-8 h-8 mx-auto text-orange-600 mb-3" />
-                            <h3 className="font-semibold text-lg">Email</h3>
-                            <p className="text-gray-600 text-sm">Soporte por correo electrónico</p>
-                            <p className="font-semibold text-lg mt-2 text-orange-600 hover:text-orange-700">servicio@sena.edu.co</p>
-                            <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mt-3">
-                                <Clock className="w-4 h-4" />
-                                <span>Respuesta en 24-48 horas</span>
-                            </div>
-                            <div className="mt-2 text-xs text-gray-400">
-                            </div>
-                        </div>
-
-                        {/* Teléfono falta editar el numero por uno real */}
-                        <div className="bg-white shadow rounded-lg p-6 text-center">
-                            <Phone className="w-8 h-8 mx-auto text-green-600 mb-3" />
-                            <h3 className="font-semibold text-lg">Teléfono</h3>
-                            <p className="text-gray-600 text-sm">Línea gratuita nacional</p>
-                            <p className="font-semibold text-lg mt-2">01 8000 910 270</p>
-                            <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mt-3">
-                                <Clock className="w-4 h-4" />
-                                <span>Lunes a viernes: 7:00 AM - 7:00 PM</span>
-                            </div>
-                        </div>
+                        {loadingContacts ? (
+                            <div className="col-span-2 text-center text-gray-500">Cargando contactos...</div>
+                        ) : (
+                            contacts
+                                .filter(c => c.extra_info !== "enlace")
+                                .map((contact) => (
+                                    <div
+                                        key={contact.id}
+                                        className="bg-white shadow rounded-lg p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                                        onClick={() => {
+                                            if (contact.type.toLowerCase() === "email") {
+                                                const subject = encodeURIComponent('Solicitud de Soporte - Sistema de Gestión');
+                                                const body = encodeURIComponent('Hola,\n\nPor favor, describe tu consulta o problema:\n\n');
+                                                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contact.value}&su=${subject}&body=${body}`;
+                                                window.open(gmailUrl, '_blank');
+                                            }
+                                        }}
+                                    >
+                                        {contact.type.toLowerCase() === "email" ? (
+                                            <Mail className="w-8 h-8 mx-auto text-orange-600 mb-3" />
+                                        ) : (
+                                            <Phone className="w-8 h-8 mx-auto text-green-600 mb-3" />
+                                        )}
+                                        <h3 className="font-semibold text-lg">{contact.type}</h3>
+                                        <p className="text-gray-600 text-sm">{contact.label}</p>
+                                        <p className={`font-semibold text-lg mt-2 ${contact.type.toLowerCase() === "email" ? "text-orange-600 hover:text-orange-700" : ""}`}>{contact.value}</p>
+                                        <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mt-3">
+                                            <Clock className="w-4 h-4" />
+                                            <span>{contact.extra_info}</span>
+                                        </div>
+                                    </div>
+                                ))
+                        )}
                     </div>
 
 
@@ -124,18 +159,18 @@ const SupportModal = ({ isOpen, onClose }) => {
                             Horarios de atención
                         </h3>
                         <div className="space-y-2 text-sm">
-                            <div className="flex justify-between border-b border-gray-300 py-2">
-                                <span className="text-black font-semibold">Lunes a Viernes</span>
-                                <span className="text-[#43A047]">7:00 AM - 7:00 PM</span>
-                            </div>
-                            <div className="flex justify-between border-b border-gray-300 py-2">
-                                <span className="text-black font-semibold">Sábados</span>
-                                <span className="text-[#43A047]">8:00 AM - 4:00 PM</span>
-                            </div>
-                            <div className="flex justify-between border-b border-gray-300 py-2">
-                                <span className="text-black font-semibold">Domingos y festivos</span>
-                                <span className="text-gray-400">Cerrado</span>
-                            </div>
+                            {loadingSchedules ? (
+                                <div className="text-center text-gray-500">Cargando horarios...</div>
+                            ) : (
+                                schedules.map(sch => (
+                                    <div key={sch.id} className="flex justify-between border-b border-gray-300 py-2">
+                                        <span className="text-black font-semibold">{sch.day_range}</span>
+                                        <span className={sch.is_closed ? "text-gray-400" : "text-[#43A047]"}>
+                                            {sch.is_closed ? "Cerrado" : sch.hours}
+                                        </span>
+                                    </div>
+                                ))
+                            )}
                         </div>
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-md">
                             <p className="text-sm text-orange-800">
@@ -207,14 +242,10 @@ const SupportModal = ({ isOpen, onClose }) => {
                                 <CustomSelect
                                     value={formData.category}
                                     onChange={(val) => handleInputChange({ target: { name: "category", value: val } })}
-                                    options={[
-                                        { value: "tecnico", label: "Soporte Técnico" },
-                                        { value: "academico", label: "Consulta Académica" },
-                                        { value: "plataforma", label: "Problemas con la Plataforma" },
-                                        { value: "otros", label: "Otros" },
-                                    ]}
+                                    options={categories.map(cat => ({ value: String(cat.id), label: cat.name }))}
                                     label="Categoría de Consulta *"
-                                    placeholder="Selecciona una categoría"
+                                    placeholder={loadingCategories ? "Cargando..." : "Selecciona una categoría"}
+                                    disabled={loadingCategories}
                                 />
                             </div>
 
@@ -266,18 +297,27 @@ const SupportModal = ({ isOpen, onClose }) => {
                     <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="font-semibold text-gray-900 mb-4 text-xl">Enlaces útiles</h3>
                         <div className="space-y-3">
-                            <a
-                                href="https://betowa.sena.edu.co/"
-                                target="_blank"
-                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
-                            >
-                                <span className="text-gray-700 group-hover:text-gray-900">
-                                    Sofia Plus - Oferta educativa
-                                </span>
-                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
-                            </a>
+                            {loadingContacts ? (
+                                <div className="text-center text-gray-500">Cargando enlaces...</div>
+                            ) : (
+                                contacts
+                                    .filter(c => c.extra_info === "enlace")
+                                    .map(link => (
+                                        <a
+                                            key={link.id}
+                                            href={link.value}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+                                        >
+                                            <span className="text-gray-700 group-hover:text-gray-900">
+                                                {link.label}
+                                            </span>
+                                            <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                                        </a>
+                                    ))
+                            )}
                         </div>
-
                     </div>
                 </div>
             </div>

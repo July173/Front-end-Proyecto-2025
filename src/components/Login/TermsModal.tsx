@@ -24,6 +24,7 @@
     const [sections, setSections] = useState<LegalSection[]>([]);
     const [loading, setLoading] = useState(false);
 
+
     useEffect(() => {
       if (!isOpen) return;
       setLoading(true);
@@ -37,8 +38,6 @@
         setLoading(false);
       })();
     }, [isOpen]);
-
-    if (!isOpen) return null;
 
     // Agrupa las secciones por parentId
     const groupedSections = React.useMemo(() => {
@@ -54,6 +53,8 @@
         children: map[parent.id] || []
       }));
     }, [sections]);
+
+    if (!isOpen) return null;
 
     return ReactDOM.createPortal(
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
