@@ -1,5 +1,7 @@
-  import React from "react";
+  import React, { useEffect, useState } from "react";
   import ReactDOM from "react-dom";
+  import { fetchActiveTermsDocument, fetchSectionsByDocumentId } from "../../Api/Services/LegalDocument";
+  import type { LegalDocument, LegalSection } from "../../Api/types/entities/legalDocument.types";
 
   /**
    * Componente TermsModal
@@ -16,8 +18,42 @@
    *
    * @returns {JSX.Element | null} Modal de términos y condiciones renderizado.
    */
+
   const TermsModal = ({ isOpen, onClose }) => {
+    const [document, setDocument] = useState<LegalDocument | null>(null);
+    const [sections, setSections] = useState<LegalSection[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      if (!isOpen) return;
+      setLoading(true);
+      (async () => {
+        const doc = await fetchActiveTermsDocument();
+        setDocument(doc);
+        if (doc) {
+          const secs = await fetchSectionsByDocumentId(doc.id);
+          setSections(secs);
+        }
+        setLoading(false);
+      })();
+    }, [isOpen]);
+
     if (!isOpen) return null;
+
+    // Agrupa las secciones por parentId
+    const groupedSections = React.useMemo(() => {
+      const parents = sections.filter(s => s.parentId === null);
+      const children = sections.filter(s => s.parentId !== null);
+      const map: Record<number, LegalSection[]> = {};
+      children.forEach(child => {
+        if (!map[child.parentId!]) map[child.parentId!] = [];
+        map[child.parentId!].push(child);
+      });
+      return parents.map(parent => ({
+        parent,
+        children: map[parent.id] || []
+      }));
+    }, [sections]);
 
     return ReactDOM.createPortal(
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -43,12 +79,11 @@
                   </svg>
                 </div>
                 <h2 className="text-3xl font-semibold text-gray-900 text-center">
-                  Términos y condiciones
+                  {document?.title || "Términos y condiciones"}
                 </h2>
               </div>
               <p className="text-sm text-gray-500 mt-1 text-center">
-                Condiciones de uso de los servicios del SENA - Servicio Nacional de
-                Aprendizaje
+                Condiciones de uso de los servicios del SENA - Servicio Nacional de Aprendizaje
               </p>
             </div>
             <button
@@ -69,149 +104,42 @@
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6 mt-28">
-            {/* 1. Aceptación */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                1. Aceptación de los términos
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Al acceder y utilizar los servicios del SENA (Servicio Nacional de
-                Aprendizaje), usted acepta estar sujeto a estos términos y
-                condiciones de uso. Si no está de acuerdo con alguno de estos
-                términos, no debe utilizar nuestros servicios. El SENA se reserva el
-                derecho de modificar estos términos en cualquier momento. Las
-                modificaciones entrarán en vigor inmediatamente después de su
-                publicación en este sitio web.
-              </p>
-            </div>
-
-            {/* 2. Descripción */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                2. Descripción de los servicios
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                El SENA ofrece formación profesional integral gratuita en los
-                siguientes servicios:
-              </p>
-              <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-                <li>Programas de formación técnica y tecnológica</li>
-                <li>Cursos complementarios virtuales y presenciales</li>
-                <li>Servicios de empleabilidad y emprendimiento</li>
-                <li>Plataformas educativas digitales (Sofia Plus, LMS SENA)</li>
-                <li>Servicios de bienestar al aprendiz</li>
-                <li>Certificación de competencias laborales</li>
-              </ul>
-            </div>
-
-            {/* 3. Obligaciones */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                3. Obligaciones del usuario
-              </h3>
-              <h4 className="text-base font-semibold mb-2 mt-2">
-                3.1 Requisitos de registro
-              </h4>
-              <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">
-                <li>Proporcionar información verdadera, precisa y completa</li>
-                <li>Mantener actualizada su información personal</li>
-                <li>
-                  Ser responsables de la confidencialidad de sus credenciales
-                </li>
-                <li>Cumplir con los requisitos académicos establecidos</li>
-              </ul>
-              <h4 className="text-base font-semibold mb-2 mt-2">
-                3.2 Conducta del usuario
-              </h4>
-              <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-                <li>Respetar las normas de convivencia institucional</li>
-                <li>No utilizar los servicios para fines ilegales o no autorizados</li>
-                <li>Mantener un comportamiento ético y profesional</li>
-                <li>Respetar los derechos de propiedad intelectual</li>
-                <li>No compartir contenido inapropiado o ofensivo</li>
-              </ul>
-            </div>
-
-            {/* 4. Propiedad Intelectual */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                4. Derechos de propiedad intelectual
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Todo el contenido disponible en las plataformas del SENA,
-                incluyendo pero no limitado a textos, gráficos, logotipos, iconos,
-                imágenes, clips de audio, descargas digitales y compilaciones de
-                datos, es propiedad del SENA o de sus proveedores de contenido y
-                está protegido por las leyes de derechos de autor de Colombia e
-                internacionales. Los usuarios pueden utilizar el contenido
-                únicamente para fines educativos personales y no comerciales,
-                respetando siempre los créditos correspondientes.
-              </p>
-            </div>
-
-            {/* 5. Protección de Datos */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                5. Protección de datos personales
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                El SENA se compromete a proteger la privacidad de los usuarios
-                conforme a la Ley 1581 de 2012 y el Decreto 1377 de 2013 sobre
-                Protección de Datos Personales en Colombia. Para más información
-                sobre cómo recopilamos, utilizamos y protegemos sus datos
-                personales, consulte nuestra Política de Privacidad.
-              </p>
-            </div>
-
-            {/* 6. Responsabilidad */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                6. Limitación de responsabilidad
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                El SENA no será responsable por daños directos, indirectos,
-                incidentales, especiales o consecuenciales que resulten del uso o
-                la imposibilidad de uso de nuestros servicios. Nos esforzamos por
-                mantener la disponibilidad continua de nuestros servicios, pero no
-                garantizamos que estén libres de interrupciones, errores o virus.
-              </p>
-            </div>
-
-            {/* 7. Terminación del Servicio */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                7. . Terminación del servicio
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                El SENA se reserva el derecho de suspender o terminar el acceso a
-                sus servicios a cualquier usuario que viole estos términos y
-                condiciones, sin previo aviso. Los usuarios pueden solicitar la
-                terminación de su cuenta en cualquier momento contactando a nuestro
-                servicio de soporte.
-              </p>
-            </div>
-
-            {/* 8. Ley Aplicable y Jurisdicción */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">
-                8. Ley Aplicable y jurisdicción
-              </h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Estos términos y condiciones se rigen por las leyes de la República
-                de Colombia. Cualquier disputa que surja en relación con estos
-                términos será sometida a la jurisdicción exclusiva de los
-                tribunales competentes de Bogotá D.C., Colombia.
-              </p>
-            </div>
-
+            {loading ? (
+              <div className="text-center text-gray-500">Cargando...</div>
+            ) : (
+              groupedSections.length > 0 ? (
+                groupedSections.map(({ parent, children }) => (
+                  <div key={parent.id} className="bg-white shadow rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-3">
+                      {parent.code ? `${parent.code}. ` : ""}{parent.title}
+                    </h3>
+                    <p className="text-sm text-gray-700 leading-relaxed">{parent.content}</p>
+                    {children.length > 0 && (
+                      <div className="mt-4 space-y-4">
+                        {children.map(child => (
+                          <div key={child.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 className="text-base font-semibold mb-2">
+                              {child.code ? `${child.code}. ` : ""}{child.title}
+                            </h4>
+                            <p className="text-sm text-gray-700 leading-relaxed">{child.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-center text-gray-500">No hay información disponible.</div>
+              )
+            )}
             {/* Footer */}
             <div className="text-xs text-gray-500 text-center pt-6">
-              <strong>Última actualización:</strong> Agosto 2025
+              <strong>Última actualización:</strong> {document?.last_update ? new Date(document.last_update).toLocaleDateString("es-CO", { year: "numeric", month: "long" }) : "-"}
             </div>
           </div>
         </div>
       </div>,
-      document.body
+      window.document.body
     );
   };
 
