@@ -5,6 +5,9 @@ import { AssignTableRow, DetailData } from "@/Api/types/Modules/assign.types";
 import { getFormRequestById } from "@/Api/Services/RequestAssignaton";
 import { Document, Page } from 'react-pdf';
 
+import { getDocumentTypesWithEmpty } from "@/Api/Services/TypeDocument";
+import { DocumentType } from "@/Api/types/entities/document.type";
+
 interface AssignTableViewProps {
   onAction: (row: AssignTableRow) => void;
   actionLabel?: string;
@@ -18,6 +21,7 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
   const [detail, setDetail] = useState<DetailData | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [pdfFullscreen, setPdfFullscreen] = useState(false);
+  const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
 
   React.useEffect(() => {
     setLoading(true);
@@ -37,6 +41,22 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
   }, []);
 
   // Elimina el useEffect y el fetch interno
+  React.useEffect(() => {
+    getDocumentTypesWithEmpty().then((types) => {
+      setDocumentTypes(
+        types.filter((t) => typeof t.id === "number").map((t) => ({
+          id: Number(t.id),
+          name: t.name
+        }))
+      );
+    });
+  }, []);
+
+  // Helper para obtener el nombre del tipo de documento por id
+  const getDocTypeName = (id: number) => {
+    const found = documentTypes.find(dt => Number(dt.id) === Number(id));
+    return found ? found.name : "";
+  };
 
   return (
     <div className="w-full rounded-[10px] border border-stone-300/70 bg-white overflow-hidden">
@@ -63,24 +83,27 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
               <div className={`flex items-center border-b border-gray-200 h-12 hover:bg-gray-50 transition-all cursor-pointer ${expandedIdx === idx ? 'bg-gray-50' : ''}`}
                 onClick={async () => {
                   if (expandedIdx === idx) {
+                    // Solo ocultar el detalle, no volver a consultar
                     setExpandedIdx(null);
-                    setDetail(null);
                   } else {
                     setExpandedIdx(idx);
-                    setLoadingDetail(true);
-                    try {
-                      const data = await getFormRequestById(row.id!);
-                      setDetail(data.data || null);
-                    } catch {
-                      setDetail(null);
-                    } finally {
-                      setLoadingDetail(false);
+                    // Solo consultar si el detalle no corresponde al row actual
+                    if (!detail || detail.id !== row.id) {
+                      setLoadingDetail(true);
+                      try {
+                        const data = await getFormRequestById(row.id!);
+                        setDetail(data.data || null);
+                      } catch {
+                        setDetail(null);
+                      } finally {
+                        setLoadingDetail(false);
+                      }
                     }
                   }
                 }}>
                 <div className="w-12 px-2 text-center text-black text-sm font-normal font-['Roboto']">{idx + 1}</div>
                 <div className="w-56 px-2 text-center text-black text-sm font-normal font-['Roboto']">{row.nombre}</div>
-                <div className="w-44 px-2 text-center text-black text-sm font-normal font-['Roboto']">{row.tipo_identificacion}</div>
+                <div className="w-44 px-2 text-center text-black text-sm font-normal font-['Roboto']">{getDocTypeName(row.tipo_identificacion)}</div>
                 <div className="w-44 px-2 text-center text-black text-sm font-normal font-['Roboto']">{row.numero_identificacion}</div>
                 <div className="w-40 px-2 text-center text-black text-sm font-normal font-['Roboto']">{row.fecha_solicitud}</div>
                 <div className="w-32 px-2 text-center flex items-center justify-center">
@@ -101,7 +124,7 @@ const AssignTableView: React.FC<AssignTableViewProps> = ({ onAction, actionLabel
                     <>
                       <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                         <div><span className="font-semibold">Nombre Aprendiz</span><br />{detail.nombre_aprendiz}</div>
-                        <div><span className="font-semibold">Tipo Identificación</span><br />{detail.tipo_identificacion}</div>
+                        <div><span className="font-semibold">Tipo Identificación</span><br />{getDocTypeName(detail.tipo_identificacion)}</div>
                         <div><span className="font-semibold">Número Identificación</span><br />{detail.numero_identificacion}</div>
                         <div><span className="font-semibold">Teléfono Aprendiz</span><br />{detail.telefono_aprendiz}</div>
                         <div><span className="font-semibold">Correo Aprendiz</span><br />{detail.correo_aprendiz}</div>

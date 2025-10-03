@@ -1,6 +1,4 @@
-import React from "react";
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getDocumentTypesWithEmpty } from "@/Api/Services/TypeDocument";
 import { DocumentType } from "@/Api/types/entities/document.type";
 
@@ -34,27 +32,27 @@ export default function ModalAsignar({ aprendiz, onClose, onReject }: ModalAsign
 
     useEffect(() => {
         getDocumentTypesWithEmpty().then((types) => {
-            setDocumentTypes(
-                types
-                    .filter((t) => typeof t.id === "number")
-                    .map((t) => ({
-                        ...t,
-                        id: Number(t.id),
-                    }))
-            );
-        });
-    }, []);
-
-    useEffect(() => {
-        if (documentTypes.length > 0 && aprendiz.tipo_identificacion) {
-            const found = documentTypes.find(dt => Number(dt.id) === aprendiz.tipo_identificacion);
+            const validTypes: DocumentType[] = types
+                .filter(t => typeof t.id === "number")
+                .map(t => ({
+                    id: t.id as number,
+                    name: t.name
+                }));
+            setDocumentTypes(validTypes);
+            const found = validTypes.find(t => t.id === aprendiz.tipo_identificacion);
             setDocTypeName(found ? found.name : "");
-        }
-    }, [documentTypes, aprendiz.tipo_identificacion]);
+        });
+    }, [aprendiz.tipo_identificacion]);
 
     return (
-        <div className="w-full h-full min-h-screen flex items-center justify-center fixed inset-0 z-50">
-            <div className="bg-white rounded-[10px] shadow-lg max-w-2xl w-full mx-4 p-6 relative flex flex-col gap-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Overlay oscuro */}
+                <div className="absolute inset-0 bg-black bg-opacity-40" style={{ pointerEvents: 'none' }} />
+            {/* Modal principal */}
+                <div
+                    className="bg-white rounded-[10px] shadow-lg max-w-2xl w-full mx-4 p-6 relative flex flex-col gap-6 z-10"
+                    style={{ pointerEvents: 'auto' }}
+                >
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-2">
                     <img src={imgImage27} alt="icon" className="w-8 h-8" />
