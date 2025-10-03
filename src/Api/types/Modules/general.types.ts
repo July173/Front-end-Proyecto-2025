@@ -51,3 +51,30 @@ export interface Center {
   active: boolean;
   regional: number;
 }
+
+export interface Colors {
+  name: string;
+  hexagonal_value: string;
+  active: boolean;
+}
+
+export interface TypeOfQueries {
+  id: number;
+  name: string;
+  description?: string;
+  active: boolean;
+}
+
+export interface TypeDocument<T> {
+  id: number;
+  name: string;
+  acronyms: string;
+  active: boolean;
+}
+
+export interface ContractType {
+  id: number;
+  name: string;
+  description?: string;
+  active: boolean;
+}
