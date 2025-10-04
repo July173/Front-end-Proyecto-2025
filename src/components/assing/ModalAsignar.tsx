@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+import ModalOtroInstructor from "./ModalOtroInstructor";
 import { getDocumentTypesWithEmpty } from "@/Api/Services/TypeDocument";
+import { getInstructoresCustomList } from "@/Api/Services/Instructor";
+import { assignInstructorToAprendiz } from "@/Api/Services/RequestAssignaton";
 import { DocumentType } from "@/Api/types/entities/document.type";
+import { InstructorCustomList } from "@/Api/types/entities/instructor.types";
 
 interface AprendizData {
     nombre: string;
@@ -10,6 +14,7 @@ interface AprendizData {
     fecha_inicio_etapa_practica: string;
     programa: string;
     fecha_solicitud: string;
+    aprendiz_id?: number; // Necesitamos el ID del aprendiz para la asignación
 }
 
 interface ModalAsignarProps {
@@ -29,8 +34,45 @@ const imgImage32 = "https://s3-alpha-sig.figma.com/img/02d2/a66d/70b15153ce01f79
 export default function ModalAsignar({ aprendiz, onClose, onReject }: ModalAsignarProps) {
     const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
     const [docTypeName, setDocTypeName] = useState<string>("");
+    const [showOtherInstructorModal, setShowOtherInstructorModal] = useState(false);
+    const [selectedInstructor, setSelectedInstructor] = useState<InstructorCustomList | null>(null);
+    const [instructores, setInstructores] = useState<InstructorCustomList[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string>("");
+    const [assigning, setAssigning] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    const handleConfirmAssignment = async () => {
+        if (!selectedInstructor || !aprendiz.aprendiz_id) {
+            alert('Debe seleccionar un instructor y tener un aprendiz válido');
+            return;
+        }
+
+        setAssigning(true);
+        setShowConfirmModal(false);
+        try {
+            await assignInstructorToAprendiz(selectedInstructor.id, aprendiz.aprendiz_id);
+            alert('Instructor asignado exitosamente');
+            onClose();
+            // Aquí podrías agregar lógica para refrescar la lista o mostrar notificación
+        } catch (error) {
+            console.error('Error al asignar instructor:', error);
+            alert('Error al asignar el instructor. Por favor intente nuevamente.');
+        } finally {
+            setAssigning(false);
+        }
+    };
+
+    const handleAssignInstructor = () => {
+        if (!selectedInstructor || !aprendiz.aprendiz_id) {
+            alert('Debe seleccionar un instructor y tener un aprendiz válido');
+            return;
+        }
+        setShowConfirmModal(true);
+    };
 
     useEffect(() => {
+        // Cargar tipos de documento
         getDocumentTypesWithEmpty().then((types) => {
             const validTypes: DocumentType[] = types
                 .filter(t => typeof t.id === "number")
@@ -42,9 +84,35 @@ export default function ModalAsignar({ aprendiz, onClose, onReject }: ModalAsign
             const found = validTypes.find(t => t.id === aprendiz.tipo_identificacion);
             setDocTypeName(found ? found.name : "");
         });
+
+        // Cargar instructores
+        setLoading(true);
+        setError("");
+        getInstructoresCustomList()
+            .then(data => {
+                // Validar que data sea un array y filtrar elementos inválidos
+                if (Array.isArray(data)) {
+                    const validInstructores = data.filter(inst => 
+                        inst && typeof inst === 'object' && inst.id && inst.nombre
+                    );
+                    setInstructores(validInstructores);
+                } else {
+                    setInstructores([]);
+                    setError("Formato de datos incorrecto");
+                }
+            })
+            .catch(error => {
+                console.error("Error al cargar instructores:", error);
+                setError("Error al cargar instructores");
+                setInstructores([]);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [aprendiz.tipo_identificacion]);
 
     return (
+        <>
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             {/* Overlay oscuro */}
                 <div className="absolute inset-0 bg-black bg-opacity-40" style={{ pointerEvents: 'none' }} />
@@ -106,10 +174,32 @@ export default function ModalAsignar({ aprendiz, onClose, onReject }: ModalAsign
                 {/* Selector de instructor */}
                 <div>
                     <div className="text-black text-2xl font-medium font-['Roboto'] mb-2">Seleccionar Instructor</div>
-                    <select className="w-full border rounded-lg px-4 py-2 text-base font-normal font-['Roboto'] focus:outline-none">
-                        <option>Paola guerrero mendosa</option>
-                        <option>Otro instructor</option>
-                    </select>
+                    {loading ? (
+                        <div className="text-center py-4">Cargando instructores...</div>
+                    ) : error ? (
+                        <div className="text-center py-4 text-red-500">{error}</div>
+                    ) : selectedInstructor ? (
+                        // Si ya tiene instructor asignado, mostrar su nombre con opción de cambiar
+                        <div className="flex items-center gap-4">
+                            <div className="flex-1 border rounded-lg px-4 py-2 text-base font-normal font-['Roboto'] bg-gray-50">
+                                {selectedInstructor.nombre}
+                            </div>
+                            <button 
+                                className="bg-blue-500 text-white px-6 py-2 rounded-[10px] font-bold hover:bg-blue-600"
+                                onClick={() => setShowOtherInstructorModal(true)}
+                            >
+                                Cambiar instructor
+                            </button>
+                        </div>
+                    ) : (
+                        // Si NO tiene instructor asignado, mostrar solo el botón de asignar
+                        <button 
+                            className="w-full bg-green-500 text-white px-6 py-3 rounded-[10px] font-bold text-lg hover:bg-green-600"
+                            onClick={() => setShowOtherInstructorModal(true)}
+                        >
+                            Asignar Instructor
+                        </button>
+                    )}
                 </div>
                 {/* Botones de acción */}
                 <div className="flex flex-row gap-4 justify-start mt-4">
@@ -119,11 +209,69 @@ export default function ModalAsignar({ aprendiz, onClose, onReject }: ModalAsign
                     <button className="bg-white border border-[#a39f9f] text-black font-bold px-6 py-2 rounded-[10px] flex items-center gap-2 hover:bg-gray-100" onClick={onClose}>
                         Cancelar
                     </button>
-                    <button className="bg-[#7bcc7f] border border-[#c0fbcd] text-[#0c672d] font-bold px-6 py-2 rounded-[10px] flex items-center gap-2 hover:bg-[#a6e6ad]">
-                        Asignar Instructor
+                    <button 
+                        className="bg-[#7bcc7f] border border-[#c0fbcd] text-[#0c672d] font-bold px-6 py-2 rounded-[10px] flex items-center gap-2 hover:bg-[#a6e6ad] disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleAssignInstructor}
+                        disabled={!selectedInstructor || assigning}
+                    >
+                        {assigning ? 'Asignando...' : 'Asignar Instructor'}
                     </button>
                 </div>
             </div>
         </div>
+        {/* Modal para 'Otro instructor' */}
+        {showOtherInstructorModal && (
+            <ModalOtroInstructor
+                instructores={instructores}
+                onClose={() => {
+                    setShowOtherInstructorModal(false);
+                }}
+                onAssign={instructor => {
+                    setSelectedInstructor(instructor);
+                    setShowOtherInstructorModal(false);
+                }}
+            />
+        )}
+        
+        {/* Modal de confirmación */}
+        {showConfirmModal && selectedInstructor && (
+            <div className="fixed inset-0 z-[80] flex items-center justify-center">
+                <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowConfirmModal(false)} />
+                <div className="bg-white rounded-[10px] shadow-lg max-w-md w-full mx-4 p-6 relative z-[81]">
+                    <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-xl font-bold text-black mb-2">¿Confirmar asignación?</h3>
+                            <p className="text-gray-700">
+                                Se asignará el instructor <span className="font-bold">{selectedInstructor.nombre}</span> para el seguimiento de <span className="font-bold">{aprendiz.nombre}</span>.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-3 justify-end mt-6">
+                        <button
+                            className="px-6 py-2 rounded-[10px] border border-gray-400 text-gray-700 font-bold hover:bg-gray-100"
+                            onClick={() => setShowConfirmModal(false)}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            className="px-6 py-2 rounded-[10px] bg-green-500 text-white font-bold hover:bg-green-600 flex items-center gap-2"
+                            onClick={handleConfirmAssignment}
+                            disabled={assigning}
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            {assigning ? 'Confirmando...' : 'Confirmar asignación'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+        </>
     );
 }

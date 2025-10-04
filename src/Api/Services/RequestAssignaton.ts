@@ -92,3 +92,37 @@ export const getFormRequestById = async (requestId: number): Promise<any> => {
     throw error;
   }
 };
+
+/**
+ * Asigna un instructor a un aprendiz
+ * @param instructorId - ID del instructor
+ * @param aprendizId - ID del aprendiz
+ * @returns Promesa con la respuesta de la asignación
+ */
+export const assignInstructorToAprendiz = async (
+  instructorId: number,
+  aprendizId: number
+): Promise<any> => {
+  try {
+    const response = await fetch(ENDPOINTS.requestAsignation.postAssignInstructor, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        instructor: instructorId,
+        aprendiz: aprendizId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al asignar instructor');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error en assignInstructorToAprendiz:', error);
+    throw error;
+  }
+};

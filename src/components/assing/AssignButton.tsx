@@ -41,6 +41,7 @@ const AssignButton: React.FC<AssignButtonProps> = ({ state = "Asignar", onClick,
           fecha_inicio_etapa_practica: d.fecha_inicio_etapa_practica,
           programa: d.programa,
           fecha_solicitud: d.fecha_solicitud,
+          aprendiz_id: d.aprendiz_id || d.id_aprendiz || d.aprendiz, // Agregar el ID del aprendiz
         });
         setShowModal(true);
       } catch (e) {

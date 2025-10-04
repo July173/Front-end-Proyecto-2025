@@ -103,7 +103,7 @@ export const ENDPOINTS = {
     getAllInstructores: `${API_BASE_URL}general/instructors/`,
     getIdInstructor: `${API_BASE_URL}general/instructors/{id}/Create-Instructor/Retrieve/`,
     putIdInstructor: `${API_BASE_URL}general/instructors/{id}/Create-Instructor/update/`,
-
+    getCustomList: `${API_BASE_URL}general/instructors/custom-list/`,
   },
   /** Endpoints para regionales */
   regional: {
@@ -175,6 +175,7 @@ export const ENDPOINTS = {
     patchDenialRequest : `${API_BASE_URL}assign/request_asignation/{id}/form-request-reject/`,
     postPdfRequest : `${API_BASE_URL}assign/form-requests/upload-pdf/`,
     getPdfRequest : `${API_BASE_URL}assign/request_asignation/{id}/form-request-pdf-url/`,
+    postAssignInstructor : `${API_BASE_URL}assign/asignation_instructor/custom-create/`,
   },
   modalityProductiveStage :{
     getModalityProductiveStage : `${API_BASE_URL}assign/modality_productive_stage/`,
