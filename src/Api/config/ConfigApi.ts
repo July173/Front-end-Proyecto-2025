@@ -31,6 +31,7 @@
 import { get } from "http";
 import { permission } from "process";
 import { getFichas } from "../Services/Ficha";
+import { create } from "domain";
 
 
 /**
@@ -46,16 +47,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://django:8000/ap
  * Las rutas pueden contener parámetros entre llaves (ej: {id}) que deben ser reemplazados dinámicamente.
  */
 export const ENDPOINTS = {
-  // Endpoints para tipo de contrato
-  contractType: {
-    list: `${API_BASE_URL}general/type-contracts/`,
-    create: `${API_BASE_URL}general/type-contracts/`,
-    read: `${API_BASE_URL}general/type-contracts/{id}/`,
-    update: `${API_BASE_URL}general/type-contracts/{id}/`,
-    partialUpdate: `${API_BASE_URL}general/type-contracts/{id}/`,
-    delete: `${API_BASE_URL}general/type-contracts/{id}/`,
-    softDelete: `${API_BASE_URL}general/type-contracts/{id}/soft-delete/`,
-  },
+
   /** Endpoints para gestión de personas (aprendiz, etc) */
   person: {
     registerAprendiz: `${API_BASE_URL}security/persons/register-aprendiz/`,
@@ -152,12 +144,21 @@ export const ENDPOINTS = {
   // Endpoints para tipo de documento
   documentType: {
     list: `${API_BASE_URL}security/document-types/`,
-    create: `${API_BASE_URL}general/type-documents/`,
-    read: `${API_BASE_URL}general/type-documents/{id}/`,
-    update: `${API_BASE_URL}general/type-documents/{id}/`,
-    partialUpdate: `${API_BASE_URL}general/type-documents/{id}/`,
-    delete: `${API_BASE_URL}general/type-documents/{id}/`,
-    softDelete: `${API_BASE_URL}general/type-documents/{id}/soft-delete/`,
+    create: `${API_BASE_URL}security/document-types/`,
+    read: `${API_BASE_URL}security/document-types/{id}/`,
+    update: `${API_BASE_URL}security/document-types/{id}/`,
+    partialUpdate: `${API_BASE_URL}security/document-types/{id}/`,
+    delete: `${API_BASE_URL}security/document-types/{id}/`,
+    softDelete: `${API_BASE_URL}security/document-types/{id}/soft-delete/`,
+  },
+    // Endpoints para tipo de contrato
+  contractType: {
+    list: `${API_BASE_URL}general/type-contracts/`,
+    create: `${API_BASE_URL}general/type-contracts/`,
+    read: `${API_BASE_URL}general/type-contracts/{id}/`,
+    update: `${API_BASE_URL}general/type-contracts/{id}/`,
+    partialUpdate: `${API_BASE_URL}general/type-contracts/{id}/`,
+    softDelete: `${API_BASE_URL}general/type-contracts/{id}/soft-delete/`,
   },
   // Plantillas Excel para registro masivo
   excelTemplates: {
@@ -197,10 +198,20 @@ export const ENDPOINTS = {
   TypeOfQueries :{
     allTypeOfQueries : `${API_BASE_URL}general/type-of-queries/`,
     idTypeOfQueries : `${API_BASE_URL}general/type-of-queries/{id}`,
-
-  }
-  
-
+    createTypeOfQueries : `${API_BASE_URL}general/type-of-queries/`,
+    updateTypeOfQueries : `${API_BASE_URL}general/type-of-queries/{id}/`,
+    patchTypeOfQueries : `${API_BASE_URL}general/type-of-queries/{id}/`,
+    deleteTypeOfQueries : `${API_BASE_URL}general/type-of-queries/{id}/`,
+    softDeleteTypeOfQueries : `${API_BASE_URL}general/type-of-queries/{id}/soft-delete/`,
+  },
+  Colors :{
+    allColors : `${API_BASE_URL}general/colors/`,
+    idColors : `${API_BASE_URL}general/colors/{id}`,
+    createColors : `${API_BASE_URL}general/colors/`,
+    updateColors : `${API_BASE_URL}general/colors/{id}/`,
+    patchColors : `${API_BASE_URL}general/colors/{id}/`,
+    softDeleteColors : `${API_BASE_URL}general/colors/{id}/soft-delete/`,
+  },
 };
 
 

@@ -1,4 +1,26 @@
 /**
+ * Deshabilita (soft-delete) un tipo de documento
+ * @param id number
+ * @returns Promise<any>
+ */
+export async function softDeleteDocumentType(id: number): Promise<any> {
+  const response = await fetch(ENDPOINTS.documentType.softDelete.replace("{id}", String(id)), {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Error al deshabilitar el tipo de documento");
+  }
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {};
+  }
+}
+/**
  * Obtiene los tipos de contrato con una opción vacía por defecto para selects
  * @returns Promise<{ id: number | ""; name: string }[]> - Lista de tipos de contrato con opción vacía
  */
@@ -29,7 +51,7 @@ export async function getContractTypesWithEmpty(): Promise<{ id: number | ""; na
 }
 import { ENDPOINTS } from "../config/ConfigApi";
 
-import { DocumentType } from "../types/entities/document.type";
+import { TypeDocument } from "../types/Modules/general.types";
 
 /**
  * Obtiene todos los tipos de documento disponibles desde el backend
@@ -54,7 +76,7 @@ export async function getDocumentTypes(): Promise<DocumentType[]> {
  * @returns Promise<DocumentType>
  */
 export async function getDocumentTypeById(id: number): Promise<DocumentType> {
-  const response = await fetch(ENDPOINTS.documentType.read.replace(":id", String(id)), {
+  const response = await fetch(ENDPOINTS.documentType.read.replace("{id}", String(id)), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -92,7 +114,7 @@ export async function createDocumentType(data: { name: string }): Promise<Docume
  * @returns Promise<DocumentType>
  */
 export async function updateDocumentType(id: number, data: { name: string }): Promise<DocumentType> {
-  const response = await fetch(ENDPOINTS.documentType.update.replace(":id", String(id)), {
+  const response = await fetch(ENDPOINTS.documentType.update.replace("{id}", String(id)), {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -111,7 +133,7 @@ export async function updateDocumentType(id: number, data: { name: string }): Pr
  * @returns Promise<void>
  */
 export async function deleteDocumentType(id: number): Promise<void> {
-  const response = await fetch(ENDPOINTS.documentType.delete.replace(":id", String(id)), {
+  const response = await fetch(ENDPOINTS.documentType.delete.replace("{id}", String(id)), {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -131,11 +153,10 @@ export async function getDocumentTypesWithEmpty(): Promise<{ id: number | ""; na
     const documentTypes = await getDocumentTypes();
     return [
       { id: "", name: "Seleccione tipo de documento" },
-      ...documentTypes
+      ...documentTypes.map((doc: any) => ({ id: doc.id ?? doc.ID ?? doc.typeId, name: doc.name ?? doc.typeName }))
     ];
   } catch (error) {
     console.error('Error obteniendo tipos de documento:', error);
-    // En caso de error, devolver una opción vacía
     return [
       { id: "", name: "Seleccione tipo de documento" }
     ];
